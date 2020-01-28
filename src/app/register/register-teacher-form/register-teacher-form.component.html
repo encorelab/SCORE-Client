@@ -149,22 +149,6 @@
         >
         </new-password-and-confirm>
       </div>
-      <div class="form-field-extra-sub">
-        <p>
-          <mat-checkbox class="checkbox-inline" formControlName="agree"
-            ><ng-container i18n
-              >I agree to the
-              <a href="privacy" target="_blank">WISE Privacy Policy & Terms of Use</a>
-              *</ng-container
-            ></mat-checkbox
-          >
-          <mat-error
-            *ngIf="isSubmitted && createTeacherAccountFormGroup.hasError('agreeNotChecked')"
-            i18n
-            >You must agree to the Privacy Policy & Terms of Use</mat-error
-          >
-        </p>
-      </div>
       <p *ngIf="isRecaptchaEnabled" i18n>
         This site is protected by reCAPTCHA and the Google
         <a href="https://policies.google.com/privacy">Privacy Policy</a> and

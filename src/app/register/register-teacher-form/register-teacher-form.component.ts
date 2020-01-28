@@ -17,21 +17,18 @@ import { ConfigService } from '../../services/config.service';
   styleUrls: ['./register-teacher-form.component.scss']
 })
 export class RegisterTeacherFormComponent extends RegisterUserFormComponent implements OnInit {
-  createTeacherAccountFormGroup: FormGroup = this.fb.group(
-    {
-      firstName: new FormControl('', [Validators.required, Validators.pattern(this.NAME_REGEX)]),
-      lastName: new FormControl('', [Validators.required, Validators.pattern(this.NAME_REGEX)]),
-      email: new FormControl('', [Validators.required, Validators.email]),
-      city: new FormControl('', [Validators.required]),
-      state: new FormControl('', [Validators.required]),
-      country: new FormControl('', [Validators.required]),
-      schoolName: new FormControl('', [Validators.required]),
-      schoolLevel: new FormControl('', [Validators.required]),
-      howDidYouHearAboutUs: new FormControl(''),
-      agree: new FormControl('')
-    },
-    { validator: this.agreeCheckboxValidator }
-  );
+  createTeacherAccountFormGroup: FormGroup = this.fb.group({
+    firstName: new FormControl('', [Validators.required, Validators.pattern(this.NAME_REGEX)]),
+    lastName: new FormControl('', [Validators.required, Validators.pattern(this.NAME_REGEX)]),
+    email: new FormControl('', [Validators.required, Validators.email]),
+    city: new FormControl('', [Validators.required]),
+    state: new FormControl('', [Validators.required]),
+    country: new FormControl('', [Validators.required]),
+    schoolName: new FormControl('', [Validators.required]),
+    schoolLevel: new FormControl('', [Validators.required]),
+    howDidYouHearAboutUs: new FormControl(''),
+    agree: new FormControl('')
+  });
   isRecaptchaEnabled: boolean = this.configService.isRecaptchaEnabled();
   isSubmitted = false;
   passwordsFormGroup = this.fb.group({});
@@ -153,15 +150,5 @@ export class RegisterTeacherFormComponent extends RegisterUserFormComponent impl
     return this.passwordsFormGroup.controls[
       NewPasswordAndConfirmComponent.NEW_PASSWORD_FORM_CONTROL_NAME
     ].value;
-  }
-
-  private agreeCheckboxValidator(createTeacherAccountFormGroup: FormGroup): any {
-    const agree = createTeacherAccountFormGroup.get('agree').value;
-    if (!agree) {
-      const error = { agreeNotChecked: true };
-      createTeacherAccountFormGroup.setErrors(error);
-      return error;
-    }
-    return null;
   }
 }
