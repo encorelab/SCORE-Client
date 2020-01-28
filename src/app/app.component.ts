@@ -46,6 +46,22 @@ export class AppComponent {
     @Inject(DOCUMENT) private document: Document
   ) {
     iconRegistry.addSvgIcon(
+      'eco',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/img/icons/eco.svg')
+    );
+    iconRegistry.addSvgIcon(
+      'tech',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/img/icons/tech.svg')
+    );
+    iconRegistry.addSvgIcon(
+      'group',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/img/icons/group.svg')
+    );
+    iconRegistry.addSvgIcon(
+      'share',
+      sanitizer.bypassSecurityTrustResourceUrl('assets/img/icons/share.svg')
+    );
+    iconRegistry.addSvgIcon(
       'ki-elicit',
       sanitizer.bypassSecurityTrustResourceUrl('assets/img/icons/ki-elicit.svg')
     );
