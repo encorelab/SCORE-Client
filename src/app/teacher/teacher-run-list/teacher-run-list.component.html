@@ -1,5 +1,5 @@
 <div class="notice" *ngIf="!runs.length && loaded">
-  <p i18n>Hey there! Looks like you haven't run any WISE units in your classes yet.</p>
+  <p i18n>Hey there! Looks like you haven't run any units in your classes yet.</p>
   <p i18n>Select "Browse Units" to find titles to use with your students.</p>
 </div>
 <div class="content-block" *ngIf="runs.length">
@@ -63,9 +63,9 @@
     <ng-container *ngFor="let run of filteredRuns.sort(sortByStartTimeDesc); let i = index">
       <app-timeline-item [active]="isRunActive(run)" *ngIf="i < 10 || showAll" id="run{{ run.id }}">
         <app-timeline-item-label>
-          <strong>{{ run.startTime | date : 'mediumDate' }}</strong>
+          <strong>{{ run.startTime | date: 'mediumDate' }}</strong>
           <ng-container *ngIf="run.endTime && runSpansDays(run)">
-            - <strong>{{ run.endTime | date : 'mediumDate' }}</strong>
+            - <strong>{{ run.endTime | date: 'mediumDate' }}</strong>
           </ng-container>
         </app-timeline-item-label>
         <app-timeline-item-content>
