@@ -47,7 +47,7 @@ export class ListClassroomCoursesDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    const descriptionText = $localize`Hi class! Please complete the "${this.data.run.name}:unitTitle:" WISE unit. (Access Code: ${this.data.run.runCode}:accessCode:)`;
+    const descriptionText = $localize`Hi class! Please complete the "${this.data.run.name}:unitTitle:" SCORE unit. (Access Code: ${this.data.run.runCode}:accessCode:)`;
     const description = new FormControl(descriptionText, Validators.required);
     this.coursesControl = new FormArray(this.courses.map(() => new FormControl(false)));
     this.coursesControl.valueChanges.subscribe((controls) => {
