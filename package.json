@@ -145,10 +145,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/WISE-Community/WISE-Client.git"
+    "url": "git+https://github.com/encorelab/SCORE.git"
   },
   "keywords": [
-    "WISE",
+    "SCORE",
     "education",
     "science",
     "inquiry"
@@ -156,9 +156,9 @@
   "author": "",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/WISE-Community/WISE-Client/issues"
+    "url": "https://github.com/encorelab/SCORE/issues"
   },
-  "homepage": "https://github.com/WISE-Community/WISE-Client#readme",
+  "homepage": "https://github.com/encorelab/SCORE#readme",
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
