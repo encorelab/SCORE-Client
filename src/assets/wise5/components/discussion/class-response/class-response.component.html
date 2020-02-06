@@ -103,7 +103,7 @@
           <button [ngClass]="isDownvoteClicked ? 'md-accent' : ''" (click)="downvoteClicked()">
             <mat-icon>thumb_down</mat-icon>
           </button>
-          {{ 'Likes: ' + (votes + currentVote) }}
+          {{ 'Likes: ' + numVotes }}
         </div>
         <div fxFlex></div>
         <div *ngIf="mode === 'grading' || mode === 'gradingRevision'">

@@ -39,8 +39,8 @@ export class ClassResponse {
   urlMatcher: any = /((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?)/g;
   expanded: boolean = false;
   repliesToShow: any[] = [];
-  currentVote = 0;
-  votes = 10; //TODO set and get from database
+  currentVote = 0; //TODO initialize to current vote
+  numVotes = 10; //TODO set and get from database
   isUpvoteClicked = false;
   isDownvoteClicked = false;
 
@@ -157,13 +157,16 @@ export class ClassResponse {
   }
 
   updateCurrentVote() {
+    var newVote;
     if (this.isUpvoteClicked) {
-      this.currentVote = 1;
+      newVote = 1;
     } else if (this.isDownvoteClicked) {
-      this.currentVote = -1;
+      newVote = -1;
     } else {
-      this.currentVote = 0;
+      newVote = 0;
     }
+    this.numVotes += newVote - this.currentVote;
+    this.currentVote = newVote;
   }
 
   upvoteClicked() {
