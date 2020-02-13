@@ -7,6 +7,7 @@ import {
   ViewEncapsulation
 } from '@angular/core';
 import { ConfigService } from '../../../services/configService';
+import { AnnotationService } from '../../../services/annotationService';
 
 @Component({
   selector: 'class-response',
@@ -36,15 +37,24 @@ export class ClassResponse {
   @Output()
   undoDeleteButtonClicked: any = new EventEmitter();
 
+  @Output()
+  createupvoteannotation: any = new EventEmitter();
+
+  @Output()
+  createdownvoteannotation: any = new EventEmitter();
+
+  @Output()
+  createunvoteannotation: any = new EventEmitter();
+
   urlMatcher: any = /((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?)/g;
   expanded: boolean = false;
   repliesToShow: any[] = [];
-  currentVote = 0; //TODO initialize to current vote
-  numVotes = 10; //TODO set and get from database
+  currentVote = 0;
+  numVotes = 0;
   isUpvoteClicked = false;
   isDownvoteClicked = false;
 
-  constructor(private ConfigService: ConfigService) {}
+  constructor(private annotationService: AnnotationService, private ConfigService: ConfigService) {}
 
   ngOnInit(): void {
     this.injectLinksIntoResponse();
@@ -156,32 +166,66 @@ export class ClassResponse {
     this.showAllReplies();
   }
 
-  updateCurrentVote() {
-    var newVote;
-    if (this.isUpvoteClicked) {
-      newVote = 1;
-    } else if (this.isDownvoteClicked) {
-      newVote = -1;
-    } else {
-      newVote = 0;
-    }
+  updateNumVotes(newVote) {
     this.numVotes += newVote - this.currentVote;
     this.currentVote = newVote;
   }
 
-  upvoteClicked() {
-    this.isUpvoteClicked = !this.isUpvoteClicked;
-    if (this.isUpvoteClicked) {
+  upvoteClicked(componentState) {
+    var isUpvoteClicked = !this.isUpvoteClicked;
+    var newVote;
+
+    if (isUpvoteClicked) {
+      newVote = 1;
+      this.createupvoteannotation.emit({ componentState: componentState });
+      this.isUpvoteClicked = true;
       this.isDownvoteClicked = false;
+      this.updateNumVotes(newVote);
+    } else {
+      newVote = 0;
+      this.createunvoteannotation.emit({ componentState: componentState });
+      this.isUpvoteClicked = false;
+      this.isDownvoteClicked = false;
+      this.updateNumVotes(newVote);
     }
-    this.updateCurrentVote();
   }
 
-  downvoteClicked() {
-    this.isDownvoteClicked = !this.isDownvoteClicked;
-    if (this.isDownvoteClicked) {
+  downvoteClicked(componentState) {
+    var isDownvoteClicked = !this.isDownvoteClicked;
+    var newVote;
+
+    if (isDownvoteClicked) {
+      newVote = -1;
+      this.createdownvoteannotation.emit({ componentState: componentState });
       this.isUpvoteClicked = false;
+      this.isDownvoteClicked = true;
+      this.updateNumVotes(newVote);
+    } else {
+      newVote = 0;
+      this.createunvoteannotation.emit({ componentState: componentState });
+      this.isUpvoteClicked = false;
+      this.isUpvoteClicked = false;
+      this.updateNumVotes(newVote);
     }
-    this.updateCurrentVote();
+  }
+
+  /**
+   * Get the vote annotations for these component states
+   * @param componentStates an array of component states
+   * @return an array of vote annotations that are associated
+   * with the component states
+   */
+  getVoteAnnotationsByComponentStates(componentStates = []) {
+    const annotations = [];
+    for (const componentState of componentStates) {
+      const latestInappropriateFlagAnnotation = this.annotationService.getLatestAnnotationByStudentWorkIdAndType(
+        componentState.id,
+        'vote'
+      );
+      if (latestInappropriateFlagAnnotation != null) {
+        annotations.push(latestInappropriateFlagAnnotation);
+      }
+    }
+    return annotations;
   }
 }
