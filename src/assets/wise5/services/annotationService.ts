@@ -165,11 +165,21 @@ export class AnnotationService {
       let annotation = this.saveToServerSuccess(savedAnnotationDataResponse);
       return Promise.resolve(annotation);
     } else {
-      const params = {
+      const params: any = {
         runId: this.ConfigService.getRunId(),
         workgroupId: this.ConfigService.getWorkgroupId(),
         annotations: JSON.stringify(annotations)
       };
+
+      let url;
+      if (this.ConfigService.getMode() === 'studentRun') {
+        url = 'studentDataURL';
+        params.studentWorkList = JSON.stringify([]);
+        params.events = JSON.stringify([]);
+      } else {
+        url = 'teacherDataURL';
+      }
+
       const headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
       return this.http
         .post(this.ConfigService.getConfigParam('teacherDataURL'), $.param(params), {

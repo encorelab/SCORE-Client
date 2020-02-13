@@ -17,6 +17,9 @@ import { AnnotationService } from '../../../services/annotationService';
 })
 export class ClassResponse {
   @Input()
+  componentannotations = [];
+
+  @Input()
   response: any;
 
   @Input()
@@ -62,6 +65,7 @@ export class ClassResponse {
     if (this.hasAnyReply()) {
       this.showLastReply();
     }
+    this.updateVoteDisplays();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -99,6 +103,41 @@ export class ClassResponse {
       }
       return `<a href="${matchUrl}" target="_blank">${match}</a>`;
     });
+  }
+
+  updateVoteDisplays() {
+    this.sumVotes();
+    this.getLatestVoteForCurrentWorkgroup();
+  }
+
+  sumVotes() {
+    for (const annotation of this.componentannotations) {
+      if (annotation.type === 'vote' && annotation.studentWorkId === this.response.id) {
+        this.numVotes += annotation.data.value;
+      }
+    }
+  }
+
+  getLatestVoteForCurrentWorkgroup() {
+    for (let i = this.componentannotations.length - 1; i >= 0; i--) {
+      const componentannotation = this.componentannotations[i];
+      if (
+        componentannotation.studentWorkId === this.response.id &&
+        componentannotation.fromWorkgroupId === this.ConfigService.getWorkgroupId()
+      ) {
+        if (componentannotation.data.value === -1) {
+          this.isDownvoteClicked = true;
+          this.isUpvoteClicked = false;
+        } else if (componentannotation.data.value === 1) {
+          this.isDownvoteClicked = false;
+          this.isUpvoteClicked = true;
+        } else {
+          this.isDownvoteClicked = false;
+          this.isUpvoteClicked = false;
+        }
+        break;
+      }
+    }
   }
 
   getAvatarColorForWorkgroupId(workgroupId: number): string {
@@ -166,46 +205,19 @@ export class ClassResponse {
     this.showAllReplies();
   }
 
-  updateNumVotes(newVote) {
-    this.numVotes += newVote - this.currentVote;
-    this.currentVote = newVote;
-  }
-
   upvoteClicked(componentState) {
-    var isUpvoteClicked = !this.isUpvoteClicked;
-    var newVote;
-
-    if (isUpvoteClicked) {
-      newVote = 1;
-      this.createupvoteannotation.emit({ componentState: componentState });
-      this.isUpvoteClicked = true;
-      this.isDownvoteClicked = false;
-      this.updateNumVotes(newVote);
+    if (!this.isUpvoteClicked) {
+      this.createupvoteannotation({ componentState: componentState });
     } else {
-      newVote = 0;
-      this.createunvoteannotation.emit({ componentState: componentState });
-      this.isUpvoteClicked = false;
-      this.isDownvoteClicked = false;
-      this.updateNumVotes(newVote);
+      this.createunvoteannotation({ componentState: componentState });
     }
   }
 
   downvoteClicked(componentState) {
-    var isDownvoteClicked = !this.isDownvoteClicked;
-    var newVote;
-
-    if (isDownvoteClicked) {
-      newVote = -1;
-      this.createdownvoteannotation.emit({ componentState: componentState });
-      this.isUpvoteClicked = false;
-      this.isDownvoteClicked = true;
-      this.updateNumVotes(newVote);
+    if (!this.isDownvoteClicked) {
+      this.createdownvoteannotation({ componentState: componentState });
     } else {
-      newVote = 0;
-      this.createunvoteannotation.emit({ componentState: componentState });
-      this.isUpvoteClicked = false;
-      this.isUpvoteClicked = false;
-      this.updateNumVotes(newVote);
+      this.createunvoteannotation({ componentState: componentState });
     }
   }
 
