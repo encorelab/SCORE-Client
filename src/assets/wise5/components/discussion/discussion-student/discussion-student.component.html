@@ -99,6 +99,7 @@
       <div fxHide fxShow.sm fxShow.xs>
         <class-response
           *ngFor="let componentState of topLevelResponses.all"
+          [componentannotations]="componentAnnotations"
           [response]="componentState"
           [numReplies]="componentState.replies.length"
           (submitButtonClicked)="handleSubmitButtonClicked(componentState)"
@@ -116,6 +117,7 @@
       <div fxHide fxShow.gt-sm>
         <class-response
           *ngFor="let componentState of topLevelResponses.col2"
+          [componentannotations]="componentAnnotations"
           [response]="componentState"
           [numReplies]="componentState.replies.length"
           (submitButtonClicked)="handleSubmitButtonClicked(componentState)"
@@ -134,6 +136,7 @@
     <div class="discussion-posts half-width" fxHide fxShow.gt-sm>
       <class-response
         *ngFor="let componentState of topLevelResponses.col1"
+        [componentannotations]="componentAnnotations"
         [response]="componentState"
         [numReplies]="componentState.replies.length"
         (submitButtonClicked)="handleSubmitButtonClicked(componentState)"

@@ -22,6 +22,7 @@ import { DiscussionService } from '../discussionService';
 })
 export class DiscussionStudent extends ComponentStudent {
   classResponses: any[] = [];
+  componentAnnotations = [];
   componentStateIdReplyingTo: number;
   newResponse: string = '';
   responsesMap: any = {};
@@ -118,6 +119,7 @@ export class DiscussionStudent extends ComponentStudent {
     }
     this.disableComponentIfNecessary();
     this.registerStudentWorkReceivedListener();
+    this.registerAnnotationReceivedListener();
     this.broadcastDoneRenderingComponent();
   }
 
@@ -309,6 +311,19 @@ export class DiscussionStudent extends ComponentStudent {
     );
   }
 
+  registerAnnotationReceivedListener() {
+    this.subscriptions.add(
+      this.AnnotationService.annotationReceived$.subscribe((annotation) => {
+        if (this.isForThisComponent(annotation)) {
+          // todo calculating a new annotation is buggy
+          //const annotations = this.componentAnnotations.concat(annotation);
+          //this.componentAnnotations =
+          //this.filterLatestAnnotationsByWorkgroup(annotations);
+        }
+      })
+    );
+  }
+
   isWorkFromThisComponent(componentState) {
     return this.isForThisComponent(componentState);
   }
@@ -334,8 +349,30 @@ export class DiscussionStudent extends ComponentStudent {
       this.nodeId,
       this.componentId
     ).subscribe((response: any) => {
+      this.componentAnnotations = this.filterLatestAnnotationsByWorkgroup(response.annotations);
       this.setClassResponses(response.studentWork, response.annotations);
     });
+  }
+
+  filterLatestAnnotationsByWorkgroup(annotations) {
+    const filteredAnnotations = [];
+    for (let i = annotations.length - 1; i >= 0; i--) {
+      const annotation = annotations[i];
+      let isFound = false;
+      for (const filteredAnnotation of filteredAnnotations) {
+        if (
+          filteredAnnotation.fromWorkgroupId === annotation.fromWorkgroupId &&
+          filteredAnnotation.studentWorkId === annotation.studentWorkId
+        ) {
+          isFound = true;
+          break;
+        }
+      }
+      if (!isFound) {
+        filteredAnnotations.push(annotation);
+      }
+    }
+    return filteredAnnotations;
   }
 
   submitButtonClicked() {
@@ -512,7 +549,7 @@ export class DiscussionStudent extends ComponentStudent {
       data
     );
     this.AnnotationService.saveAnnotation(annotation).then(() => {
-      //TODO
+      this.getClassmateResponses();
     });
   }
 
@@ -547,7 +584,7 @@ export class DiscussionStudent extends ComponentStudent {
       data
     );
     this.AnnotationService.saveAnnotation(annotation).then(() => {
-      //TODO
+      this.getClassmateResponses();
     });
   }
 
@@ -582,7 +619,7 @@ export class DiscussionStudent extends ComponentStudent {
       data
     );
     this.AnnotationService.saveAnnotation(annotation).then(() => {
-      //TODO
+      this.getClassmateResponses();
     });
   }
 }
