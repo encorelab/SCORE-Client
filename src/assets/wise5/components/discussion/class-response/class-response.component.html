@@ -97,10 +97,13 @@
         </h3>
         <p matLine [innerHTML]="reply.studentData.responseHTML"></p>
         <div fxLayout="row" fxLayout-align="end center">
-          <button [ngClass]="isUpvoteClicked ? 'md-accent' : ''" (click)="upvoteClicked()">
+          <button [ngClass]="isUpvoteClicked ? 'md-accent' : ''" (click)="upvoteClicked(response)">
             <mat-icon>thumb_up</mat-icon>
           </button>
-          <button [ngClass]="isDownvoteClicked ? 'md-accent' : ''" (click)="downvoteClicked()">
+          <button
+            [ngClass]="isDownvoteClicked ? 'md-accent' : ''"
+            (click)="downvoteClicked(response)"
+          >
             <mat-icon>thumb_down</mat-icon>
           </button>
           {{ 'Likes: ' + numVotes }}

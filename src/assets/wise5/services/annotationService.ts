@@ -422,6 +422,51 @@ export class AnnotationService {
   }
 
   /**
+   * Create a vote annotation
+   * @param runId the run id
+   * @param periodId the period id
+   * @param nodeId the node id
+   * @param componentId the component id
+   * @param fromWorkgroupId the teacher workgroup id
+   * @param toWorkgroupId the student workgroup id
+   * @param studentWorkId the component state id
+   * @param data the annotation data
+   * @returns the inappropriate flag annotation
+   */
+  createVoteAnnotation(
+    runId,
+    periodId,
+    nodeId,
+    componentId,
+    fromWorkgroupId,
+    toWorkgroupId,
+    studentWorkId,
+    data
+  ) {
+    const annotationId = null;
+    const localNotebookItemId = null;
+    const notebookItemId = null;
+    const annotationType = 'vote';
+    const clientSaveTime = new Date();
+    const annotation = this.createAnnotation(
+      annotationId,
+      runId,
+      periodId,
+      fromWorkgroupId,
+      toWorkgroupId,
+      nodeId,
+      componentId,
+      studentWorkId,
+      localNotebookItemId,
+      notebookItemId,
+      annotationType,
+      data,
+      clientSaveTime
+    );
+    return annotation;
+  }
+
+  /**
    * Get the latest annotations for a given component (as an object)
    * @param nodeId the node id
    * @param componentId the component id
@@ -701,6 +746,33 @@ export class AnnotationService {
    */
   getLatestAutoCommentAnnotationByStudentWorkId(studentWorkId) {
     return this.getLatestAnnotationByStudentWorkIdAndType(studentWorkId, 'autoComment');
+  }
+
+  /**
+   * Get the latest annotation for the given student work and annotation type
+   * @param studentWorkId the student work id
+   * @param fromWorkgroupId the type of annotation
+   * @return the latest annotation for the given student work and annotation type
+   */
+  getLatestVoteAnnotationByStudentWorkIdAndFromWorkgroupId(studentWorkId, fromWorkgroupId) {
+    for (let a = this.annotations.length - 1; a >= 0; a--) {
+      const annotation = this.annotations[a];
+
+      if (annotation != null) {
+        if (
+          'vote' == annotation.type &&
+          studentWorkId == annotation.studentWorkId &&
+          fromWorkgroupId == annotation.fromWorkgroupId
+        ) {
+          /*
+           * we have found an annotation with the given annotation type,
+           * student work id, and group id
+           */
+          return annotation;
+        }
+      }
+    }
+    return null;
   }
 
   /**
