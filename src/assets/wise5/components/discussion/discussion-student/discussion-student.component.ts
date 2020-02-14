@@ -546,9 +546,7 @@ export class DiscussionStudent extends ComponentStudent {
       studentWorkId,
       data
     );
-    this.AnnotationService.saveAnnotation(annotation).then(() => {
-      this.getClassmateResponses();
-    });
+    this.AnnotationService.saveAnnotation(annotation);
   }
 
   /**
@@ -581,9 +579,7 @@ export class DiscussionStudent extends ComponentStudent {
       studentWorkId,
       data
     );
-    this.AnnotationService.saveAnnotation(annotation).then(() => {
-      this.getClassmateResponses();
-    });
+    this.AnnotationService.saveAnnotation(annotation);
   }
 
   /**
@@ -616,8 +612,6 @@ export class DiscussionStudent extends ComponentStudent {
       studentWorkId,
       data
     );
-    this.AnnotationService.saveAnnotation(annotation).then(() => {
-      this.getClassmateResponses();
-    });
+    this.AnnotationService.saveAnnotation(annotation);
   }
 }
