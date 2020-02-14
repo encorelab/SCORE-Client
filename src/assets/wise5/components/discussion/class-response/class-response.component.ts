@@ -111,6 +111,7 @@ export class ClassResponse {
   }
 
   sumVotes() {
+    this.numVotes = 0;
     for (const annotation of this.componentannotations) {
       if (annotation.type === 'vote' && annotation.studentWorkId === this.response.id) {
         this.numVotes += annotation.data.value;

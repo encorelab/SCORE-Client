@@ -315,10 +315,8 @@ export class DiscussionStudent extends ComponentStudent {
     this.subscriptions.add(
       this.AnnotationService.annotationReceived$.subscribe((annotation) => {
         if (this.isForThisComponent(annotation)) {
-          // todo calculating a new annotation is buggy
-          //const annotations = this.componentAnnotations.concat(annotation);
-          //this.componentAnnotations =
-          //this.filterLatestAnnotationsByWorkgroup(annotations);
+          const annotations = this.componentAnnotations.concat(annotation);
+          this.componentAnnotations = this.filterLatestAnnotationsByWorkgroup(annotations);
         }
       })
     );
