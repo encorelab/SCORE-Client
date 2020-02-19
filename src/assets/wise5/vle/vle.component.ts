@@ -286,6 +286,10 @@ export class VLEComponent implements AfterViewInit {
     document.querySelector('.top').scrollIntoView();
   }
 
+  protected isShowStepTools(): boolean {
+    return this.layoutState === 'node' && this.projectService.isShowStudentNavigationControls();
+  }
+
   /**
    * Returns WISE API
    */

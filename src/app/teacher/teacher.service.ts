@@ -8,6 +8,7 @@ import { Run } from '../domain/run';
 import { Course } from '../domain/course';
 import { CopyProjectDialogComponent } from '../modules/library/copy-project-dialog/copy-project-dialog.component';
 import { TeacherRun } from './teacher-run';
+import { Period } from '../domain/period';
 
 @Injectable()
 export class TeacherService {
@@ -61,8 +62,18 @@ export class TeacherService {
     return this.http.get<Run>(`${this.runUrl}/${runId}`);
   }
 
+  getPeriods(run: Run): Observable<Period[]> {
+    return this.http.get<Period[]>(`/api/teacher/period/${run.id}`);
+  }
+
   getProjectLastRun(projectId: number): Observable<Run> {
     return this.http.get<Run>(`${this.lastRunUrl}/${projectId}`);
+  }
+
+  getProjectContent(project: Project) {
+    this.http.get<any>(`/curriculum/${project.id}/project.json`).subscribe((content) => {
+      project.content = content;
+    });
   }
 
   registerTeacherAccount(teacherUser: Teacher): Observable<any> {

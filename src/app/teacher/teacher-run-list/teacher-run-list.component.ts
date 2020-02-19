@@ -106,8 +106,8 @@ export class TeacherRunListComponent implements OnInit {
     this.periods = [];
     for (const run of this.runs) {
       for (const period of run.periods) {
-        if (!this.periods.includes(period)) {
-          this.periods.push(period);
+        if (!this.periods.includes(period.name)) {
+          this.periods.push(period.name);
         }
       }
     }
@@ -165,7 +165,17 @@ export class TeacherRunListComponent implements OnInit {
 
   private performFilter(value: string): void {
     this.filteredRuns = this.filteredRuns.filter((run: TeacherRun) => {
-      return value === '' || run.periods.includes(value);
+      if (value !== '') {
+        return (
+          run.periods
+            .map((period) => {
+              return period.name;
+            })
+            .indexOf(value) !== -1
+        );
+      } else {
+        return true;
+      }
     });
   }
 
