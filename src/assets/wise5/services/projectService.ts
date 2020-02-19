@@ -1966,4 +1966,11 @@ export class ProjectService {
     const component = this.getComponent(nodeId, componentId);
     return component[fieldName]?.referenceComponent;
   }
+
+  isShowStudentNavigationControls() {
+    if (this.project.layout.showStudentNavigationControls != null) {
+      return this.project.layout.showStudentNavigationControls;
+    }
+    return true;
+  }
 }

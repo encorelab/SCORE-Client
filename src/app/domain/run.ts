@@ -1,5 +1,6 @@
 import { Project } from './project';
 import { User } from './user';
+import { Period } from './period';
 
 export class Run {
   id: number;
@@ -11,7 +12,7 @@ export class Run {
   lastRun: string;
   numStudents: number;
   maxStudentsPerTeam: number;
-  periods: string[];
+  periods: Period[];
   owner: User;
   sharedOwners: User[] = [];
   project: Project;
