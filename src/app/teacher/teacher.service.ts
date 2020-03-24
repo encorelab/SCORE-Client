@@ -72,7 +72,7 @@ export class TeacherService {
 
   getProjectContent(project: Project) {
     this.http.get<any>(`/curriculum/${project.id}/project.json`).subscribe((content) => {
-      project.content = content;
+      project.setContent(content);
     });
   }
 
