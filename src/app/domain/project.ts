@@ -19,6 +19,9 @@ export class Project {
   uri: String;
   license: String;
   content: any;
+  nodes: any[] = [];
+  idToNode: any = {};
+  idToOrder: any = {};
 
   static readonly VIEW_PERMISSION: number = 1;
   static readonly EDIT_PERMISSION: number = 2;
@@ -89,5 +92,74 @@ export class Project {
       metadata.standardsAddressed = JSON.parse(metadata.standardsAddressed);
     }
     return metadata;
+  }
+
+  public setContent(content) {
+    this.content = content;
+    this.initIdToNode();
+    this.idToOrder = this.getNodeOrderOfProject();
+  }
+
+  initIdToNode() {
+    for (const node of this.content.nodes) {
+      this.idToNode[node.id] = node;
+    }
+  }
+
+  getNodeOrderOfProject() {
+    const rootNode = this.getNodeById(this.content.startGroupId, this.content);
+    const idToOrder = {
+      nodeCount: 0
+    };
+    const stepNumber = '';
+    const nodes = [];
+    const projectIdToOrder = this.getNodeOrderOfProjectHelper(
+      this.content,
+      rootNode,
+      idToOrder,
+      stepNumber,
+      nodes
+    );
+    delete projectIdToOrder.nodeCount;
+    return {
+      idToOrder: projectIdToOrder,
+      nodes: nodes
+    };
+  }
+
+  getNodeOrderOfProjectHelper(project, node, idToOrder, stepNumber, nodes) {
+    const item = {
+      order: idToOrder.nodeCount,
+      node: node,
+      stepNumber: stepNumber
+    };
+
+    idToOrder[node.id] = item;
+    idToOrder.nodeCount++;
+    nodes.push(item);
+
+    if (node.type === 'group') {
+      const childIds = node.ids;
+      for (let c = 0; c < childIds.length; c++) {
+        const childId = childIds[c];
+        const child = this.getNodeById(childId, project);
+        let childStepNumber = stepNumber;
+        if (childStepNumber != '') {
+          childStepNumber += '.';
+        }
+        childStepNumber += c + 1;
+        this.getNodeOrderOfProjectHelper(project, child, idToOrder, childStepNumber, nodes);
+      }
+    }
+    return idToOrder;
+  }
+
+  getNodeById(nodeId, project = this.content) {
+    for (const node of project.nodes.concat(project.inactiveNodes)) {
+      if (node.id === nodeId) {
+        return node;
+      }
+    }
+    return null;
   }
 }
