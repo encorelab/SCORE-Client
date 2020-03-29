@@ -55,7 +55,7 @@ export class ClassroomMonitorComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.logoPath = this.projectService.getThemePath() + '/images/encore-website-logo.png';
+    this.logoPath = this.projectService.getThemePath() + '/images/encore-website-sm-logo.png';
     this.notifications = this.notificationService.notifications;
     this.projectId = this.configService.getProjectId();
     this.projectTitle = this.projectService.getProjectTitle();
