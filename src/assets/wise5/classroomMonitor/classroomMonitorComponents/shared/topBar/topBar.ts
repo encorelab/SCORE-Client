@@ -190,7 +190,7 @@ const TopBar = {
             <div class="md-toolbar-tools" >
                 <span class="md-button logo-link">
                     <a href="{{::$ctrl.contextPath}}/teacher" target="_self">
-                        <img ng-src="{{ ::$ctrl.logoPath }}" alt="{{ ::'WISE_LOGO' | translate }}" class="logo" />
+                        <img ng-src="{{ ::$ctrl.logoPath }}" alt="{{ ::'SCORE_LOGO' | translate }}" class="logo" />
                     </a>
                 </span>
                 <h3 layout="row" layout-align="start center">
