@@ -27,6 +27,8 @@ export class DiscussionStudent extends ComponentStudent {
   newResponse: string = '';
   responsesMap: any = {};
   retrievedClassmateResponses: boolean = false;
+  sortOptions = ['newest', 'oldest', 'mostPopular', 'leastPopular'];
+  sortPostsBy = 'newest';
   studentResponse: string = '';
   topLevelResponses: any = {};
 
@@ -470,6 +472,9 @@ export class DiscussionStudent extends ComponentStudent {
   }
 
   setClassResponses(componentStates: any[], annotations: any[] = []): void {
+    componentStates = componentStates.sort((response1, response2) => {
+      return this.sortPostsFunction(response1, response2);
+    });
     const isStudentMode = true;
     this.classResponses = this.DiscussionService.getClassResponses(
       componentStates,
@@ -483,6 +488,58 @@ export class DiscussionStudent extends ComponentStudent {
       this.workgroupId
     );
     this.retrievedClassmateResponses = true;
+  }
+
+  sortPostsFunction(response1, response2) {
+    if (this.sortPostsBy === 'oldest') {
+      return this.sortByOldest(response1, response2);
+    } else if (this.sortPostsBy === 'mostPopular') {
+      return this.sortByMostPopular(response1, response2);
+    } else if (this.sortPostsBy === 'leastPopular') {
+      return this.sortByLeastPopular(response1, response2);
+    }
+    return this.sortByNewest(response1, response2);
+  }
+
+  sortPosts() {
+    this.getClassmateResponses();
+  }
+
+  sortByNewest(componentState1, componentState2) {
+    if (componentState1.serverSaveTime < componentState2.serverSaveTime) {
+      return -1;
+    } else if (componentState1.serverSaveTime > componentState2.serverSaveTime) {
+      return 1;
+    }
+    return 0;
+  }
+
+  sortByOldest(componentState1, componentState2) {
+    return this.sortByNewest(componentState2, componentState1);
+  }
+
+  sortByMostPopular(componentState1, componentState2) {
+    const cs1Votes = this.sumVotesForComponentState(componentState1);
+    const cs2Votes = this.sumVotesForComponentState(componentState2);
+    if (cs1Votes >= cs2Votes) {
+      return 1;
+    } else {
+      return -1;
+    }
+  }
+
+  sortByLeastPopular(componentState1, componentState2) {
+    return this.sortByMostPopular(componentState2, componentState1);
+  }
+
+  sumVotesForComponentState(componentState) {
+    let numVotes = 0;
+    for (const annotation of this.componentAnnotations) {
+      if (annotation.type === 'vote' && annotation.studentWorkId === componentState.id) {
+        numVotes += annotation.data.value;
+      }
+    }
+    return numVotes;
   }
 
   addClassResponse(componentState: any): void {

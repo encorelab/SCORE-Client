@@ -1,5 +1,21 @@
 <component-header [component]="component"></component-header>
 <div class="discussion-content">
+  <div style="display: flex; justify-content: flex-end">
+    <mat-form-field style="margin-right: 20; width: 300">
+      <mat-label>Sort Posts</mat-label>
+      <mat-select
+        md-theme="default"
+        style="width: 200px"
+        [(ngModel)]="sortPostsBy"
+        (ngModelChange)="sortPosts()"
+        aria-label="Sort Posts"
+      >
+        <mat-option *ngFor="let sortOption of sortOptions" [value]="sortOption">
+          {{ sortOption }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
   <component-annotations
     *ngIf="mode === 'student'"
     class="annotations--inside"
