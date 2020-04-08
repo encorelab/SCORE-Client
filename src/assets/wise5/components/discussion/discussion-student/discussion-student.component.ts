@@ -58,7 +58,9 @@ export class DiscussionStudent extends ComponentStudent {
 
   ngOnInit(): void {
     super.ngOnInit();
-
+    if (this.isVotingAllowed()) {
+      this.sortOptions = this.sortOptions.concat(['mostPopular', 'leastPopular']);
+    }
     if (this.ConfigService.isPreview()) {
       let componentStates = [];
       if (this.component.hasConnectedComponent()) {
@@ -475,6 +477,10 @@ export class DiscussionStudent extends ComponentStudent {
 
   isClassmateResponsesGated() {
     return this.componentContent.gateClassmateResponses;
+  }
+
+  isVotingAllowed() {
+    return this.componentContent.isVotingAllowed;
   }
 
   setClassResponses(componentStates: any[], annotations: any[] = []): void {

@@ -26,6 +26,7 @@ export class DiscussionService extends ComponentService {
     component.prompt = '';
     component.isStudentAttachmentEnabled = true;
     component.gateClassmateResponses = true;
+    component.isVotingAllowed = false;
     return component;
   }
 

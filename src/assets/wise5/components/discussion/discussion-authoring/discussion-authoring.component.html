@@ -22,3 +22,13 @@
     Students must create a post before viewing classmates' posts
   </mat-checkbox>
 </div>
+<div class="checkbox-container">
+  <mat-checkbox
+    color="primary"
+    [(ngModel)]="componentContent.isVotingAllowed"
+    (ngModelChange)="componentChanged()"
+    i18n
+  >
+    Students can vote on posts
+  </mat-checkbox>
+</div>
