@@ -289,11 +289,15 @@ export class DiscussionService extends ComponentService {
     classResponses: any[],
     componentId: string,
     workgroupId: number,
+    sortPostsFunction: any,
     isGradingMode: boolean = false
   ): any {
     const allResponses = [];
     const oddResponses = [];
     const evenResponses = [];
+    classResponses = classResponses.sort((response1, response2) => {
+      return sortPostsFunction(response1, response2);
+    });
     for (const [index, classResponse] of Object.entries(classResponses)) {
       if (classResponse.studentData.componentStateIdReplyingTo == null) {
         if (

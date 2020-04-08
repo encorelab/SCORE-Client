@@ -319,6 +319,12 @@ export class DiscussionStudent extends ComponentStudent {
         if (this.isForThisComponent(annotation)) {
           const annotations = this.componentAnnotations.concat(annotation);
           this.componentAnnotations = this.filterLatestAnnotationsByWorkgroup(annotations);
+          this.topLevelResponses = this.DiscussionService.getLevel1Responses(
+            this.classResponses,
+            this.componentId,
+            this.workgroupId,
+            this.sortPostsFunction
+          );
         }
       })
     );
@@ -472,9 +478,6 @@ export class DiscussionStudent extends ComponentStudent {
   }
 
   setClassResponses(componentStates: any[], annotations: any[] = []): void {
-    componentStates = componentStates.sort((response1, response2) => {
-      return this.sortPostsFunction(response1, response2);
-    });
     const isStudentMode = true;
     this.classResponses = this.DiscussionService.getClassResponses(
       componentStates,
@@ -485,7 +488,8 @@ export class DiscussionStudent extends ComponentStudent {
     this.topLevelResponses = this.DiscussionService.getLevel1Responses(
       this.classResponses,
       this.componentId,
-      this.workgroupId
+      this.workgroupId,
+      this.sortPostsFunction
     );
     this.retrievedClassmateResponses = true;
   }
@@ -551,7 +555,8 @@ export class DiscussionStudent extends ComponentStudent {
       this.topLevelResponses = this.DiscussionService.getLevel1Responses(
         this.classResponses,
         this.componentId,
-        this.workgroupId
+        this.workgroupId,
+        this.sortPostsFunction
       );
     }
   }
