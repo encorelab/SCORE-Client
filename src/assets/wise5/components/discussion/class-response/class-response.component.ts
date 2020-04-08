@@ -31,6 +31,9 @@ export class ClassResponse {
   @Input()
   isDisabled: boolean;
 
+  @Input()
+  isVotingAllowed: boolean;
+
   @Output()
   submitButtonClicked: any = new EventEmitter();
 

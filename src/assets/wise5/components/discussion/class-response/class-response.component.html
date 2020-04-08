@@ -96,7 +96,7 @@
           ></save-time-message>
         </h3>
         <p matLine [innerHTML]="reply.studentData.responseHTML"></p>
-        <div fxLayout="row" fxLayout-align="end center">
+        <div fxLayout="row" fxLayout-align="end center" *ngIf="isVotingAllowed">
           <button [ngClass]="isUpvoteClicked ? 'md-accent' : ''" (click)="upvoteClicked(response)">
             <mat-icon>thumb_up</mat-icon>
           </button>
