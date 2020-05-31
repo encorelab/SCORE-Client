@@ -230,4 +230,52 @@ export class StudentProgressComponent implements OnInit {
     this.teacherDataService.studentProgressSort = this.sort;
     this.sortWorkgroups();
   }
+
+  isShowingAllPeriods() {
+    return this.teacherDataService.getCurrentPeriod().periodId === -1;
+  }
+
+  chooseNodeToSend($event: any, workgroup: any) {
+    $event.stopPropagation();
+    this.upgrade.$injector.get('$mdDialog').show({
+      templateUrl: 'wise5/classroomMonitor/studentProgress/goToNodeSelect.html',
+      controller: [
+        '$scope',
+        '$mdDialog',
+        'ProjectService',
+        'TeacherDataService',
+        'TeacherWebSocketService',
+        function GoToNodeSelectController(
+          $scope,
+          $mdDialog,
+          ProjectService,
+          TeacherDataService,
+          TeacherWebSocketService
+        ) {
+          $scope.idToOrder = ProjectService.idToOrder;
+          $scope.workgroup = workgroup;
+          $scope.period = TeacherDataService.getCurrentPeriod();
+          $scope.isApplicationNode = (id) => {
+            return ProjectService.isApplicationNode(id);
+          };
+          $scope.getNodePositionAndTitleByNodeId = (id) => {
+            return ProjectService.getNodePositionAndTitleByNodeId(id);
+          };
+          $scope.sendToNode = (nodeId) => {
+            if ($scope.workgroup != null) {
+              TeacherWebSocketService.sendWorkgroupToNode($scope.workgroup.workgroupId, nodeId);
+            } else {
+              TeacherWebSocketService.sendPeriodToNode($scope.period.periodId, nodeId);
+            }
+          };
+          $scope.close = () => {
+            $mdDialog.hide();
+          };
+        }
+      ],
+      targetEvent: $event,
+      clickOutsideToClose: true,
+      escapeToClose: true
+    });
+  }
 }
