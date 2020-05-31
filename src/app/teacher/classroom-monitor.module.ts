@@ -54,6 +54,7 @@ import { MainMenuComponent } from '../../assets/wise5/common/main-menu/main-menu
 import { ShowNodeInfoDialogComponent } from '../classroom-monitor/show-node-info-dialog/show-node-info-dialog.component';
 import { MilestoneModule } from './milestone/milestone.module';
 import { GradingCommonModule } from './grading-common.module';
+import { GoToNodeSelectComponent } from '../../main/webapp/score/teachingassistant/src/app/core/components/go-to-node-select/go-to-node-select.component';
 
 @NgModule({
   declarations: [
@@ -67,6 +68,7 @@ import { GradingCommonModule } from './grading-common.module';
     ComponentSelectComponent,
     DataExportComponent,
     ExportStepVisitsComponent,
+    GoToNodeSelectComponent,
     MainMenuComponent,
     ManagePeriodComponent,
     ManageShowStudentInfoComponent,

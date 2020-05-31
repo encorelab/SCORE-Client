@@ -5,6 +5,14 @@
         <div fxFlex.sm="100" fxFlex.xs="100">
           <workgroup-select-autocomplete></workgroup-select-autocomplete>
         </div>
+        <mat-button
+          *ngIf="!isShowingAllPeriods()"
+          class="md-accent"
+          style="position: absolute; right: 0px"
+          (click)="chooseNodeToSend($event)"
+        >
+          <mat-icon>timeline</mat-icon>
+        </mat-button>
       </mat-list-item>
       <table class="table--list mat-elevation-z1">
         <thead class="table--list__thead">

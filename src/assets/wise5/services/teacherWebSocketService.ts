@@ -88,6 +88,18 @@ export class TeacherWebSocketService {
     this.rxStomp.publish({ destination: `/app/unpause/${this.runId}/${periodId}` });
   }
 
+  sendWorkgroupToNode(workgroupId, nodeId) {
+    this.rxStomp.publish({
+      destination: `/app/api/teacher/run/${this.runId}/workgroup-to-node/${workgroupId}/${nodeId}`
+    });
+  }
+
+  sendPeriodToNode(periodId, nodeId) {
+    this.rxStomp.publish({
+      destination: `/app/api/teacher/run/${this.runId}/period-to-node/${periodId}/${nodeId}`
+    });
+  }
+
   sendNodeToClass(periodId: number, node: any) {
     this.rxStomp.publish({
       destination: `/app/api/teacher/run/${this.runId}/node-to-period/${periodId}`,

@@ -2,13 +2,13 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
+import { TeacherService } from '../../../../../../../site/src/app/teacher/teacher.service';
+import { TasksService } from '../../services/http/tasks.service';
+import * as moment from 'moment';
 import { MatSelectChange } from '@angular/material/select';
 import { TaskRequest } from '../../domain/task-request';
 import { WebSocketService } from '../../services/websocket/websocket.service';
-import { ClassesStore } from '../../../../../../../../../assets/score/teachingassistant/src/app/core/services/storage/classes-store';
-import { Period } from '../../../../../../../../../app/domain/period';
-import { TeacherService } from '../../../../../../../../../app/teacher/teacher.service';
-import { TasksService } from '../../../../../../../../../assets/score/teachingassistant/src/app/core/services/http/tasks.service';
+import { UpgradeModule } from '@angular/upgrade/static';
 
 @Component({
   selector: 'app-task-datatable',
@@ -40,7 +40,7 @@ export class TaskDatatableComponent implements OnInit {
   runId: number = 0;
 
   constructor(
-    private classesStore: ClassesStore,
+    private upgrade: UpgradeModule,
     private teacherService: TeacherService,
     private tasksService: TasksService,
     private websocketService: WebSocketService
@@ -50,6 +50,13 @@ export class TaskDatatableComponent implements OnInit {
     this.websocketService._connect();
     this.tasksDataSource.paginator = this.paginator;
     this.tasksDataSource.sort = this.sort;
+    this.periodName = this.upgrade.$injector
+      .get('TeacherDataService')
+      .getCurrentPeriod().periodName;
+    this.upgrade.$injector.get('$rootScope').$on('currentPeriodChanged', (event, args) => {
+      this.periodName = args.currentPeriod.periodName;
+      this.refreshTasks();
+    });
     this.refreshRunInformation();
     this.refreshTasks();
     setInterval(() => {
@@ -63,7 +70,7 @@ export class TaskDatatableComponent implements OnInit {
   }
 
   refreshRunInformation() {
-    this.runId = this.classesStore.runId;
+    this.runId = this.upgrade.$injector.get('ConfigService').getRunId();
     this.teacherService.getRun(this.runId).subscribe(
       (run) => {
         this.periods = run.periods;
