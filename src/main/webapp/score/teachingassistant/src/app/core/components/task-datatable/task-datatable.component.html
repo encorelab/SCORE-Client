@@ -1,31 +1,27 @@
-<div class="tab-container l-constrained" fxLayout="column" fxLayoutAlign="start stretch">
-  <h2>Task Information {{ selectionTitle }}</h2>
-  <br />
-  <mat-form-field>
-    <mat-label>Select Period:</mat-label>
-    <mat-select (selectionChange)="periodSelectionChange($event)">
-      <mat-option *ngFor="let period of periods" [value]="period">
-        {{ period }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-  <div class="mat-elevation-z1">
-    <table [dataSource]="tasksDataSource" mat-table matSort>
-      <!-- Position Column -->
-      <ng-container matColumnDef="id">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header style="text-align: center">Id</th>
-        <td *matCellDef="let task" mat-cell>{{ task.id }}</td>
-      </ng-container>
-      <ng-container matColumnDef="name">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header style="text-align: center">Step</th>
-        <td *matCellDef="let task" mat-cell>{{ task.name }}</td>
-      </ng-container>
-      <ng-container matColumnDef="active">
-        <th *matHeaderCellDef mat-header-cell mat-sort-header style="text-align: center">
-          Active Step
-        </th>
-        <td *matCellDef="let task" mat-cell>{{ task.active }}</td>
-      </ng-container>
+<div class="l-constrained view-content view-content--with-sidemenu" fxLayout="column" fxLayoutAlign="center">
+    <!-- <h2>Task Information {{selectionTitle}}</h2> -->
+    <!-- <br> -->
+    <div *ngIf="periodName === 'All Periods'">
+        <div style="display: inline-flex; vertical-align: middle; align-items: center;">
+            <i class="material-icons">error_outline</i>
+            <span> Showing tasks for all periods is currently not supported. Please choose a specific period.</span>
+        </div>
+    </div>
+    <div class="view-content--with-sidemenu" class="mat-elevation-z1">
+        <table [dataSource]="tasksDataSource" mat-table matSort>
+            <!-- Position Column -->
+            <ng-container matColumnDef="id">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header style="text-align: center">Id</th>
+                <td *matCellDef="let task" mat-cell> {{task.id}} </td>
+            </ng-container>
+            <ng-container matColumnDef="name">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header style="text-align: center">Step</th>
+                <td *matCellDef="let task" mat-cell> {{task.name}} </td>
+            </ng-container>
+            <ng-container matColumnDef="active">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header style="text-align: center">Active Step</th>
+                <td *matCellDef="let task" mat-cell> {{task.active}}</td>
+            </ng-container>
 
       <ng-container matColumnDef="workgroupId">
         <th *matHeaderCellDef mat-header-cell mat-sort-header style="text-align: center">
@@ -113,13 +109,31 @@
         </td>
       </ng-container>
 
-      <tr *matHeaderRowDef="tasksDisplayedColumns" mat-header-row></tr>
-      <tr *matRowDef="let row; columns: tasksDisplayedColumns" mat-row></tr>
-    </table>
-    <mat-paginator
-      [pageSizeOptions]="[10, 20, 40]"
-      [pageSize]="10"
-      showFirstLastButtons
-    ></mat-paginator>
-  </div>
+            <ng-container matColumnDef="requests">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header style="text-align: center">Requests</th>
+                <td *matCellDef="let task" mat-cell>
+                    <div *ngFor="let taskRequest of task.taskRequests">
+                        <div *ngIf="taskRequest.complete == false; else other">
+                            <ng-container *ngIf="taskRequest.status == 'need_approval'">
+                                <button mat-flat-button color="primary" class="buttons"
+                                        (click)="taskRequestCompleteAction(taskRequest,'approved')">
+                                    <mat-icon>thumb_up</mat-icon>
+                                </button>
+                                <div style="height: 5px"></div>
+                                <button mat-flat-button color="accent" class="buttons"
+                                        (click)="taskRequestCompleteAction(taskRequest, 'needs_work')">
+                                    <mat-icon>thumb_down</mat-icon>
+                                </button>
+                            </ng-container>
+                            <div style="height: 5px"></div>
+                            <ng-container *ngIf="taskRequest.status == 'need_help'">
+                                <button mat-flat-button color="primary" class="buttons"
+                                        (click)="taskRequestCompleteAction(taskRequest, 'helped')">
+            <tr *matRowDef="let row; columns: tasksDisplayedColumns;" mat-row></tr>
+        </table>
+        <mat-paginator
+            class="table-controls"
+            [pageSizeOptions]="[10,20,40]"
+            [pageSize]="10" showFirstLastButtons></mat-paginator>
+    </div>
 </div>
