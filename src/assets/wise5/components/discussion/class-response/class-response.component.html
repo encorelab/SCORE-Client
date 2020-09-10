@@ -62,115 +62,120 @@
     </div>
   </div>
   <mat-divider *ngIf="mode === 'student' || response.replies.length > 0"></mat-divider>
-  <div class="notice-bg-bg" *ngIf="response.replies.length > 0">
-    <div class="comments-header" matSubheader>
-      <span *ngIf="response.replies.length === 1" i18n>
-        Comments ({{ response.replies.length }})
-      </span>
-      <a
-        *ngIf="response.replies.length > 1"
-        [routerLink]=""
-        (click)="toggleExpanded()"
-        fxLayoutAlign="start center"
-      >
-        <span i18n>Comments ({{ response.replies.length }})</span>
-        <mat-icon>{{ expanded ? 'expand_less' : 'expand_more' }}</mat-icon>
-      </a>
-    </div>
-    <mat-list class="comments">
-      <mat-list-item [ngClass]="{ 'animate-show': !isLast }" *ngFor="let reply of repliesToShow">
-        <mat-icon
-          matListAvatar
-          class="mat-40"
-          style="color: {{ getAvatarColorForWorkgroupId(reply.workgroupId) }}"
+  <div *ngIf="isCommentingAllowed">
+    <div class="notice-bg-bg" *ngIf="response.replies.length > 0">
+      <div class="comments-header" matSubheader>
+        <span *ngIf="response.replies.length === 1" i18n>
+          Comments ({{ response.replies.length }})
+        </span>
+        <a
+          *ngIf="response.replies.length > 1"
+          [routerLink]=""
+          (click)="toggleExpanded()"
+          fxLayoutAlign="start center"
         >
-          account_circle
-        </mat-icon>
-        <h3 matLine>
-          <span class="mat-body-2">{{ reply.usernames }}</span
-          >&nbsp;
-          <save-time-message
-            [saveTime]="adjustClientSaveTime(reply.serverSaveTime)"
-            [timeOnly]="true"
-            tooltipPosition="after"
-          ></save-time-message>
-        </h3>
-        <p matLine [innerHTML]="reply.studentData.responseHTML"></p>
-        <div fxLayout="row" fxLayout-align="end center" *ngIf="isVotingAllowed">
-          <button [ngClass]="isUpvoteClicked ? 'md-accent' : ''" (click)="upvoteClicked(response)">
-            <mat-icon>thumb_up</mat-icon>
-          </button>
-          <button
-            [ngClass]="isDownvoteClicked ? 'md-accent' : ''"
-            (click)="downvoteClicked(response)"
+          <span i18n>Comments ({{ response.replies.length }})</span>
+          <mat-icon>{{ expanded ? 'expand_less' : 'expand_more' }}</mat-icon>
+        </a>
+      </div>
+      <mat-list class="comments">
+        <mat-list-item [ngClass]="{ 'animate-show': !isLast }" *ngFor="let reply of repliesToShow">
+          <mat-icon
+            matListAvatar
+            class="mat-40"
+            style="color: {{ getAvatarColorForWorkgroupId(reply.workgroupId) }}"
           >
-            <mat-icon>thumb_down</mat-icon>
-          </button>
-          {{ 'Likes: ' + numVotes }}
-        </div>
-        <div fxFlex></div>
-        <div *ngIf="mode === 'grading' || mode === 'gradingRevision'">
-          <button
-            *ngIf="
-              (response.latestInappropriateFlagAnnotation == null ||
-                response.latestInappropriateFlagAnnotation.data.action !== 'Delete') &&
-              (reply.latestInappropriateFlagAnnotation == null ||
-                reply.latestInappropriateFlagAnnotation.data.action != 'Delete')
-            "
-            mat-raised-button
-            class="warn"
-            (click)="delete(reply)"
-            i18n-matTooltip
-            matTooltip="Delete this post so students will not see it"
-            matTooltipPosition="above"
-            i18n
-          >
-            Delete
-          </button>
-          <span
-            *ngIf="
-              response.latestInappropriateFlagAnnotation != null &&
-              response.latestInappropriateFlagAnnotation.data.action === 'Delete'
-            "
-            class="warn"
-            i18n-matTooltip
-            matTooltip="Students will not see this post"
-            matTooltipPosition="above"
-            i18n
-          >
-            Parent Deleted
-          </span>
-          <button
-            *ngIf="
-              reply.latestInappropriateFlagAnnotation != null &&
-              reply.latestInappropriateFlagAnnotation.data.action === 'Delete'
-            "
-            mat-raised-button
-            class="warn"
-            (click)="undoDelete(reply)"
-            i18n-matTooltip
-            matTooltip="Make this post viewable to students"
-            matTooltipPosition="above"
-            i18n
-          >
-            Undo Delete
-          </button>
-        </div>
-      </mat-list-item>
-    </mat-list>
-    <mat-divider></mat-divider>
-  </div>
-  <div class="new-reply" fxLayout="row" *ngIf="mode === 'student' && !isDisabled">
-    <textarea
-      class="new-reply-input"
-      [(ngModel)]="response.replyText"
-      (keyup)="replyEntered($event)"
-      placeholder="Add Comment"
-      i18n-placeholder
-      aria-label="Add Comment"
-      i18n-aria-label
-      cdkTextareaAutosize
-    >
-    </textarea>
+            account_circle
+          </mat-icon>
+          <h3 matLine>
+            <span class="mat-body-2">{{ reply.usernames }}</span
+            >&nbsp;
+            <save-time-message
+              [saveTime]="adjustClientSaveTime(reply.serverSaveTime)"
+              [timeOnly]="true"
+              tooltipPosition="after"
+            ></save-time-message>
+          </h3>
+          <p matLine [innerHTML]="reply.studentData.responseHTML"></p>
+          <div fxLayout="row" fxLayout-align="end center" *ngIf="isVotingAllowed">
+            <button
+              [ngClass]="isUpvoteClicked ? 'md-accent' : ''"
+              (click)="upvoteClicked(response)"
+            >
+              <mat-icon>thumb_up</mat-icon>
+            </button>
+            <button
+              [ngClass]="isDownvoteClicked ? 'md-accent' : ''"
+              (click)="downvoteClicked(response)"
+            >
+              <mat-icon>thumb_down</mat-icon>
+            </button>
+            {{ 'Likes: ' + numVotes }}
+          </div>
+          <div fxFlex></div>
+          <div *ngIf="mode === 'grading' || mode === 'gradingRevision'">
+            <button
+              *ngIf="
+                (response.latestInappropriateFlagAnnotation == null ||
+                  response.latestInappropriateFlagAnnotation.data.action !== 'Delete') &&
+                (reply.latestInappropriateFlagAnnotation == null ||
+                  reply.latestInappropriateFlagAnnotation.data.action != 'Delete')
+              "
+              mat-raised-button
+              class="warn"
+              (click)="delete(reply)"
+              i18n-matTooltip
+              matTooltip="Delete this post so students will not see it"
+              matTooltipPosition="above"
+              i18n
+            >
+              Delete
+            </button>
+            <span
+              *ngIf="
+                response.latestInappropriateFlagAnnotation != null &&
+                response.latestInappropriateFlagAnnotation.data.action === 'Delete'
+              "
+              class="warn"
+              i18n-matTooltip
+              matTooltip="Students will not see this post"
+              matTooltipPosition="above"
+              i18n
+            >
+              Parent Deleted
+            </span>
+            <button
+              *ngIf="
+                reply.latestInappropriateFlagAnnotation != null &&
+                reply.latestInappropriateFlagAnnotation.data.action === 'Delete'
+              "
+              mat-raised-button
+              class="warn"
+              (click)="undoDelete(reply)"
+              i18n-matTooltip
+              matTooltip="Make this post viewable to students"
+              matTooltipPosition="above"
+              i18n
+            >
+              Undo Delete
+            </button>
+          </div>
+        </mat-list-item>
+      </mat-list>
+      <mat-divider></mat-divider>
+    </div>
+    <div class="new-reply" fxLayout="row" *ngIf="mode === 'student' && !isDisabled">
+      <textarea
+        class="new-reply-input"
+        [(ngModel)]="response.replyText"
+        (keyup)="replyEntered($event)"
+        placeholder="Add Comment"
+        i18n-placeholder
+        aria-label="Add Comment"
+        i18n-aria-label
+        cdkTextareaAutosize
+      >
+      </textarea>
+    </div>
   </div>
 </mat-card>

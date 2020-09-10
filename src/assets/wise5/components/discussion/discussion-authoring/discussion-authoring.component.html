@@ -25,6 +25,16 @@
 <div class="checkbox-container">
   <mat-checkbox
     color="primary"
+    [(ngModel)]="componentContent.isCommentingAllowed"
+    (ngModelChange)="componentChanged()"
+    i18n
+  >
+    Students can comment on posts
+  </mat-checkbox>
+</div>
+<div class="checkbox-container">
+  <mat-checkbox
+    color="primary"
     [(ngModel)]="componentContent.isVotingAllowed"
     (ngModelChange)="componentChanged()"
     i18n

@@ -125,6 +125,9 @@ export class DiscussionStudent extends ComponentStudent {
     this.registerStudentWorkReceivedListener();
     this.registerAnnotationReceivedListener();
     this.broadcastDoneRenderingComponent();
+    if (this.componentContent.isCommentingAllowed == null) {
+      this.componentContent.isCommentingAllowed = true;
+    }
   }
 
   ngOnDestroy(): void {
