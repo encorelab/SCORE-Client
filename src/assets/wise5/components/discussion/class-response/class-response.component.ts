@@ -32,6 +32,9 @@ export class ClassResponse {
   isDisabled: boolean;
 
   @Input()
+  isCommentingAllowed: boolean = true;
+
+  @Input()
   isVotingAllowed: boolean;
 
   @Output()

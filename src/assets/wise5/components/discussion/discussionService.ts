@@ -24,6 +24,7 @@ export class DiscussionService extends ComponentService {
     const component: any = super.createComponent();
     component.type = 'Discussion';
     component.prompt = '';
+    component.isCommentingAllowed = true;
     component.isStudentAttachmentEnabled = true;
     component.gateClassmateResponses = true;
     component.isVotingAllowed = false;
