@@ -16,21 +16,14 @@ import { UpgradeModule } from '@angular/upgrade/static';
   styleUrls: ['./task-datatable.component.scss']
 })
 export class TaskDatatableComponent implements OnInit {
-  tasksDataSource = new MatTableDataSource<Task>();
-  tasksDisplayedColumns = [
-    'id',
-    'name',
-    'workgroupId',
-    'periodId',
-    'duration',
-    'startTime',
-    'endTime',
-    'timeLeft',
-    'active',
-    'complete',
-    'requests'
-  ];
-  periods: Period[];
+    tasksDataSource = new MatTableDataSource<Task>();
+    tasksDisplayedColumns = [
+        'workgroupId',
+        'name',
+        'timeLeft',
+        'requests',
+    ];
+    periods: Period[];
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -39,12 +32,12 @@ export class TaskDatatableComponent implements OnInit {
   private periodName: string;
   runId: number = 0;
 
-  constructor(
-    private upgrade: UpgradeModule,
-    private teacherService: TeacherService,
-    private tasksService: TasksService,
-    private websocketService: WebSocketService
-  ) {}
+    constructor(
+        private upgrade: UpgradeModule,
+        private teacherService: TeacherService,
+        private tasksService: TasksService,
+        private websocketService: WebSocketService,
+    ) { }
 
   ngOnInit() {
     this.websocketService._connect();
@@ -80,23 +73,24 @@ export class TaskDatatableComponent implements OnInit {
     );
   }
 
-  refreshTasks() {
-    if (this.periodName) {
-      this.tasksService
-        .getTasksByRunIdAndPeriodName(this.runId, this.periodName)
-        .subscribe((tasks) => {
-          this.tasksDataSource.data = [];
-          for (let i = 0; i < tasks.length; i++) {
-            let task: Task = tasks[i];
-            if (task.complete == false) {
-              this.tasksDataSource.data.filter(function (element) {
-                return element.id != task.id;
-              });
-            }
-            this.tasksDataSource.data.push(task);
-            this.resetAttributes();
-          }
-        });
+    refreshTasks() {
+        if (this.periodName) {
+            this.tasksService
+                .getTasksByRunIdAndPeriodName(this.runId, this.periodName)
+                .subscribe(tasks => {
+                    this.tasksDataSource.data = [];
+                    for (let i = 0; i < tasks.length; i++) {
+                        let task: Task = tasks[i];
+                        if (task.complete == false) {
+                            this.tasksDataSource.data.filter(function (element) {
+                                return element.id != task.id;
+                            });
+                        }
+                        this.tasksDataSource.data.push(task);
+                        this.resetAttributes();
+                    }
+                });
+        }
     }
   }
 
@@ -127,8 +121,11 @@ export class TaskDatatableComponent implements OnInit {
       let now = moment();
       let end = moment(task.endTime);
 
-      var duration = end.diff(now);
-      // console.log('DIFFF', duration);
+            var duration = end.diff(now);
+            // console.log('DIFFF', duration);
+        }
+
+        return 0;
     }
   }
 
