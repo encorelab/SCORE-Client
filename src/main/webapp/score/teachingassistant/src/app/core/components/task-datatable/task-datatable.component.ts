@@ -86,7 +86,9 @@ export class TaskDatatableComponent implements OnInit {
                                 return element.id != task.id;
                             });
                         }
-                        this.tasksDataSource.data.push(task);
+                        if (task.active) {
+                            this.tasksDataSource.data.push(task);
+                        }
                         this.resetAttributes();
                     }
                 });
