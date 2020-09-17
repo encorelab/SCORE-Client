@@ -42,3 +42,13 @@
     Students can vote on posts
   </mat-checkbox>
 </div>
+<div class="checkbox-container">
+  <mat-checkbox
+    color="primary"
+    [(ngModel)]="componentContent.isSharedAcrossAllPeriods"
+    (ngModelChange)="componentChanged()"
+    i18n
+  >
+    Students can discuss with students from all periods, not just their own
+  </mat-checkbox>
+</div>
