@@ -353,7 +353,9 @@ export class DiscussionStudent extends ComponentStudent {
 
   getClassmateResponses(): void {
     const runId = this.ConfigService.getRunId();
-    const periodId = this.ConfigService.getPeriodId();
+    const periodId = this.componentContent.isSharedAcrossAllPeriods
+      ? null
+      : this.ConfigService.getPeriodId();
     this.DiscussionService.getClassmateResponses(
       runId,
       periodId,
