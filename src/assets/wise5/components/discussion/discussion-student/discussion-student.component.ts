@@ -322,8 +322,7 @@ export class DiscussionStudent extends ComponentStudent {
     this.subscriptions.add(
       this.AnnotationService.annotationReceived$.subscribe((annotation) => {
         if (this.isForThisComponent(annotation)) {
-          const annotations = this.componentAnnotations.concat(annotation);
-          this.componentAnnotations = this.filterLatestAnnotationsByWorkgroup(annotations);
+          this.addAnnotation(annotation);
           this.topLevelResponses = this.DiscussionService.getLevel1Responses(
             this.classResponses,
             this.componentId,
@@ -333,6 +332,11 @@ export class DiscussionStudent extends ComponentStudent {
         }
       })
     );
+  }
+
+  addAnnotation(annotation: any) {
+    const annotations = this.componentAnnotations.concat(annotation);
+    this.componentAnnotations = this.filterLatestAnnotationsByWorkgroup(annotations);
   }
 
   isWorkFromThisComponent(componentState) {
@@ -619,7 +623,9 @@ export class DiscussionStudent extends ComponentStudent {
       studentWorkId,
       data
     );
-    this.AnnotationService.saveAnnotation(annotation);
+    this.AnnotationService.saveAnnotation(annotation).then(() => {
+      this.addAnnotation(annotation);
+    });
   }
 
   /**
@@ -652,7 +658,9 @@ export class DiscussionStudent extends ComponentStudent {
       studentWorkId,
       data
     );
-    this.AnnotationService.saveAnnotation(annotation);
+    this.AnnotationService.saveAnnotation(annotation).then(() => {
+      this.addAnnotation(annotation);
+    });
   }
 
   /**
@@ -685,6 +693,8 @@ export class DiscussionStudent extends ComponentStudent {
       studentWorkId,
       data
     );
-    this.AnnotationService.saveAnnotation(annotation);
+    this.AnnotationService.saveAnnotation(annotation).then(() => {
+      this.addAnnotation(annotation);
+    });
   }
 }
