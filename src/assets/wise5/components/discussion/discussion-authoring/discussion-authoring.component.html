@@ -52,3 +52,13 @@
     Students can discuss with students from all periods, not just their own
   </mat-checkbox>
 </div>
+<div class="checkbox-container">
+  <mat-checkbox
+    color="primary"
+    [(ngModel)]="componentContent.isNotifyClassOnNewPosts"
+    (ngModelChange)="componentChanged()"
+    i18n
+  >
+    Notify all students in the class for all new posts (not replies)
+  </mat-checkbox>
+</div>
