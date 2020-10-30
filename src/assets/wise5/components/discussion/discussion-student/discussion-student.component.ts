@@ -224,7 +224,27 @@ export class DiscussionStudent extends ComponentStudent {
             workgroupsNotifiedSoFar
           );
         }
+      } else if (this.componentContent.isNotifyClassOnNewPosts) {
+        this.notifyClassOnNewPost();
       }
+    }
+  }
+
+  notifyClassOnNewPost() {
+    const notification = this.NotificationService.createNewNotification(
+      this.ConfigService.getRunId(),
+      this.ConfigService.getPeriodId(),
+      'DiscussionPost',
+      this.nodeId,
+      this.componentId,
+      this.ConfigService.getWorkgroupId(),
+      null,
+      $localize`A classmate created a new post!`
+    );
+    if (this.componentContent.isSharedAcrossAllPeriods) {
+      this.NotificationService.notifyClassmatesInAllPeriods(notification).subscribe();
+    } else {
+      this.NotificationService.notifyClassmatesInPeriod(notification).subscribe();
     }
   }
 
