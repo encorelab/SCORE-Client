@@ -5,6 +5,7 @@ import { NodeService } from '../../../services/nodeService';
 import { ProjectService } from '../../../services/projectService';
 import { ComponentShowWorkDirective } from '../../component-show-work.directive';
 import { TeacherDiscussionService } from '../teacherDiscussionService';
+import { TeacherDataService } from '../../../services/teacherDataService';
 
 @Component({
   selector: 'discussion-show-work',
@@ -15,15 +16,17 @@ export class DiscussionShowWorkComponent extends ComponentShowWorkDirective {
   @Input() workgroupId: any;
 
   topLevelResponses: any = {};
+  annotations = [];
   classResponses: any[] = [];
   responsesMap: any = {};
   retrievedClassmateResponses: boolean = false;
   studentText: string = $localize`Student`;
 
   constructor(
-    private AnnotationService: AnnotationService,
+    protected AnnotationService: AnnotationService,
     private ConfigService: ConfigService,
     protected nodeService: NodeService,
+    private teacherDataService: TeacherDataService,
     private TeacherDiscussionService: TeacherDiscussionService,
     protected ProjectService: ProjectService
   ) {
@@ -42,8 +45,10 @@ export class DiscussionShowWorkComponent extends ComponentShowWorkDirective {
       componentIds,
       this.workgroupId
     );
-    const annotations = this.getInappropriateFlagAnnotationsByComponentStates(componentStates);
-    this.setClassResponses(componentStates, annotations);
+    this.annotations = this.getInappropriateFlagAnnotationsByComponentStates(
+      componentStates
+    ).concat(this.teacherDataService.getAnnotationsByNodeId(this.nodeId));
+    this.setClassResponses(componentStates, this.annotations);
   }
 
   /**

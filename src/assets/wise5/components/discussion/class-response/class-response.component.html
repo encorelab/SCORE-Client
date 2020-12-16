@@ -100,12 +100,14 @@
           <div fxLayout="row" fxLayout-align="end center" *ngIf="isVotingAllowed">
             <button
               [ngClass]="isUpvoteClicked ? 'md-accent' : ''"
+              [disabled]="mode === 'showAllPosts'"
               (click)="upvoteClicked(response)"
             >
               <mat-icon>thumb_up</mat-icon>
             </button>
             <button
               [ngClass]="isDownvoteClicked ? 'md-accent' : ''"
+              [disabled]="mode === 'showAllPosts'"
               (click)="downvoteClicked(response)"
             >
               <mat-icon>thumb_down</mat-icon>
