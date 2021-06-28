@@ -255,23 +255,23 @@ const WorkgroupComponentRevisions = {
                                         workgroup-id="{{::$ctrl.workgroupId}}"
                                         [is-revision]="true">
                                     </table-grading>
-                                    <component-revisions-info
-                                        node-id="::$ctrl.nodeId"
-                                        component-id="::$ctrl.componentId"
-                                        to-workgroup-id="::$ctrl.workgroupId"
-                                        component-state="item.componentState"
-                                        active='false'>
-                                    </component-revisions-info>
+                                    <div class="component__actions__info component--grading__actions__info md-caption">
+                                      <component-state-info
+                                          [component-state]="item.componentState"
+                                          [is-active]="false">
+                                      </component-state-info>
+                                    </div>
                                 </div>
                                 <div flex="100" flex-gt-sm="33" class="component--grading__annotations">
-                                  <component-grading node-id="::$ctrl.nodeId"
-                                      component-id="::$ctrl.componentId"
-                                      from-workgroup-id="::$ctrl.fromWorkgroupId"
-                                      to-workgroup-id="$ctrl.workgroupId"
-                                      component-state-id="item.componentState.id"
-                                      show-all-annotations="true"
-                                      is-disabled="true">
-                                  </component-grading>
+                                  <edit-component-annotations
+                                      [component-id]="::$ctrl.componentId"
+                                      [component-state-id]="item.componentState.id"
+                                      [from-workgroup-id]="::$ctrl.fromWorkgroupId"
+                                      [is-disabled]="true"
+                                      [node-id]="::$ctrl.nodeId"
+                                      [show-all-annotations]="true"
+                                      [to-workgroup-id]="$ctrl.workgroupId">
+                                  </edit-component-annotations>
                                 </div>
                             </div>
                         </div>

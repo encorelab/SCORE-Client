@@ -94,9 +94,11 @@ export class DiscussionService extends ComponentService {
     return new Promise((resolve, reject) => {
       let params = new HttpParams()
         .set('runId', runId + '')
-        .set('periodId', periodId + '')
         .set('getStudentWork', true + '')
         .set('getAnnotations', true + '');
+      if (periodId != null) {
+        params = params.set('periodId', periodId + '');
+      }
       for (const component of components) {
         params = params.append('components', JSON.stringify(component));
       }
