@@ -178,6 +178,14 @@ export class ConfigService {
     return null;
   }
 
+  getPeriodName() {
+    const myUserInfo = this.getMyUserInfo();
+    if (myUserInfo != null) {
+      return myUserInfo.periodName;
+    }
+    return null;
+  }
+
   getPeriods() {
     const myUserInfo = this.getMyUserInfo();
     if (myUserInfo != null) {

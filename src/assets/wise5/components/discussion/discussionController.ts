@@ -4,6 +4,7 @@ import ComponentController from '../componentController';
 import { DiscussionService } from './discussionService';
 import { Directive } from '@angular/core';
 import { StudentAssetRequest } from '../../vle/studentAsset/StudentAssetRequest';
+import * as angular from 'angular';
 
 @Directive()
 class DiscussionController extends ComponentController {
@@ -13,7 +14,10 @@ class DiscussionController extends ComponentController {
   topLevelResponses: any;
   responsesMap: any;
   retrievedClassmateResponses: boolean;
+  componentAnnotations: any = [];
   componentStateIdReplyingTo: any;
+  sortOptions = ['newest', 'oldest'];
+  sortPostsBy = 'newest';
 
   static $inject = [
     '$filter',
@@ -80,6 +84,9 @@ class DiscussionController extends ComponentController {
     this.topLevelResponses = [];
     this.responsesMap = {};
     this.retrievedClassmateResponses = false;
+    if (this.isVotingAllowed()) {
+      this.sortOptions = this.sortOptions.concat(['mostPopular', 'leastPopular']);
+    }
     if (this.ConfigService.isPreview()) {
       let componentStates = [];
       if (this.UtilService.hasConnectedComponent(this.componentContent)) {
@@ -144,8 +151,12 @@ class DiscussionController extends ComponentController {
     this.initializeScopeGetComponentState();
     this.subscribeToAttachStudentAsset();
     this.registerStudentWorkReceivedListener();
+    this.registerAnnotationReceivedListener();
     this.initializeWatchMdMedia();
     this.broadcastDoneRenderingComponent();
+    if (this.componentContent.isCommentingAllowed == null) {
+      this.componentContent.isCommentingAllowed = true;
+    }
   }
 
   isConnectedComponentShowWorkMode() {
@@ -356,6 +367,25 @@ class DiscussionController extends ComponentController {
     );
   }
 
+  registerAnnotationReceivedListener() {
+    this.subscriptions.add(
+      this.AnnotationService.annotationReceived$.subscribe(({ annotation }) => {
+        if (this.isForThisComponent(annotation)) {
+          this.addAnnotation(annotation);
+          this.topLevelResponses = this.DiscussionService.getLevel1Responses(
+            this.classResponses,
+            this.componentId,
+            this.workgroupId
+          );
+        }
+      })
+    );
+  }
+
+  addAnnotation(annotation: any) {
+    const annotations = this.componentAnnotations.concat(annotation);
+    this.componentAnnotations = this.filterLatestAnnotationsByWorkgroup(annotations);
+  }
   isWorkFromClassmate(componentState) {
     return componentState.workgroupId !== this.ConfigService.getWorkgroupId();
   }
@@ -390,15 +420,51 @@ class DiscussionController extends ComponentController {
   }
 
   getClassmateResponses(components = [{ nodeId: this.nodeId, componentId: this.componentId }]) {
-    const runId = this.ConfigService.getRunId();
-    const periodId = this.ConfigService.getPeriodId();
-    this.DiscussionService.getClassmateResponses(runId, periodId, components).then(
-      (result: any) => {
-        this.setClassResponses(result.studentWorkList, result.annotations);
-      }
-    );
+    if (this.isShowAllPostsMode()) {
+      const currentPeriodId = this.DiscussionService.TeacherDataService.getCurrentPeriod().periodId;
+      const postsForPeriod = this.DiscussionService.TeacherDataService.getComponentStatesByComponentId(
+        this.componentId
+      ).filter((componentState) => {
+        return currentPeriodId === -1 || componentState.periodId === currentPeriodId;
+      });
+      this.componentAnnotations = this.DiscussionService.TeacherDataService.getAnnotationsByNodeId(
+        this.nodeId
+      );
+      this.setClassResponses(postsForPeriod, this.componentAnnotations);
+    } else {
+      const runId = this.ConfigService.getRunId();
+      const periodId = this.componentContent.isSharedAcrossAllPeriods
+        ? null
+        : this.ConfigService.getPeriodId();
+      this.DiscussionService.getClassmateResponses(runId, periodId, components).then(
+        ({ studentWorkList, annotations }) => {
+          this.componentAnnotations = this.filterLatestAnnotationsByWorkgroup(annotations);
+          this.setClassResponses(studentWorkList, annotations);
+        }
+      );
+    }
   }
 
+  filterLatestAnnotationsByWorkgroup(annotations) {
+    const filteredAnnotations = [];
+    for (let i = annotations.length - 1; i >= 0; i--) {
+      const annotation = annotations[i];
+      let isFound = false;
+      for (const filteredAnnotation of filteredAnnotations) {
+        if (
+          filteredAnnotation.fromWorkgroupId === annotation.fromWorkgroupId &&
+          filteredAnnotation.studentWorkId === annotation.studentWorkId
+        ) {
+          isFound = true;
+          break;
+        }
+      }
+      if (!isFound) {
+        filteredAnnotations.push(annotation);
+      }
+    }
+    return filteredAnnotations;
+  }
   submitButtonClicked() {
     this.isSubmit = true;
     this.disableComponentIfNecessary();
@@ -491,6 +557,10 @@ class DiscussionController extends ComponentController {
     return this.componentContent.gateClassmateResponses;
   }
 
+  isVotingAllowed() {
+    return this.componentContent.isVotingAllowed;
+  }
+
   setClassResponses(componentStates: any[], annotations: any[] = []): void {
     const isStudentMode = true;
     this.classResponses = this.DiscussionService.getClassResponses(
@@ -505,6 +575,58 @@ class DiscussionController extends ComponentController {
       this.workgroupId
     );
     this.retrievedClassmateResponses = true;
+  }
+
+  sortPostsFunction(response1, response2) {
+    if (this.sortPostsBy === 'oldest') {
+      return this.sortByOldest(response1, response2);
+    } else if (this.sortPostsBy === 'mostPopular') {
+      return this.sortByMostPopular(response1, response2);
+    } else if (this.sortPostsBy === 'leastPopular') {
+      return this.sortByLeastPopular(response1, response2);
+    }
+    return this.sortByNewest(response1, response2);
+  }
+
+  sortPosts() {
+    this.getClassmateResponses();
+  }
+
+  sortByNewest(componentState1, componentState2) {
+    if (componentState1.serverSaveTime < componentState2.serverSaveTime) {
+      return -1;
+    } else if (componentState1.serverSaveTime > componentState2.serverSaveTime) {
+      return 1;
+    }
+    return 0;
+  }
+
+  sortByOldest(componentState1, componentState2) {
+    return this.sortByNewest(componentState2, componentState1);
+  }
+
+  sortByMostPopular(componentState1, componentState2) {
+    const cs1Votes = this.sumVotesForComponentState(componentState1);
+    const cs2Votes = this.sumVotesForComponentState(componentState2);
+    if (cs1Votes >= cs2Votes) {
+      return 1;
+    } else {
+      return -1;
+    }
+  }
+
+  sortByLeastPopular(componentState1, componentState2) {
+    return this.sortByMostPopular(componentState2, componentState1);
+  }
+
+  sumVotesForComponentState(componentState) {
+    let numVotes = 0;
+    for (const annotation of this.componentAnnotations) {
+      if (annotation.type === 'vote' && annotation.studentWorkId === componentState.id) {
+        numVotes += annotation.data.value;
+      }
+    }
+    return numVotes;
   }
 
   addClassResponse(componentState: any): void {
@@ -532,6 +654,169 @@ class DiscussionController extends ComponentController {
         responsesMap[componentStateIdReplyingTo].replies.push(componentState);
       }
     }
+  }
+
+  /**
+   * Students upvoted this post. This function will create a vote
+   * annotation with the value set to -1, 0, or 1 depending on the
+   * voting response.
+   * @param componentState the student component that the vote is being
+   * applied to.
+   */
+  createupvoteannotation(componentState) {
+    const toWorkgroupId = componentState.workgroupId;
+    const userInfo = this.ConfigService.getUserInfoByWorkgroupId(toWorkgroupId);
+    const periodId = userInfo.periodId;
+    const studentUserInfo = this.ConfigService.getMyUserInfo();
+    const fromWorkgroupId = studentUserInfo.workgroupId;
+    const runId = this.ConfigService.getRunId();
+    const nodeId = this.nodeId;
+    const componentId = this.componentId;
+    const studentWorkId = componentState.id;
+    const data = {
+      value: 1
+    };
+    const annotation = this.AnnotationService.createVoteAnnotation(
+      runId,
+      periodId,
+      nodeId,
+      componentId,
+      fromWorkgroupId,
+      toWorkgroupId,
+      studentWorkId,
+      data
+    );
+    return this.AnnotationService.saveAnnotation(annotation).then(() => {
+      this.addAnnotation(annotation);
+    });
+  }
+
+  /**
+   * Students downvoted this post. This function will create a vote
+   * annotation with the value set to -1, 0, or 1 depending on the
+   * voting response.
+   * @param componentState the student component that the vote is being
+   * applied to.
+   */
+  createdownvoteannotation(componentState) {
+    const toWorkgroupId = componentState.workgroupId;
+    const userInfo = this.ConfigService.getUserInfoByWorkgroupId(toWorkgroupId);
+    const periodId = userInfo.periodId;
+    const studentUserInfo = this.ConfigService.getMyUserInfo();
+    const fromWorkgroupId = studentUserInfo.workgroupId;
+    const runId = this.ConfigService.getRunId();
+    const nodeId = this.nodeId;
+    const componentId = this.componentId;
+    const studentWorkId = componentState.id;
+    const data = {
+      value: -1
+    };
+    const annotation = this.AnnotationService.createVoteAnnotation(
+      runId,
+      periodId,
+      nodeId,
+      componentId,
+      fromWorkgroupId,
+      toWorkgroupId,
+      studentWorkId,
+      data
+    );
+    return this.AnnotationService.saveAnnotation(annotation).then(() => {
+      this.addAnnotation(annotation);
+    });
+  }
+
+  /**
+   * Students un-voted this post. This function will create a vote
+   * annotation with the value set to -1, 0, or 1 depending on the
+   * voting response.
+   * @param componentState the student component that the vote is being
+   * applied to.
+   */
+  createunvoteannotation(componentState) {
+    const toWorkgroupId = componentState.workgroupId;
+    const userInfo = this.ConfigService.getUserInfoByWorkgroupId(toWorkgroupId);
+    const periodId = userInfo.periodId;
+    const studentUserInfo = this.ConfigService.getMyUserInfo();
+    const fromWorkgroupId = studentUserInfo.workgroupId;
+    const runId = this.ConfigService.getRunId();
+    const nodeId = this.nodeId;
+    const componentId = this.componentId;
+    const studentWorkId = componentState.id;
+    const data = {
+      value: 0
+    };
+    const annotation = this.AnnotationService.createVoteAnnotation(
+      runId,
+      periodId,
+      nodeId,
+      componentId,
+      fromWorkgroupId,
+      toWorkgroupId,
+      studentWorkId,
+      data
+    );
+    return this.AnnotationService.saveAnnotation(annotation).then(() => {
+      this.addAnnotation(annotation);
+    });
+  }
+
+  /**
+   * Get the inappropriate flag annotations for these component states
+   * @param componentStates an array of component states
+   * @return an array of inappropriate flag annotations that are associated
+   * with the component states
+   */
+  getInappropriateFlagAnnotationsByComponentStates(componentStates = []) {
+    const annotations = [];
+    for (const componentState of componentStates) {
+      const latestInappropriateFlagAnnotation = this.AnnotationService.getLatestAnnotationByStudentWorkIdAndType(
+        componentState.id,
+        'inappropriateFlag'
+      );
+      if (latestInappropriateFlagAnnotation != null) {
+        annotations.push(latestInappropriateFlagAnnotation);
+      }
+    }
+    return annotations;
+  }
+
+  showEntireDiscussion($event) {
+    this.$mdDialog.show({
+      targetEvent: $event,
+      fullscreen: true,
+      clickOutsideToClose: true,
+      parent: angular.element(document.body),
+      template: `<md-dialog class="dialog--wider">
+        <md-toolbar><div class="md-toolbar-tools"><h2>{{$ctrl.stepTitle}}</h2></div></md-toolbar>
+        <md-dialog-content class="gray-lighter-bg md-dialog-content">
+          <component node-id="{{$ctrl.nodeId}}" component-id="{{$ctrl.componentId}}" mode="showAllPosts"></component>
+        </md-dialog-content>
+        <md-dialog-actions layout="row" layout-align="start center">
+          <span flex></span>
+          <md-button class="md-primary" ng-click="close()" aria-label="{{ ::'CLOSE' | translate }}">
+            {{ ::'CLOSE' | translate }}
+          </md-button>
+        </md-dialog-actions>
+      </md-dialog>`,
+      controller: ShowEntireDiscussionController,
+      bindToController: true,
+      controllerAs: '$ctrl',
+      locals: {
+        componentId: this.componentId,
+        nodeId: this.nodeId,
+        stepTitle: this.ProjectService.getNodePositionAndTitleByNodeId(this.nodeId)
+      }
+    });
+    function ShowEntireDiscussionController($scope, $mdDialog) {
+      $scope.close = () => {
+        $mdDialog.hide();
+      };
+    }
+  }
+
+  isShowAllPostsMode() {
+    return this.mode === 'showAllPosts';
   }
 }
 

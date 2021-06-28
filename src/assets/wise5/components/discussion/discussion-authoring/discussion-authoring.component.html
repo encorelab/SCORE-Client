@@ -18,3 +18,39 @@
     Students must create a post before viewing classmates' posts
   </mat-checkbox>
 </div>
+<div class="checkbox-container">
+  <mat-checkbox
+      color='primary'
+      [(ngModel)]='authoringComponentContent.isNotifyClassOnNewPosts'
+      (ngModelChange)='componentChanged()'
+      i18n>
+    Notify all students in the class for all new posts (not replies)
+  </mat-checkbox>
+</div>
+<div class="checkbox-container">
+  <mat-checkbox
+      color='primary'
+      [(ngModel)]='authoringComponentContent.isSharedAcrossAllPeriods'
+      (ngModelChange)='componentChanged()'
+      i18n>
+    Students can discuss with students from all periods, not just their own
+  </mat-checkbox>
+</div>
+<div class="checkbox-container">
+  <mat-checkbox
+      color='primary'
+      [(ngModel)]='authoringComponentContent.isCommentingAllowed'
+      (ngModelChange)='componentChanged()'
+      i18n>
+    Students can comment on posts
+  </mat-checkbox>
+</div>
+<div class="checkbox-container">
+  <mat-checkbox
+      color='primary'
+      [(ngModel)]='authoringComponentContent.isVotingAllowed'
+      (ngModelChange)='componentChanged()'
+      i18n>
+    Students can vote on posts
+  </mat-checkbox>
+</div>

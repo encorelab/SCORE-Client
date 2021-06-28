@@ -90,6 +90,8 @@ import { StepToolsComponent } from '../assets/wise5/common/stepTools/step-tools.
 import { NodeIconChooserDialog } from '../assets/wise5/common/node-icon-chooser-dialog/node-icon-chooser-dialog.component';
 import { CopyNodesService } from '../assets/wise5/services/copyNodesService';
 import { InsertNodesService } from '../assets/wise5/services/insertNodesService';
+import { TaskDatatableComponent } from '../assets/score/teachingassistant/src/app/core/components/task-datatable/task-datatable.component';
+import { GoToNodeSelectComponent } from '../assets/score/teachingassistant/src/app/core/components/go-to-node-select/go-to-node-select.component';
 
 @NgModule({
   declarations: [
@@ -132,6 +134,7 @@ import { InsertNodesService } from '../assets/wise5/services/insertNodesService'
     EditOutsideUrlAdvancedComponent,
     EmbeddedAuthoring,
     EmbeddedGrading,
+    GoToNodeSelectComponent,
     GradingEditComponentMaxScoreComponent,
     GraphAuthoring,
     GraphGrading,
@@ -159,6 +162,7 @@ import { InsertNodesService } from '../assets/wise5/services/insertNodesService'
     SummaryAuthoring,
     TableAuthoring,
     TableGrading,
+    TaskDatatableComponent,
     WorkgroupInfoComponent,
     WorkgroupNodeScoreComponent,
     WorkgroupSelectAutocompleteComponent,

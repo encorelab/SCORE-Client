@@ -21,6 +21,7 @@ export class TeacherRunListItemComponent implements OnInit {
   editLink: string = '';
   gradeAndManageLink: string = '';
   manageStudentsLink: string = '';
+  teacherAssistantLink: string = '';
   thumbStyle: SafeStyle;
   animateDuration: string = '0s';
   animateDelay: string = '0s';
@@ -42,6 +43,7 @@ export class TeacherRunListItemComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log('RUN',this.run);
     this.run.project.thumbStyle = this.getThumbStyle();
     const contextPath = this.configService.getContextPath();
     this.editLink = `${contextPath}/author/authorproject.html?projectId=${this.run.project.id}`;

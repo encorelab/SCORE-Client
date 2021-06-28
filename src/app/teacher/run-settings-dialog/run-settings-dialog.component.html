@@ -6,8 +6,8 @@
   <h3 i18n>Class Periods</h3>
   <div fxLayoutGap="8px" fxLayout="row wrap">
     <div *ngFor="let period of run.periods" class="info-block" fxLayoutAlign="center center">
-      <span class="mat-body-2 ">{{ period }}</span>
-      <button mat-icon-button color="accent" (click)="deletePeriod(period)" i18n-aria-label
+      <span class="mat-body-2 ">{{ period.name }}</span>
+      <button mat-icon-button color="accent" (click)="deletePeriod(period.name)" i18n-aria-label
               aria-label="Delete period">
         <mat-icon>close</mat-icon>
       </button>
@@ -25,6 +25,12 @@
       <mat-hint *ngIf="addPeriodMessage" class="warn">{{ addPeriodMessage }}</mat-hint>
     </mat-form-field>
   </div>
+  <p></p>
+  <p>
+  <mat-checkbox [checked]="isRandomPeriodAssignment" (change)="updateRandomPeriodAssignment($event.checked)" i18n>
+      Randomly assign students to periods
+  </mat-checkbox>
+  </p>
   <mat-divider></mat-divider>
   <h3 i18n>Students Per Team</h3>
   <mat-radio-group [(ngModel)]="maxStudentsPerTeam" #rGroup fxLayoutGap="16px">

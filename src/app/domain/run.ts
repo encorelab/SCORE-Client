@@ -1,6 +1,7 @@
 import { Project } from './project';
 import { User } from './user';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { Period } from "./period";
 
 export class Run {
   id: number;
@@ -8,12 +9,13 @@ export class Run {
   runCode: string;
   startTime: number;
   endTime: number;
+  isRandomPeriodAssignment: boolean;
   isLockedAfterEndDate: boolean;
   lastRun: string;
   projectThumb: string;
   numStudents: number;
   maxStudentsPerTeam: number;
-  periods: string[];
+  periods: Period[];
   owner: User;
   sharedOwners: User[] = [];
   project: Project;
@@ -93,6 +95,10 @@ export class Run {
       return this.endTime <= now;
     }
     return false;
+  }
+
+  isTAToolEnabled() {
+    return JSON.parse(this.project.metadata.tools).isTAToolEnabled;
   }
 
   hasEndTime() {

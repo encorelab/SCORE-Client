@@ -50,12 +50,14 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { HelpIconComponent } from '../assets/wise5/themes/default/themeComponents/helpIcon/help-icon.component';
 import { NodeStatusIcon } from '../assets/wise5/themes/default/themeComponents/nodeStatusIcon/node-status-icon.component';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MomentModule } from 'ngx-moment';
 import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatTableModule } from '@angular/material/table';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -97,11 +99,13 @@ export class EmptyComponent {}
     MatIconModule,
     MatInputModule,
     MatListModule,
+    MatPaginatorModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatRadioModule,
     MatSelectModule,
     MatSidenavModule,
+    MatTableModule,
     MatSliderModule,
     MatTabsModule,
     MatToolbarModule,
@@ -167,11 +171,13 @@ export class EmptyComponent {}
     MatIconModule,
     MatInputModule,
     MatListModule,
+    MatPaginatorModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatRadioModule,
     MatSelectModule,
     MatSidenavModule,
+    MatTableModule,
     MatSliderModule,
     MatSlideToggleModule,
     MatTabsModule,

@@ -61,7 +61,7 @@ export class ForgotTeacherUsernameComponent implements OnInit {
   }
 
   setEmailNotFoundMessage() {
-    const message = $localize`We did not find a WISE account associated with that email. Please make sure you have typed your email address correctly.`;
+    const message = $localize`We did not find a SCORE account associated with that email. Please make sure you have typed your email address correctly.`;
     this.setMessage(message);
   }
 

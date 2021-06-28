@@ -18,7 +18,7 @@ export class TeacherProjectLibraryComponent implements OnInit {
   numberOfPersonalProjectsVisible: number = 0;
   route: String;
   tabs: any[] = [
-    { path: 'library/tested', label: $localize`WISE Tested`, numVisible: 0 },
+    { path: 'library/tested', label: $localize`SCORE Tested`, numVisible: 0 },
     { path: 'library/community', label: $localize`Community Built`, numVisible: 0 },
     { path: 'library/personal', label: $localize`My Units`, numVisible: 0 }
   ];

@@ -349,6 +349,10 @@ class ThemeController {
     this.layoutState = layoutState;
   }
 
+  isShowStepTools() {
+    return this.layoutState === 'node' && this.ProjectService.isShowStudentNavigationControls();
+  }
+
   handleServerDisconnect() {
     if (!this.connectionLostShown) {
       this.$mdToast.show(this.connectionLostDisplay);

@@ -106,7 +106,27 @@ export class TeacherWebSocketService {
     this.getStomp().send(`/app/unpause/${this.runId}/${periodId}`, {}, {});
   }
 
+  sendWorkgroupToNode(workgroupId, nodeId) {
+    this.stomp.send(
+      `/app/api/teacher/run/${this.runId}/workgroup-to-node/${workgroupId}/${nodeId}`,
+      {},
+      {}
+    );
+  }
+
+  sendPeriodToNode(periodId, nodeId) {
+    this.stomp.send(
+      `/app/api/teacher/run/${this.runId}/period-to-node/${periodId}/${nodeId}`,
+      {},
+      {}
+    );
+  }
+
   sendNodeToClass(periodId: number, node: any) {
     this.stomp.send(`/app/api/teacher/run/${this.runId}/node-to-period/${periodId}`, node, {});
+  }
+
+  sendRequestApprovedMessageToStudent(workgroupId: number, runId: number) {
+    this.stomp.send(`/app/api/teacher/run/${runId}/workgroup-to-next-node/${workgroupId}`, null);
   }
 }

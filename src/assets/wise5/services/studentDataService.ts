@@ -181,6 +181,7 @@ export class StudentDataService extends DataService {
     if (this.ConfigService.isPreview()) {
       this.retrieveStudentDataForPreview();
     } else {
+      this.initializeStudentTasks();
       return this.retrieveStudentDataForSignedInStudent();
     }
   }
@@ -813,6 +814,7 @@ export class StudentDataService extends DataService {
     } else {
       this.AnnotationService.broadcastAnnotationReceived({ annotation: annotation });
     }
+    this.updateNodeStatuses();
   }
 
   broadcastNotebookItemAnnotationReceived(args: any) {
@@ -1002,6 +1004,95 @@ export class StudentDataService extends DataService {
     const deferred = this.upgrade.$injector.get('$q').defer();
     deferred.resolve(savedStudentDataResponse);
     return deferred.promise;
+  }
+
+  editTaskTimer(eventType) {
+    if (!this.ConfigService.isPreview() && this.ConfigService.isRunActive()) {
+      const runId = this.ConfigService.getRunId();
+      const periodId = this.ConfigService.getPeriodId();
+      const workgroupId = this.ConfigService.getWorkgroupId();
+      const projectId = this.ConfigService.getProjectId();
+      const activityId = this.getCurrentNodeId();
+
+      const taskParams = {
+        runId: runId,
+        periodId: periodId,
+        workgroupId: workgroupId,
+        activityId: activityId,
+        projectId: projectId,
+        eventType: eventType
+      };
+      this.http.post('/api/tasks/timer', taskParams).toPromise();
+    }
+  }
+
+  performTaskRequest(type) {
+    if (!this.ConfigService.isPreview() && this.ConfigService.isRunActive()) {
+      const runId = this.ConfigService.getRunId();
+      const periodId = this.ConfigService.getPeriodId();
+      const workgroupId = this.ConfigService.getWorkgroupId();
+      const projectId = this.ConfigService.getProjectId();
+      const activityId = this.getCurrentNodeId();
+
+      const taskParams = {
+        runId: runId,
+        periodId: periodId,
+        workgroupId: workgroupId,
+        activityId: activityId,
+        projectId: projectId,
+        requestType: type
+      };
+      this.http.post('/api/tasks/taskrequest', taskParams).toPromise();
+    }
+  }
+
+  initializeStudentTasks() {
+    if (!this.ConfigService.isPreview() && this.ConfigService.isRunActive()) {
+      const studentStatusURL = this.ConfigService.getStudentStatusURL();
+      if (studentStatusURL != null) {
+        const runId = this.ConfigService.getRunId();
+        const periodId = this.ConfigService.getPeriodId();
+        const periodName = this.ConfigService.getPeriodName();
+        const projectId = this.ConfigService.getProjectId();
+        const workgroupId = this.ConfigService.getWorkgroupId();
+        const userInfo = this.ConfigService.getUserInfoByWorkgroupId(workgroupId);
+        const username = userInfo.username;
+        let nodes = this.ProjectService.getNodes();
+
+        // console.log("PERIOD ID PROJECT", periodId, periodName);
+
+        //cycle through all the nodes and check if they have tasks
+
+        const tasksObj = {
+          nodes: []
+        };
+
+        for (let node of nodes) {
+          if (!this.ProjectService.isGroupNode(node.id)) {
+            if (node.task) {
+              const nodeJSON = {
+                id: node.id,
+                title: node.title,
+                duration: node.task.duration
+              };
+              tasksObj.nodes.push(nodeJSON);
+            }
+          }
+        }
+
+        const nodesJSON = angular.toJson(tasksObj);
+        const taskParams = {
+          runId: runId,
+          periodId: periodId,
+          periodName: periodName,
+          projectId: projectId,
+          workgroupId: workgroupId,
+          username: username,
+          tasks: nodesJSON
+        };
+        this.http.post('/api/task', taskParams).toPromise();
+      }
+    }
   }
 
   processSavedStudentWorkList(savedStudentWorkList) {

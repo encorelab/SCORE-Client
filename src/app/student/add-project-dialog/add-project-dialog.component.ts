@@ -21,6 +21,7 @@ export class AddProjectDialogComponent implements OnInit {
     period: new FormControl({ value: '', disabled: true }, Validators.required)
   });
   isAdding = false;
+  isRandomlyAssignedPeriod = false;
 
   constructor(
     public dialog: MatDialog,
@@ -78,6 +79,10 @@ export class AddProjectDialogComponent implements OnInit {
     }
   }
 
+  chooseRandom(periods: string[]): string {
+    return periods[Math.floor(Math.random() * periods.length)];
+  }
+
   handleRunCodeResponse(runInfo) {
     if (runInfo.error) {
       this.clearPeriods();
@@ -86,8 +91,15 @@ export class AddProjectDialogComponent implements OnInit {
       if (runInfo.wiseVersion === 4) {
         this.setInvalidRunCode();
       } else {
-        this.registerRunPeriods = runInfo.periods;
-        this.addProjectForm.controls['period'].enable();
+        if (runInfo.isRandomPeriodAssignment) {
+          this.selectedPeriod = this.chooseRandom(runInfo.periods);
+          this.registerRunPeriods.push(this.selectedPeriod);
+          this.addProjectForm.controls['period'].setValue(this.selectedPeriod);
+          this.isRandomlyAssignedPeriod = true;
+        } else {
+          this.registerRunPeriods = runInfo.periods;
+          this.addProjectForm.controls['period'].enable();
+        };
       }
     }
   }

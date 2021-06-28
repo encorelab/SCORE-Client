@@ -79,7 +79,8 @@ class ClassroomMonitorController {
     this.runCode = this.ConfigService.getRunCode();
     if (this.NotebookService.isNotebookEnabled('teacherNotebook')) {
       this.notebookConfig = this.NotebookService.getTeacherNotebookConfig();
-      this.reportEnabled = this.notebookConfig.enabled && this.notebookConfig.itemTypes.report.enabled;
+      this.reportEnabled =
+        this.notebookConfig.enabled && this.notebookConfig.itemTypes.report.enabled;
     }
     this.enableProjectAchievements = this.ProjectService.getAchievements().isEnabled;
     this.views = {
@@ -117,6 +118,12 @@ class ClassroomMonitorController {
       'root.cm.manageStudents': {
         name: this.$translate('manageStudents'),
         icon: 'face',
+        type: 'primary',
+        active: true
+      },
+      'root.cm.taskDatatable': {
+        name: this.$translate('tasks'),
+        icon: 'fact_check',
         type: 'primary',
         active: true
       },
@@ -192,7 +199,7 @@ class ClassroomMonitorController {
     );
 
     // TODO: make dynamic, set somewhere like in config?
-    this.logoPath = this.ProjectService.getThemePath() + '/images/WISE-logo-ffffff.svg';
+    this.logoPath = this.ProjectService.getThemePath() + '/images/encore-website-sm-logo.png';
     this.processUI();
     this.themePath = this.ProjectService.getThemePath();
     this.notifications = this.NotificationService.notifications;

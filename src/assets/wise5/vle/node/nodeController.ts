@@ -49,10 +49,14 @@ class NodeController {
   subscriptions: Subscription = new Subscription();
   teacherWorkgroupId: number;
   workgroupId: number;
+  timeLeft: number = 60;
+  timeTitle = '';
+  timerTimerTaskId: any = 0;
 
   static $inject = [
     '$compile',
     '$filter',
+    '$mdDialog',
     '$q',
     '$scope',
     '$state',
@@ -71,6 +75,7 @@ class NodeController {
   constructor(
     private $compile: any,
     $filter: any,
+    private $mdDialog: any,
     private $q: any,
     private $scope: any,
     private $state: any,
@@ -124,6 +129,9 @@ class NodeController {
       this.NodeService.evaluateTransitionLogicOn('enterNode')
     ) {
       this.NodeService.evaluateTransitionLogic();
+    }
+    if (this.nodeContent.task != null) {
+      this.editTaskTimer('start_timer');
     }
 
     // set save message with last save/submission
@@ -459,6 +467,89 @@ class NodeController {
       const componentId = component.id;
       this.componentToScope[componentId] = childScope;
     }
+  }
+
+  editTaskTimer(eventType) {
+    if (eventType == 'start_timer') {
+      this.startTaskDuration();
+    } else {
+      this.stopTaskDuration();
+    }
+    this.StudentDataService.editTaskTimer(eventType);
+  }
+
+  hasTasks() {
+    return this.nodeContent.task != null;
+  }
+
+  hasButtons() {
+    return this.nodeContent.task.buttons != null;
+  }
+
+  hasHelpRequest() {
+    return this.nodeContent.task.buttons != null
+      ? this.nodeContent.task.buttons.indexOf('help') != -1
+      : false;
+  }
+
+  hasApprovalRequest() {
+    return this.nodeContent.task.buttons != null
+      ? this.nodeContent.task.buttons.indexOf('approval') != -1
+      : false;
+  }
+
+  hasTaskDuration() {
+    console.log('this.nodeContent.task.duration ---', this.nodeContent.task.duration);
+    return this.nodeContent.task.duration;
+  }
+
+  taskDuration() {
+    // $interval(this.startTaskDuration(), 5000);
+    return this.nodeContent.task.duration ? (this.nodeContent.task.duration / 60.0).toFixed(2) : 0;
+  }
+
+  startTaskDuration() {
+    this.timeLeft = this.nodeContent.task.duration;
+    let minutes = 0;
+    let seconds = 0;
+    this.timerTimerTaskId = setInterval(() => {
+      minutes = Math.floor(this.timeLeft / 60);
+      seconds = this.timeLeft % 60;
+
+      const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+      const secondsStr = seconds < 10 ? '0' + seconds : seconds;
+
+      this.timeTitle = minutesStr + ':' + secondsStr;
+      this.timeLeft = this.timeLeft - 1;
+      if (this.timeLeft < 0) {
+        const confirm = this.$mdDialog.alert({
+          title: 'Time Expired',
+          textContent: 'Time for this step has expired.',
+          ok: 'Ok'
+        });
+
+        this.$mdDialog.show(confirm);
+
+        //send noticiation to the TA
+        clearInterval(this.timerTimerTaskId);
+      }
+    }, 1000);
+  }
+
+  stopTaskDuration() {
+    clearInterval(this.timerTimerTaskId);
+  }
+
+  performTaskRequest(type) {
+    const confirm = this.$mdDialog.alert({
+      title: 'Request Approval',
+      textContent: 'The teaching assistant has been sent your request for approval.',
+      ok: 'Ok'
+    });
+
+    this.$mdDialog.show(confirm);
+
+    this.StudentDataService.performTaskRequest(type);
   }
 
   isShowNodeRubric() {

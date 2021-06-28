@@ -21,4 +21,11 @@ export class DiscussionAuthoring extends ComponentAuthoring {
   ) {
     super(ConfigService, NodeService, ProjectAssetService, ProjectService);
   }
+
+  ngOnInit() {
+    super.ngOnInit();
+    if (this.authoringComponentContent.isCommentingAllowed == null) {
+      this.authoringComponentContent.isCommentingAllowed = true;
+    }
+  }
 }

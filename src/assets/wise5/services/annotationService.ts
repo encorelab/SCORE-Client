@@ -173,20 +173,31 @@ export class AnnotationService {
       deferred.resolve(annotation);
       return deferred.promise;
     } else {
-      const params = {
+      const params: any = {
         runId: this.ConfigService.getRunId(),
         workgroupId: this.ConfigService.getWorkgroupId(),
         annotations: angular.toJson(annotations)
       };
-      const headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
-      return this.http
-        .post(this.ConfigService.getConfigParam('teacherDataURL'), $.param(params), {
-          headers: headers
-        })
-        .toPromise()
-        .then((savedAnnotationDataResponse: any) => {
-          return this.saveToServerSuccess(savedAnnotationDataResponse);
-        });
+      if (this.ConfigService.getMode() === 'studentRun') {
+        (params.studentWorkList = JSON.stringify([])), (params.events = JSON.stringify([]));
+        return this.http
+          .post(this.ConfigService.getConfigParam('studentDataURL'), params, {
+            headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+          })
+          .toPromise()
+          .then((savedAnnotationDataResponse: any) => {
+            return this.saveToServerSuccess(savedAnnotationDataResponse);
+          });
+      } else {
+        return this.http
+          .post(this.ConfigService.getConfigParam('teacherDataURL'), $.param(params), {
+            headers: new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' })
+          })
+          .toPromise()
+          .then((savedAnnotationDataResponse: any) => {
+            return this.saveToServerSuccess(savedAnnotationDataResponse);
+          });
+      }
     }
   }
 
@@ -414,6 +425,51 @@ export class AnnotationService {
     const localNotebookItemId = null;
     const notebookItemId = null;
     const annotationType = 'inappropriateFlag';
+    const clientSaveTime = Date.parse(new Date().toString());
+    const annotation = this.createAnnotation(
+      annotationId,
+      runId,
+      periodId,
+      fromWorkgroupId,
+      toWorkgroupId,
+      nodeId,
+      componentId,
+      studentWorkId,
+      localNotebookItemId,
+      notebookItemId,
+      annotationType,
+      data,
+      clientSaveTime
+    );
+    return annotation;
+  }
+
+  /**
+   * Create a vote annotation
+   * @param runId the run id
+   * @param periodId the period id
+   * @param nodeId the node id
+   * @param componentId the component id
+   * @param fromWorkgroupId the teacher workgroup id
+   * @param toWorkgroupId the student workgroup id
+   * @param studentWorkId the component state id
+   * @param data the annotation data
+   * @returns the inappropriate flag annotation
+   */
+  createVoteAnnotation(
+    runId,
+    periodId,
+    nodeId,
+    componentId,
+    fromWorkgroupId,
+    toWorkgroupId,
+    studentWorkId,
+    data
+  ) {
+    const annotationId = null;
+    const localNotebookItemId = null;
+    const notebookItemId = null;
+    const annotationType = 'vote';
     const clientSaveTime = Date.parse(new Date().toString());
     const annotation = this.createAnnotation(
       annotationId,
@@ -884,6 +940,33 @@ export class AnnotationService {
    */
   getLatestAutoCommentAnnotationByStudentWorkId(studentWorkId) {
     return this.getLatestAnnotationByStudentWorkIdAndType(studentWorkId, 'autoComment');
+  }
+
+  /**
+   * Get the latest annotation for the given student work and annotation type
+   * @param studentWorkId the student work id
+   * @param fromWorkgroupId the type of annotation
+   * @return the latest annotation for the given student work and annotation type
+   */
+  getLatestVoteAnnotationByStudentWorkIdAndFromWorkgroupId(studentWorkId, fromWorkgroupId) {
+    for (let a = this.annotations.length - 1; a >= 0; a--) {
+      const annotation = this.annotations[a];
+
+      if (annotation != null) {
+        if (
+          'vote' == annotation.type &&
+          studentWorkId == annotation.studentWorkId &&
+          fromWorkgroupId == annotation.fromWorkgroupId
+        ) {
+          /*
+           * we have found an annotation with the given annotation type,
+           * student work id, and group id
+           */
+          return annotation;
+        }
+      }
+    }
+    return null;
   }
 
   /**

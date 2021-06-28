@@ -75,9 +75,7 @@ describe('ForgotTeacherUsernameComponent', () => {
 
   it('should show an email not found message', () => {
     submitAndReceiveResponse('sendForgotUsernameEmail', 'failure', 'emailNotFound');
-    expect(getErrorMessage()).toContain(
-      'We did not find a WISE account associated with that email'
-    );
+    expect(getErrorMessage()).toContain('account associated with that email');
   });
 
   it('should navigate to the success page', () => {

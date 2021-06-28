@@ -139,19 +139,19 @@ export class ContactFormComponent implements OnInit {
     if (this.isStudent) {
       this.issueTypes = [
         { key: 'TROUBLE_LOGGING_IN', value: $localize`Trouble Signing In` },
-        { key: 'NEED_HELP_USING_WISE', value: $localize`Need Help Using WISE` },
-        { key: 'PROJECT_PROBLEMS', value: $localize`Problems with a WISE Unit` },
-        { key: 'FEEDBACK', value: $localize`Feedback to WISE` },
+        { key: 'NEED_HELP_USING_WISE', value: $localize`Need Help Using SCORE` },
+        { key: 'PROJECT_PROBLEMS', value: $localize`Problems with a SCORE Unit` },
+        { key: 'FEEDBACK', value: $localize`Feedback to SCORE` },
         { key: 'OTHER', value: $localize`Other` }
       ];
     } else {
       this.issueTypes = [
         { key: 'TROUBLE_LOGGING_IN', value: $localize`Trouble Signing In` },
-        { key: 'NEED_HELP_USING_WISE', value: $localize`Need Help Using WISE` },
-        { key: 'PROJECT_PROBLEMS', value: $localize`Problems with a WISE Unit` },
+        { key: 'NEED_HELP_USING_WISE', value: $localize`Need Help Using SCORE` },
+        { key: 'PROJECT_PROBLEMS', value: $localize`Problems with a SCORE Unit` },
         { key: 'STUDENT_MANAGEMENT', value: $localize`Student Management` },
         { key: 'AUTHORING', value: $localize`Need Help with Authoring` },
-        { key: 'FEEDBACK', value: $localize`Feedback to WISE` },
+        { key: 'FEEDBACK', value: $localize`Feedback to SCORE` },
         { key: 'OTHER', value: $localize`Other` }
       ];
     }

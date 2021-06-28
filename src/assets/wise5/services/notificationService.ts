@@ -186,6 +186,17 @@ export class NotificationService {
     return this.saveNotificationToServer(notification);
   }
 
+  notifyClassmatesInPeriod(notification): Observable<any> {
+    return this.http.post(
+      `/api/notification/${notification.runId}/period/${notification.periodId}`,
+      notification
+    );
+  }
+
+  notifyClassmatesInAllPeriods(notification): Observable<any> {
+    return this.http.post(`/api/notification/${notification.runId}/all-periods`, notification);
+  }
+
   saveNotificationToServer(notification) {
     if (this.ConfigService.isPreview()) {
       return this.pretendServerRequest(notification);

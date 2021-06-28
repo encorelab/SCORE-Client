@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { MatDialog } from '@angular/material/dialog';
 import { Project } from '../domain/project';
 import { Teacher } from '../domain/teacher';
 import { Run } from '../domain/run';
 import { Course } from '../domain/course';
+import { Workgroup } from '../domain/workgroup';
+import { Period } from '../domain/period';
+import { MatDialog } from '@angular/material/dialog';
 import { CopyProjectDialogComponent } from '../modules/library/copy-project-dialog/copy-project-dialog.component';
 
 @Injectable()
@@ -22,6 +24,7 @@ export class TeacherService {
   private lastRunUrl = '/api/teacher/projectlastrun';
   private addPeriodToRunUrl = '/api/teacher/run/add/period';
   private deletePeriodFromRunUrl = '/api/teacher/run/delete/period';
+  private updateRandomPeriodAssignmentUrl = 'api/teacher/run/update/random-period-assignment';
   private updateRunStudentsPerTeamUrl = '/api/teacher/run/update/studentsperteam';
   private updateRunStartTimeUrl = '/api/teacher/run/update/starttime';
   private updateRunEndTimeUrl = '/api/teacher/run/update/endtime';
@@ -63,8 +66,22 @@ export class TeacherService {
     return this.http.get<Run>(`${this.runUrl}/${runId}`);
   }
 
+  getWorkgroups(run: Run): Observable<Workgroup[]> {
+    return this.http.get<Workgroup[]>(`/api/teacher/workgroup/${run.id}`);
+  }
+
+  getPeriods(run: Run): Observable<Period[]> {
+    return this.http.get<Period[]>(`/api/teacher/period/${run.id}`);
+  }
+
   getProjectLastRun(projectId: number): Observable<Run> {
     return this.http.get<Run>(`${this.lastRunUrl}/${projectId}`);
+  }
+
+  getProjectContent(project: Project) {
+    this.http.get<any>(`/curriculum/${project.id}/project.json`).subscribe((content) => {
+      project.setContent(content);
+    });
   }
 
   registerTeacherAccount(teacherUser: Teacher): Observable<any> {
@@ -80,6 +97,7 @@ export class TeacherService {
   createRun(
     projectId: number,
     periods: string,
+    isRandomPeriodAssignment: boolean,
     maxStudentsPerTeam: number,
     startDate: number,
     endDate: number,
@@ -89,6 +107,7 @@ export class TeacherService {
     let body = new HttpParams();
     body = body.set('projectId', projectId + '');
     body = body.set('periods', periods);
+    body = body.set('isRandomPeriodAssignment', isRandomPeriodAssignment + '');
     body = body.set('maxStudentsPerTeam', maxStudentsPerTeam + '');
     body = body.set('startDate', startDate + '');
     if (endDate) {
@@ -182,7 +201,9 @@ export class TeacherService {
     body = body.set('schoolName', schoolName);
     body = body.set('schoolLevel', schoolLevel);
     body = body.set('language', language);
-    return this.http.post<any>(this.updateProfileUrl, body, { headers: headers });
+    return this.http.post<any>(this.updateProfileUrl, body, {
+      headers: headers
+    });
   }
 
   addPeriodToRun(runId: number, periodName: string) {
@@ -201,6 +222,16 @@ export class TeacherService {
     body = body.set('runId', runId + '');
     body = body.set('periodName', periodName);
     return this.http.post<Object>(url, body, { headers: headers });
+  }
+
+  updateRandomPeriodAssignment(runId: number, isRandomPeriodAssignment: boolean) {
+    const headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
+    let body = new HttpParams();
+    body = body.set('runId', runId + '');
+    body = body.set('isRandomPeriodAssignment', isRandomPeriodAssignment + '');
+    return this.http.post<Object>(`${this.updateRandomPeriodAssignmentUrl}`, body, {
+      headers: headers
+    });
   }
 
   updateRunStudentsPerTeam(runId: number, maxStudentsPerTeam: number) {
@@ -244,19 +275,26 @@ export class TeacherService {
   sendForgotUsernameEmail(email) {
     const headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
     const params = new HttpParams().set('email', email);
-    return this.http.post<any>(this.forgotUsernameUrl, params, { headers: headers });
+    return this.http.post<any>(this.forgotUsernameUrl, params, {
+      headers: headers
+    });
   }
 
   sendForgotPasswordEmail(username) {
     const headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
     const params = new HttpParams().set('username', username);
-    return this.http.post<any>(this.forgotPasswordUrl, params, { headers: headers });
+    return this.http.post<any>(this.forgotPasswordUrl, params, {
+      headers: headers
+    });
   }
 
   getVerificationCodeEmail(username) {
     const headers = new HttpHeaders({ 'Cache-Control': 'no-cache' });
     const params = new HttpParams().set('username', username);
-    return this.http.get<any>(this.getVerificationCodeUrl, { headers: headers, params: params });
+    return this.http.get<any>(this.getVerificationCodeUrl, {
+      headers: headers,
+      params: params
+    });
   }
 
   checkVerificationCode(username, verificationCode) {
@@ -264,7 +302,9 @@ export class TeacherService {
     let params = new HttpParams();
     params = params.set('username', username);
     params = params.set('verificationCode', verificationCode);
-    return this.http.post<any>(this.checkVerificationCodeUrl, params, { headers: headers });
+    return this.http.post<any>(this.checkVerificationCodeUrl, params, {
+      headers: headers
+    });
   }
 
   changePassword(username, verificationCode, password, confirmPassword) {
@@ -274,14 +314,19 @@ export class TeacherService {
     params = params.set('verificationCode', verificationCode);
     params = params.set('password', password);
     params = params.set('confirmPassword', confirmPassword);
-    return this.http.post<any>(this.changePasswordUrl, params, { headers: headers });
+    return this.http.post<any>(this.changePasswordUrl, params, {
+      headers: headers
+    });
   }
 
   getClassroomAuthorizationUrl(username: string): Observable<any> {
     const headers = new HttpHeaders({ 'Cache-Control': 'no-cache' });
     let params = new HttpParams();
     params = params.set('username', username);
-    return this.http.get<any>(this.classroomAuthorizationUrl, { headers, params });
+    return this.http.get<any>(this.classroomAuthorizationUrl, {
+      headers,
+      params
+    });
   }
 
   getClassroomCourses(username: string): Observable<Course[]> {
@@ -299,7 +344,9 @@ export class TeacherService {
     endTime: string,
     description: string
   ): Observable<any> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/x-www-form-urlencoded'
+    });
     let params = new HttpParams()
       .set('accessCode', accessCode)
       .set('unitTitle', unitTitle)
@@ -308,5 +355,17 @@ export class TeacherService {
       .set('description', description)
       .set('courseIds', JSON.stringify(courseIds));
     return this.http.post<any>(this.addAssignmentUrl, params, { headers });
+  }
+
+  sendWorkgroupToNode(runId: number, workgroupId: number, nodeId: string) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/x-www-form-urlencoded'
+    });
+    const params = new HttpParams().set('nodeId', nodeId);
+    return this.http.post<any>(
+      `/api/teacher/run/workgroup-to-node/${runId}/${workgroupId}`,
+      params,
+      { headers }
+    );
   }
 }

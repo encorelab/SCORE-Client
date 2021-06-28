@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, Output, SimpleChanges, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  SimpleChanges,
+  ViewEncapsulation
+} from '@angular/core';
+import { AnnotationService } from '../../../services/annotationService';
 import { ConfigService } from '../../../services/configService';
 
 @Component({
@@ -8,6 +16,18 @@ import { ConfigService } from '../../../services/configService';
   encapsulation: ViewEncapsulation.None
 })
 export class ClassResponse {
+  @Output()
+  createupvoteannotation: any = new EventEmitter();
+
+  @Output()
+  createunvoteannotation: any = new EventEmitter();
+
+  @Output()
+  createdownvoteannotation: any = new EventEmitter();
+
+  @Input()
+  componentannotations: any;
+
   @Input()
   response: any;
 
@@ -19,6 +39,12 @@ export class ClassResponse {
 
   @Input()
   isdisabled: any;
+
+  @Input()
+  isvotingallowed: boolean;
+
+  @Input()
+  iscommentingallowed: boolean = true;
 
   @Output()
   submitButtonClicked: any = new EventEmitter();
@@ -32,8 +58,12 @@ export class ClassResponse {
   urlMatcher: any = /((http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?)/g;
   expanded: boolean = false;
   repliesToShow: any[] = [];
+  currentVote = 0;
+  numVotes = 0;
+  isUpvoteClicked = false;
+  isDownvoteClicked = false;
 
-  constructor(private ConfigService: ConfigService) {}
+  constructor(private ConfigService: ConfigService, private AnnotationService: AnnotationService) {}
 
   ngOnInit(): void {
     this.isdisabled = this.isdisabled === 'true';
@@ -42,6 +72,7 @@ export class ClassResponse {
     if (this.hasAnyReply()) {
       this.showLastReply();
     }
+    this.updateVoteDisplays();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -49,6 +80,8 @@ export class ClassResponse {
       this.expanded = true;
       this.injectLinksIntoReplies();
       this.showAllReplies();
+    } else if (changes.componentannotations) {
+      this.updateVoteDisplays();
     }
   }
 
@@ -81,12 +114,44 @@ export class ClassResponse {
     });
   }
 
-  getAvatarColorForWorkgroupId(workgroupId: number): string {
-    return this.ConfigService.getAvatarColorForWorkgroupId(workgroupId);
+  updateVoteDisplays() {
+    this.sumVotes();
+    this.getLatestVoteForCurrentWorkgroup();
   }
 
-  adjustClientSaveTime(time: any): number {
-    return this.ConfigService.convertToClientTimestamp(time);
+  sumVotes() {
+    this.numVotes = 0;
+    for (const annotation of this.componentannotations) {
+      if (annotation.type === 'vote' && annotation.studentWorkId === this.response.id) {
+        this.numVotes += annotation.data.value;
+      }
+    }
+  }
+
+  getLatestVoteForCurrentWorkgroup() {
+    for (let i = this.componentannotations.length - 1; i >= 0; i--) {
+      const componentannotation = this.componentannotations[i];
+      if (
+        componentannotation.studentWorkId === this.response.id &&
+        componentannotation.fromWorkgroupId === this.ConfigService.getWorkgroupId()
+      ) {
+        if (componentannotation.data.value === -1) {
+          this.isDownvoteClicked = true;
+          this.isUpvoteClicked = false;
+        } else if (componentannotation.data.value === 1) {
+          this.isDownvoteClicked = false;
+          this.isUpvoteClicked = true;
+        } else {
+          this.isDownvoteClicked = false;
+          this.isUpvoteClicked = false;
+        }
+        break;
+      }
+    }
+  }
+
+  getAvatarColorForWorkgroupId(workgroupId: number): string {
+    return this.ConfigService.getAvatarColorForWorkgroupId(workgroupId);
   }
 
   replyEntered($event: any): void {
@@ -110,6 +175,10 @@ export class ClassResponse {
     if (confirm($localize`Are you sure you want to delete this post?`)) {
       this.deleteButtonClicked.emit(componentState);
     }
+  }
+
+  adjustClientSaveTime(time: any): number {
+    return this.ConfigService.convertToClientTimestamp(time);
   }
 
   undoDelete(componentState: any): void {
@@ -144,5 +213,41 @@ export class ClassResponse {
   expandAndShowAllReplies(): void {
     this.expanded = true;
     this.showAllReplies();
+  }
+
+  upvoteClicked(componentState) {
+    if (!this.isUpvoteClicked) {
+      this.createupvoteannotation.emit({ componentState: componentState });
+    } else {
+      this.createunvoteannotation.emit({ componentState: componentState });
+    }
+  }
+
+  downvoteClicked(componentState) {
+    if (!this.isDownvoteClicked) {
+      this.createdownvoteannotation.emit({ componentState: componentState });
+    } else {
+      this.createunvoteannotation.emit({ componentState: componentState });
+    }
+  }
+
+  /**
+   * Get the vote annotations for these component states
+   * @param componentStates an array of component states
+   * @return an array of vote annotations that are associated
+   * with the component states
+   */
+  getVoteAnnotationsByComponentStates(componentStates = []) {
+    const annotations = [];
+    for (const componentState of componentStates) {
+      const latestInappropriateFlagAnnotation = this.AnnotationService.getLatestAnnotationByStudentWorkIdAndType(
+        componentState.id,
+        'vote'
+      );
+      if (latestInappropriateFlagAnnotation != null) {
+        annotations.push(latestInappropriateFlagAnnotation);
+      }
+    }
+    return annotations;
   }
 }

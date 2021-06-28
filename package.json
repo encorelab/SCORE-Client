@@ -23,6 +23,7 @@
     "@angular/router": "^11.2.6",
     "@angular/upgrade": "^11.2.6",
     "@stomp/stompjs": "^5.4.4",
+    "@types/socket.io": "^2.1.4",
     "@tinymce/tinymce-angular": "^4.2.0",
     "angular": "1.7.9",
     "angular-animate": "1.7.8",
@@ -52,9 +53,10 @@
     "hopscotch": "^0.3.1",
     "html2canvas": "^0.5.0-beta4",
     "iframe-resizer": "^3.5.3",
+    "immutable": "^4.0.0-rc.12",
     "jquery": "3.4.1",
-    "jsdom": "^15.2.1",
     "moment": "^2.24.0",
+    "net": "^1.0.2",
     "ng-file-upload": "^12.0.4",
     "ng-onload": "^0.8.0",
     "ng-recaptcha": "^6.0.0",
@@ -152,7 +154,7 @@
     "url": "git+https://github.com/WISE-Community/WISE.git"
   },
   "keywords": [
-    "WISE",
+    "SCORE",
     "education",
     "science",
     "inquiry"
@@ -160,7 +162,7 @@
   "author": "",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/WISE-Community/WISE/issues"
+    "url": "https://github.com/encorelab/SCORE/issues"
   },
-  "homepage": "https://github.com/WISE-Community/WISE#readme"
+  "homepage": "https://github.com/encorelab/SCORE#readme"
 }

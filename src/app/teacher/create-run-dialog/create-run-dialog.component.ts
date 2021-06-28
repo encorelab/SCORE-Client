@@ -67,6 +67,7 @@ export class CreateRunDialogComponent {
     this.form = this.fb.group({
       selectedPeriods: this.periodsGroup,
       customPeriods: this.customPeriods,
+      isRandomPeriodAssignment: new FormControl(false),
       periods: hiddenControl,
       maxStudentsPerTeam: new FormControl('3', Validators.required),
       startDate: new FormControl(new Date(), Validators.required),
@@ -111,10 +112,12 @@ export class CreateRunDialogComponent {
     }
     const isLockedAfterEndDate = this.form.controls['isLockedAfterEndDate'].value;
     const maxStudentsPerTeam = this.form.controls['maxStudentsPerTeam'].value;
+    const isRandomPeriodAssignment = this.form.controls['isRandomPeriodAssignment'].value;
     this.teacherService
       .createRun(
         this.project.id,
         combinedPeriods,
+        isRandomPeriodAssignment,
         maxStudentsPerTeam,
         startDate,
         endDate,

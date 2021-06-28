@@ -94,7 +94,7 @@ export class ProjectService {
 
   getProjectTitle() {
     const name = this.getProjectMetadata().title;
-    return name ? name : 'A WISE Project (No name)';
+    return name ? name : 'A SCORE Project (No name)';
   }
 
   setProjectTitle(projectTitle) {
@@ -608,7 +608,7 @@ export class ProjectService {
           '<img',
           `<img onclick=\\"window.dispatchEvent(new CustomEvent('snip-image', ` +
             `{ detail: { target: this } }))\\" ` +
-            `onkeypress=\\"javascript: if (event.key === 'Enter' || event.keyCode === 13 || ` + 
+            `onkeypress=\\"javascript: if (event.key === 'Enter' || event.keyCode === 13 || ` +
             `event.which === 13 ) { window.dispatchEvent(new CustomEvent('snip-image', ` +
             `{ detail: { target: this } } )) }\\" aria-label=\\"Select image to add to notebook\\" ` +
             `title=\\"Add to notebook\\" tabindex=\\"0\\" snip`
@@ -3113,6 +3113,13 @@ export class ProjectService {
    */
   getAdditionalProcessingFunctions(nodeId, componentId) {
     return this.additionalProcessingFunctionsMap[`${nodeId}_${componentId}`];
+  }
+
+  isShowStudentNavigationControls() {
+    if (this.project.layout.showStudentNavigationControls != null) {
+      return this.project.layout.showStudentNavigationControls;
+    }
+    return true;
   }
 
   replaceNode(nodeId, node) {
