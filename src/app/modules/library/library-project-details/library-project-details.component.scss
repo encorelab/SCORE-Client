@@ -1,0 +1,70 @@
+@import
+  '~@angular/material/theming',
+  '~style/abstracts/functions',
+  '~style/abstracts/variables';
+
+.library-project-details {
+}
+
+.info-block {
+  margin: 16px 0 0;
+  padding: 12px;
+  overflow: hidden;
+}
+
+.mat-card-avatar {
+  background-size: cover;
+  border-radius: 4px;
+  margin-right: 12px;
+
+  @media (min-width: breakpoint('sm.min')) {
+    height: 64px;
+    width: 64px;
+  }
+}
+
+.mat-card-title {
+  margin-bottom: 4px;
+
+  @media (max-width: breakpoint('xs.max')) {
+    @include mat-typography-level-to-styles($config, body-1);
+    font-weight: 500;
+  }
+}
+
+.mat-card-subtitle {
+  margin-bottom: 2px;
+}
+
+.mat-dialog-actions {
+  .mat-button, .mat-button-base {
+    margin-left: 0;
+  }
+}
+
+.details {
+  > p, div {
+    margin: 0 0 12px;
+  }
+}
+
+.pe {
+  display: inline-block;
+}
+
+.license {
+  margin: 0 -12px -12px;
+  padding: 12px;
+
+  img {
+    height: 16px;
+    width: auto;
+    margin-bottom: 2px;
+    vertical-align: middle;
+  }
+}
+
+discourse-category-activity {
+  margin-bottom: 12px;
+  display: block;
+}

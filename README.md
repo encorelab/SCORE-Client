@@ -1,22 +1,17 @@
-Web-based Inquiry Science Environment (WISE) 
-====
+# Description
 
-[![Join the chat at https://gitter.im/WISE-Community/WISE](https://badges.gitter.im/WISE-Community/WISE.svg)](https://gitter.im/WISE-Community/WISE?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Build Status](https://travis-ci.org/WISE-Community/WISE.svg?branch=master)](https://travis-ci.org/WISE-Community/WISE)
+WISE-Client contains client applications for WISE students, teachers, and authors. It also contains the homepage, account pages, and project library, teacher and student schedules.
 
-Setup WISE on a Server: https://github.com/WISE-Community/WISE/wiki#Install_WISE_on_a_server
+# Development
 
-Develop WISE locally: https://github.com/WISE-Community/WISE/wiki/How-to-Setup-WISE-Local-Development
+We recommend developing WISE-Client using Docker. See instructions on the [WISE-Docker-Dev](https://github.com/WISE-Community/WISE-Docker-Dev) repository.
 
-Release Notes: https://github.com/WISE-Community/WISE/releases
- 
-Design Doc and Notes: https://github.com/WISE-Community/WISE/wiki/WISE5-Design-Documentation-and-Notes
-
-Other documentation: https://github.com/WISE-Community/WISE/wiki
-
-Developer mailinglist: https://groups.google.com/forum/#!forum/wise-dev
+# Resources
 
 Open-source license: GNU General Public License, v3.  See LICENSE.txt for details.
 
 To see WISE in action and for inquiry science curricula developed by the WISE research team at UC Berkeley, visit https://wise.berkeley.edu.
 
+Developer discussions: https://github.com/WISE-Community/WISE-Client/discussions
+
+General WISE discussions: https://wise-discuss.berkeley.edu/

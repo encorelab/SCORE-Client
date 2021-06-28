@@ -1,0 +1,19 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../out-tsc/app",
+    "baseUrl": "./",
+    "types": ["jquery", "node", "dom-mediacapture-record"],
+    "paths": {
+      "moment": ["../node_modules/moment/min/moment.min.js"]
+    }
+  },
+  "files": [
+    "main.ts",
+    "polyfills.ts"
+  ],
+  "include": [
+    "assets/wise5/themes/**/*.ts"
+  ],
+  "exclude": ["test.ts", "**/*.spec.ts"]
+}

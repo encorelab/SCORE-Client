@@ -1,0 +1,68 @@
+'use strict';
+
+import { Component } from '@angular/core';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { ProjectAssetService } from '../../../../../app/services/projectAssetService';
+import { ComponentAuthoring } from '../../../authoringTool/components/component-authoring.component';
+import { ConfigService } from '../../../services/configService';
+import { NodeService } from '../../../services/nodeService';
+import { TeacherProjectService } from '../../../services/teacherProjectService';
+import { UtilService } from '../../../services/utilService';
+
+@Component({
+  selector: 'audio-oscillator-authoring',
+  templateUrl: 'audio-oscillator-authoring.component.html',
+  styleUrls: ['audio-oscillator-authoring.component.scss']
+})
+export class AudioOscillatorAuthoring extends ComponentAuthoring {
+  sineChecked: boolean;
+  squareChecked: boolean;
+  triangleChecked: boolean;
+  sawtoothChecked: boolean;
+  inputChange: Subject<string> = new Subject<string>();
+
+  constructor(
+    protected ConfigService: ConfigService,
+    protected NodeService: NodeService,
+    protected ProjectAssetService: ProjectAssetService,
+    protected ProjectService: TeacherProjectService,
+    protected UtilService: UtilService
+  ) {
+    super(ConfigService, NodeService, ProjectAssetService, ProjectService);
+  }
+
+  ngOnInit(): void {
+    super.ngOnInit();
+    this.populateCheckedOscillatorTypes();
+    this.subscriptions.add(
+      this.inputChange.pipe(debounceTime(1000), distinctUntilChanged()).subscribe(() => {
+        this.componentChanged();
+      })
+    );
+  }
+
+  populateCheckedOscillatorTypes(): void {
+    this.sineChecked = this.authoringComponentContent.oscillatorTypes.includes('sine');
+    this.squareChecked = this.authoringComponentContent.oscillatorTypes.includes('square');
+    this.triangleChecked = this.authoringComponentContent.oscillatorTypes.includes('triangle');
+    this.sawtoothChecked = this.authoringComponentContent.oscillatorTypes.includes('sawtooth');
+  }
+
+  oscillatorTypeClicked(): void {
+    this.authoringComponentContent.oscillatorTypes = [];
+    if (this.sineChecked) {
+      this.authoringComponentContent.oscillatorTypes.push('sine');
+    }
+    if (this.squareChecked) {
+      this.authoringComponentContent.oscillatorTypes.push('square');
+    }
+    if (this.triangleChecked) {
+      this.authoringComponentContent.oscillatorTypes.push('triangle');
+    }
+    if (this.sawtoothChecked) {
+      this.authoringComponentContent.oscillatorTypes.push('sawtooth');
+    }
+    this.componentChanged();
+  }
+}
