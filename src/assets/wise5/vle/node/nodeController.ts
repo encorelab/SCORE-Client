@@ -30,7 +30,9 @@ class NodeController {
     'Embedded',
     'Label',
     'Match',
-    'MultipleChoice'
+    'MultipleChoice',
+    'OpenResponse',
+    'Table'
   ];
   dirtyComponentIds: any = [];
   dirtySubmitComponentIds: any = [];
@@ -881,7 +883,7 @@ class NodeController {
     componentState.periodId = this.ConfigService.getPeriodId();
     componentState.workgroupId = this.ConfigService.getWorkgroupId();
     componentState.isAutoSave = isAutoSave === true;
-    componentState.isSubmit = isSubmit === true;
+    componentState.isSubmit ??= isSubmit;
   }
 
   /**

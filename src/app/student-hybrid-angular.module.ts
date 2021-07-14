@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 
 import { createStudentAngularJSModule } from '../assets/wise5/vle/student-angular-js-module';
+import { bootstrapAngularJSModule } from './common-hybrid-angular.module';
 import { UpgradeModule } from '@angular/upgrade/static';
-import { setUpLocationSync } from '@angular/router/upgrade';
 import { ProjectService } from '../assets/wise5/services/projectService';
 import { VLEProjectService } from '../assets/wise5/vle/vleProjectService';
 import { CommonModule } from '@angular/common';
@@ -26,6 +26,9 @@ import { MatchStudentModule } from '../assets/wise5/components/match/match-stude
 import { StudentComponentModule } from './student/student.component.module';
 import { AnimationStudent } from '../assets/wise5/components/animation/animation-student/animation-student.component';
 import { EmbeddedStudent } from '../assets/wise5/components/embedded/embedded-student/embedded-student.component';
+import { OpenResponseStudent } from '../assets/wise5/components/openResponse/open-response-student/open-response-student.component';
+import { SafeUrl } from '../assets/wise5/directives/safeUrl/safe-url.pipe';
+import { TableStudent } from '../assets/wise5/components/table/table-student/table-student.component';
 
 @NgModule({
   declarations: [
@@ -38,8 +41,11 @@ import { EmbeddedStudent } from '../assets/wise5/components/embedded/embedded-st
     HtmlStudent,
     LabelStudent,
     MultipleChoiceStudent,
+    NavItemComponent,
+    OpenResponseStudent,
     OutsideUrlStudent,
-    NavItemComponent
+    SafeUrl,
+    TableStudent
   ],
   imports: [AngularJSModule, MatchStudentModule, StudentComponentModule],
   providers: [
@@ -57,6 +63,7 @@ export class StudentAngularJSModule {}
 })
 export class StudentVLEAngularJSModule {
   constructor(upgrade: UpgradeModule) {
+    createStudentAngularJSModule('vle');
     bootstrapAngularJSModule(upgrade, 'vle');
   }
 }
@@ -66,12 +73,7 @@ export class StudentVLEAngularJSModule {
 })
 export class PreviewAngularJSModule {
   constructor(upgrade: UpgradeModule) {
+    createStudentAngularJSModule('preview');
     bootstrapAngularJSModule(upgrade, 'preview');
   }
-}
-
-function bootstrapAngularJSModule(upgrade: UpgradeModule, moduleType: string) {
-  createStudentAngularJSModule(moduleType);
-  upgrade.bootstrap(document.body, [moduleType]);
-  setUpLocationSync(upgrade);
 }
