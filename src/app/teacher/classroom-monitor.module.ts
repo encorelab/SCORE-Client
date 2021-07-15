@@ -3,6 +3,7 @@ import { AddTeamButtonComponent } from '../../assets/wise5/classroomMonitor/clas
 import { AddTeamDialogComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manageStudents/add-team-dialog/add-team-dialog.component';
 import { ChangeStudentPasswordDialogComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manageStudents/change-student-password-dialog/change-student-password-dialog.component';
 import { ManagePeriodComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manageStudents/manage-period/manage-period.component';
+import { ManageGroupsComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manage-groups/manage-groups/manage-groups.component';
 import { ManageStudentsComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manageStudents/manage-students/manage-students.component';
 import { ManageTeamComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manageStudents/manage-team/manage-team.component';
 import { ManageTeamsComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manageStudents/manage-teams/manage-teams.component';
@@ -70,6 +71,7 @@ import { GoToNodeSelectComponent } from '../../main/webapp/score/teachingassista
     ExportStepVisitsComponent,
     GoToNodeSelectComponent,
     MainMenuComponent,
+    ManageGroupsComponent,
     ManagePeriodComponent,
     ManageShowStudentInfoComponent,
     ManageStudentsComponent,
