@@ -1,6 +1,7 @@
 'use strict';
 
 import * as angular from 'angular';
+import './classroomMonitorComponents/manage-groups/manage-groups.module';
 import './classroomMonitorComponents/manageStudents/manageStudentsModule';
 import './classroomMonitorComponents/milestones/milestones';
 import './classroomMonitorComponents/nodeGrading/nodeGrading';
@@ -24,6 +25,7 @@ export default angular
     'componentGrading',
     'cmShared',
     'dataExport',
+    'manageGroups',
     'manageStudents',
     'milestones',
     'nodeGrading',

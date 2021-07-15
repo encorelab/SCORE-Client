@@ -11,6 +11,7 @@ import { SelectPeriodComponent } from '../../assets/wise5/classroomMonitor/class
 import { WorkgroupNodeScoreComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/shared/workgroupNodeScore/workgroup-node-score.component';
 import { ViewComponentRevisionsComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/view-component-revisions/view-component-revisions.component';
 import { WorkgroupComponentGradingComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/workgroup-component-grading/workgroup-component-grading.component';
+import { ManageGroupsComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manage-groups/manage-groups/manage-groups.component';
 import { ManageStudentsComponent } from '../../assets/wise5/classroomMonitor/manageStudents/manage-students-component';
 import { AlertStatusCornerComponent } from '../classroom-monitor/alert-status-corner/alert-status-corner.component';
 import { ComponentNewWorkBadgeComponent } from '../classroom-monitor/component-new-work-badge/component-new-work-badge.component';
@@ -38,6 +39,7 @@ import { MilestoneReportDataComponent } from './milestone/milestone-report-data/
     EditComponentScoreComponent,
     GoToNodeSelectComponent,
     GradingEditComponentMaxScoreComponent,
+    ManageGroupsComponent,
     ManageStudentsComponent,
     MilestonesComponent,
     MilestoneReportDataComponent,
