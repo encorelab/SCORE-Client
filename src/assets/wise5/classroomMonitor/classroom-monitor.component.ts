@@ -119,6 +119,13 @@ export class ClassroomMonitorComponent implements OnInit {
         active: true
       },
       {
+        route: 'root.cm.manageGroups',
+        name: $localize`Manage Groups`,
+        icon: 'group_work',
+        type: 'primary',
+        active: true
+      },
+      {
         route: 'root.cm.notebooks',
         name: $localize`Student Notebooks`,
         icon: 'chrome_reader_mode',

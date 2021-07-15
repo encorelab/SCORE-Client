@@ -1,6 +1,7 @@
 'use strict';
 
 import * as angular from 'angular';
+import './classroomMonitorComponents/manage-groups/manage-groups.module';
 import './classroomMonitorComponents/manageStudents/manageStudentsModule';
 import './classroomMonitorComponents/nodeProgress/nodeProgress';
 import './classroomMonitorComponents/studentProgress/studentProgress';
@@ -12,7 +13,13 @@ import { StudentProgressComponent } from './student-progress/student-progress.co
 import { ClassroomMonitorComponent } from './classroom-monitor.component';
 
 export default angular
-  .module('classroomMonitor', ['dataExport', 'manageStudents', 'nodeProgress', 'studentProgress'])
+  .module('classroomMonitor', [
+    'dataExport',
+    'manageGroups',
+    'manageStudents',
+    'nodeProgress',
+    'studentProgress'
+  ])
   .directive('classroomMonitor', downgradeComponent({ component: ClassroomMonitorComponent }))
   .directive('notebookGrading', downgradeComponent({ component: NotebookGradingComponent }))
   .directive(
