@@ -1,0 +1,22 @@
+<span fxLayout="row">
+  <h1 mat-dialog-title i18n>Edit Group</h1>
+  <span fxFlex></span>
+  <delete-group [group]="group" [members]="membersInGroup"></delete-group>
+</span>
+<div mat-dialog-content class="info-block" cdkFocusRegionStart>
+  <h3 i18n>Group name</h3>
+  <edit-group-name [groupNameForm]="groupNameForm"></edit-group-name>
+  <h3 i18n>Group membership</h3>
+  <edit-group-members
+      [membersInGroup]="membersInGroup"
+      [membersNotInGroup]="membersNotInGroup"
+      (addMemberEvent)="addMember($event)"
+      (deleteMemberEvent)="deleteMember($event)"></edit-group-members>
+</div>
+<mat-divider></mat-divider>
+<div mat-dialog-actions fxLayoutAlign="start center" fxLayoutGap="8px" style="padding: 0">
+  <mat-progress-spinner [diameter]="24" *ngIf="isProcessing" mode="indeterminate"></mat-progress-spinner>
+  <span *ngIf="isShowSavedMessage" class="isSavedMessage" i18n>All changes saved.</span>
+  <span fxFlex></span>
+  <button mat-button mat-dialog-close color="primary" [disabled]="isProcessing" i18n>Close</button>
+</div>

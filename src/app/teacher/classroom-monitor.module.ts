@@ -56,6 +56,7 @@ import { ShowNodeInfoDialogComponent } from '../classroom-monitor/show-node-info
 import { MilestoneModule } from './milestone/milestone.module';
 import { GradingCommonModule } from './grading-common.module';
 import { GoToNodeSelectComponent } from '../../main/webapp/score/teachingassistant/src/app/core/components/go-to-node-select/go-to-node-select.component';
+import { ManageGroupsModule } from './manage-groups.module';
 
 @NgModule({
   declarations: [
@@ -113,6 +114,7 @@ import { GoToNodeSelectComponent } from '../../main/webapp/score/teachingassista
     ComponentStudentModule,
     GradingCommonModule,
     HighchartsChartModule,
+    ManageGroupsModule,
     MilestoneModule,
     PasswordModule,
     PeerGroupGradingModule,

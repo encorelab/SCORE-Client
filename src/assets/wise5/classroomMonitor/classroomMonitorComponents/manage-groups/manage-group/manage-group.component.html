@@ -1,0 +1,10 @@
+<span fxFlexLayout="row wrap" fxLayoutAlign="start center" fxLayoutGap="8px">
+  <span class="groupName" (click)="editGroup()">
+    {{group.name}}
+    (<ng-container [ngPlural]="workgroups.size">
+      <ng-template ngPluralCase="=0" i18n>0 students</ng-template>
+      <ng-template ngPluralCase="one" i18n>1 student</ng-template>
+      <ng-template ngPluralCase="other" i18n>{{workgroups.size}} students</ng-template>
+    </ng-container>)
+  </span>
+</span>
