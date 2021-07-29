@@ -26,6 +26,7 @@ import { WorkgroupSelectDropdownComponent } from '../classroom-monitor/workgroup
 import { AngularJSModule } from '../common-hybrid-angular.module';
 import { ComponentGradingModule } from './component-grading.module';
 import { MilestoneReportDataComponent } from './milestone/milestone-report-data/milestone-report-data.component';
+import { ManageGroupsModule } from './manage-groups.module';
 
 @NgModule({
   declarations: [
@@ -55,6 +56,6 @@ import { MilestoneReportDataComponent } from './milestone/milestone-report-data/
     NavItemScoreComponent,
     WorkgroupNodeStatusComponent
   ],
-  imports: [AngularJSModule, ComponentGradingModule]
+  imports: [AngularJSModule, ComponentGradingModule, ManageGroupsModule]
 })
 export class ClassroomMonitorModule {}
