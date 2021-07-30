@@ -8,6 +8,7 @@ import { Observable, Subject } from 'rxjs';
 import { AchievementService } from './achievementService';
 import { RxStomp } from '@stomp/rx-stomp';
 import { Message } from '@stomp/stompjs';
+import { Tag } from '../../../app/domain/tag';
 
 @Injectable()
 export class TeacherWebSocketService {
@@ -97,6 +98,12 @@ export class TeacherWebSocketService {
   sendPeriodToNode(periodId, nodeId) {
     this.rxStomp.publish({
       destination: `/app/api/teacher/run/${this.runId}/period-to-node/${periodId}/${nodeId}`
+    });
+  }
+
+  sendGroupToNode(group: Tag, nodeId: string) {
+    this.rxStomp.publish({
+      destination: `/app/api/teacher/run/${this.runId}/group-to-node/${group.id}/${nodeId}`
     });
   }
 
