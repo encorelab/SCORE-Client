@@ -1,48 +1,53 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material';
-import { WebSocketService } from '../../services/websocket/websocket.service';
-import { Run } from '../../../../../../../site/src/app/domain/run';
-import { Workgroup } from '../../../../../../../site/src/app/domain/workgroup';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { TeacherWebSocketService } from '../../../../../../../../assets/wise5/services/teacherWebSocketService';
+import { Run } from '../../../../../../../../app/domain/run';
+import { Workgroup } from '../../../../../../../../app/domain/workgroup';
+import { Tag } from '../../../../../../../../app/domain/tag';
+import { ProjectService } from '../../../../../../../wise5/services/projectService';
+import { Project } from '../../../../../../../../app/domain/project';
 
 @Component({
-    selector: 'app-go-to-node-select',
-    templateUrl: './go-to-node-select.component.html',
-    styleUrls: ['./go-to-node-select.component.scss'],
+  selector: 'app-go-to-node-select',
+  templateUrl: './go-to-node-select.component.html',
+  styleUrls: ['./go-to-node-select.component.scss']
 })
-export class GoToNodeSelectComponent implements OnInit {
-    run: Run;
-    stepNodes: any[] = [];
-    period: any;
-    workgroup: Workgroup;
-    displayedColumns: string[] = ['stepName'];
+export class GoToNodeSelectComponent {
+  group: Tag;
+  period: any;
+  run: Run;
+  stepNodes: any[] = [];
+  workgroup: Workgroup;
+  displayedColumns: string[] = ['stepName'];
 
-    constructor(
-        @Inject(MAT_DIALOG_DATA) public data: any,
-        private websocketService: WebSocketService,
-    ) {
-        this.run = data.run;
-        for (const nodeInOrder of this.run.project.idToOrder.nodes) {
-            if (nodeInOrder.node.type !== 'group') {
-                this.stepNodes.push(nodeInOrder);
-            }
-        }
-        this.workgroup = data.workgroup;
-        this.period = data.period;
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private projectService: ProjectService,
+    private websocketService: TeacherWebSocketService
+  ) {
+    const project = new Project();
+    project.setContent(this.projectService.project);
+    for (const nodeInOrder of project.idToOrder.nodes) {
+      if (nodeInOrder.node.type !== 'group') {
+        nodeInOrder.stepNumber = this.projectService.getNodePositionById(nodeInOrder.node.id);
+        this.stepNodes.push(nodeInOrder);
+      }
     }
+    this.workgroup = data.workgroup;
+    this.period = data.period;
+    this.group = data.group;
+  }
 
-    ngOnInit() {}
-
-    sendToNode(node: any) {
-        if (this.workgroup != null) {
-            this.websocketService._send(
-                `/app/api/teacher/run/${this.run.id}/workgroup-to-node/${this.workgroup.id}`,
-                node.id,
-            );
-        } else {
-            this.websocketService._send(
-                `/app/api/teacher/run/${this.run.id}/period-to-node/${this.period.id}`,
-                node.id,
-            );
-        }
+  sendToNode(node: any) {
+    if (this.workgroup != null) {
+      this.websocketService._send(
+        `/app/api/teacher/run/${this.run.id}/workgroup-to-node/${this.workgroup.id}`,
+        node.id
+      );
+    } else if (this.period != null) {
+      this.websocketService.sendPeriodToNode(this.period.id, node.id);
+    } else {
+      this.websocketService.sendGroupToNode(this.group, node.id);
     }
+  }
 }
