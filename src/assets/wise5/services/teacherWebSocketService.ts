@@ -7,6 +7,7 @@ import { UpgradeModule } from '@angular/upgrade/static';
 import { NotificationService } from './notificationService';
 import { Observable, Subject } from 'rxjs';
 import { AchievementService } from './achievementService';
+import { Tag } from '../../../app/domain/tag';
 
 @Injectable()
 export class TeacherWebSocketService {
@@ -117,6 +118,14 @@ export class TeacherWebSocketService {
   sendPeriodToNode(periodId, nodeId) {
     this.stomp.send(
       `/app/api/teacher/run/${this.runId}/period-to-node/${periodId}/${nodeId}`,
+      {},
+      {}
+    );
+  }
+
+  sendGroupToNode(group: Tag, nodeId: string) {
+    this.stomp.send(
+      `/app/api/teacher/run/${this.runId}/group-to-node/${group.id}/${nodeId}`,
       {},
       {}
     );

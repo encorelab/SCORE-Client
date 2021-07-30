@@ -1,6 +1,7 @@
 <span fxLayout="row">
   <h1 mat-dialog-title i18n>Edit Group</h1>
   <span fxFlex></span>
+  <move-group-to-node [group]="group"></move-group-to-node>
   <delete-group [group]="group" [members]="membersInGroup"></delete-group>
 </span>
 <div mat-dialog-content class="info-block" cdkFocusRegionStart>

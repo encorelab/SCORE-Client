@@ -214,23 +214,7 @@ class StudentProgressController {
       clickOutsideToClose: true,
       escapeToClose: true
     });
-
-    // this.dialog.open(GoToNodeSelectComponent, {
-    //     minWidth: '600px',
-    //     maxHeight: '800px',
-    //     data: { workgroup: workgroup, run: this.run },
-    //     panelClass: 'mat-dialog--md',
-    // });
   }
-
-  // chooseNodeToSendPeriod(period: Period) {
-  //     this.dialog.open(GoToNodeSelectComponent, {
-  //         minWidth: '600px',
-  //         maxHeight: '800px',
-  //         data: { period: period, run: this.run },
-  //         panelClass: 'mat-dialog--md',
-  //     });
-  // }
 }
 
 export default StudentProgressController;
