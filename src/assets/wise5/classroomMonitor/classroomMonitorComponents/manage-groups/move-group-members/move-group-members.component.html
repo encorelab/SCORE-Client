@@ -1,0 +1,35 @@
+<h3 fxLayout="row" fxLayoutAlign="start center">
+  <span>{{group.name}} ({{group.membersInGroup.length}})</span>
+  <span fxFlex></span>
+  <button mat-icon-button
+      *ngIf="group.name != 'Unassigned'"
+      (click)="removeAllMembersFromGroup()"
+      matTooltip="Remove all students from group"
+      matTooltipPosition="above"
+      i18n-matTooltip>
+    <mat-icon>clear_all</mat-icon>
+  </button>
+</h3>
+<div class="members"
+    cdkDropList
+    [cdkDropListData]="group.membersInGroup"
+    [cdkDropListEnterPredicate]="canDrop"
+    (cdkDropListDropped)="dropped.next($event)">
+  <div class="member"
+      *ngFor="let member of group.membersInGroup; let i = index"
+      cdkDrag
+      [cdkDragData]="member"
+      fxLayout="row"
+      fxLayoutAlign="start center">
+    <span>{{member.username}}</span>
+    <span fxFlex></span>
+    <button mat-icon-button
+        *ngIf="group.name != 'Unassigned'"
+        (click)="removeFromGroup(i)"
+        matTooltip="Remove student from group"
+        matTooltipPosition="above"
+        i18n-matTooltip>
+      <mat-icon>clear</mat-icon>
+    </button>
+  </div>
+</div>

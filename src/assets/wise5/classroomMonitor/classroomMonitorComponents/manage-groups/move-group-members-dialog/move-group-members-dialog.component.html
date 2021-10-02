@@ -1,0 +1,32 @@
+<h1 mat-dialog-title i18n>Move students between groups</h1>
+<div mat-dialog-content class="info-block">
+  <h3 i18n>1. Choose one or more groups</h3>
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxLayoutGap="20px">
+    <span *ngFor="let group of groups">
+      <mat-checkbox [(ngModel)]="group.isSelected" (change)="selectGroup()">{{group.name}} ({{group?.membersInGroup?.length}})</mat-checkbox>
+    </span>
+  </div>
+  <mat-divider></mat-divider>
+  <h3 i18n>2. Move students manually with drag&drop or randomly using the shuffle button</h3>
+  <div fxLayout="row wrap" fxLayoutGap="8px" cdkDropListGroup>
+    <span *ngFor="let group of selectedGroups" class="group">
+      <move-group-members [group]="group" (dropped)="drop($event)" (removed)="memberRemoved()"></move-group-members>
+    </span>
+    <move-group-members *ngIf="selectedGroups.length > 0" [group]="unassignedGroup" (updated)="drop($event)"></move-group-members>
+  </div>
+</div>
+<div mat-dialog-actions fxLayoutAlign="end" fxLayoutGap="8px">
+  <button mat-button [disabled]="isProcessing || selectedGroups.length == 0"
+      matTooltip="Randomly shuffle students between selected groups"
+      i18n-matTooltip
+      (click)="shuffleBetweenSelectedGroups()">
+    <mat-icon>shuffle</mat-icon>
+    <span i18n>Shuffle</span>
+  </button>
+  <span fxFlex></span>
+  <button mat-button mat-dialog-close [disabled]="isProcessing" i18n>Cancel</button>
+  <button mat-flat-button color="primary" (click)="saveChanges()" [disabled]="isProcessing || !isDirty">
+    <mat-progress-bar *ngIf="isProcessing" mode="indeterminate"></mat-progress-bar>
+    <ng-container i18n>Save</ng-container>
+  </button>
+</div>
