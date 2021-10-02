@@ -94,6 +94,24 @@ export class TagService {
     });
   }
 
+  removeTagFromWorkgroups(workgroupIds: number[], tag: Tag) {
+    return this.http.request('DELETE', `/api/tag/${tag.id}/workgroups/delete`, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      }),
+      body: workgroupIds
+    });
+  }
+
+  addRemoveTagsFromWorkgroups(addRemoveTagsParam: any) {
+    return this.http.request('POST', `/api/tag/workgroups/add-delete`, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      }),
+      body: addRemoveTagsParam
+    });
+  }
+
   getNextAvailableTag() {
     this.getTagsFromProject();
     let counter = 1;
