@@ -8,6 +8,9 @@ import { EditGroupNameComponent } from '../../assets/wise5/classroomMonitor/clas
 import { ListGroupsComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manage-groups/list-groups/list-groups.component';
 import { ManageGroupComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manage-groups/manage-group/manage-group.component';
 import { ManageGroupsComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manage-groups/manage-groups/manage-groups.component';
+import { MoveGroupMembersButtonComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manage-groups/move-group-members-button/move-group-members-button.component';
+import { MoveGroupMembersDialogComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manage-groups/move-group-members-dialog/move-group-members-dialog.component';
+import { MoveGroupMembersComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manage-groups/move-group-members/move-group-members.component';
 import { MoveGroupToNodeComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manage-groups/move-group-to-node/move-group-to-node.component';
 import { AngularJSModule } from '../common-hybrid-angular.module';
 
@@ -22,6 +25,9 @@ import { AngularJSModule } from '../common-hybrid-angular.module';
     ListGroupsComponent,
     ManageGroupComponent,
     ManageGroupsComponent,
+    MoveGroupMembersComponent,
+    MoveGroupMembersButtonComponent,
+    MoveGroupMembersDialogComponent,
     MoveGroupToNodeComponent
   ],
   imports: [AngularJSModule]
