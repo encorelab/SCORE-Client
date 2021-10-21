@@ -156,6 +156,7 @@ export class Project {
 
   getNodeById(nodeId, project = this.content) {
     for (const node of project.nodes.concat(project.inactiveNodes)) {
+      console.log(`nodeId:${nodeId}, project.nodes:${project.nodes}, node:${node}`);
       if (node.id === nodeId) {
         return node;
       }

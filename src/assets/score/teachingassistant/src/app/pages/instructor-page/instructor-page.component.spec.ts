@@ -1,25 +1,24 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {InstructorPageComponent} from './instructor-page.component';
+import { InstructorPageComponent } from './instructor-page.component';
 
 describe('InstructorPageComponent', () => {
-  let component: InstructorPageComponent;
-  let fixture: ComponentFixture<InstructorPageComponent>;
+    let component: InstructorPageComponent;
+    let fixture: ComponentFixture<InstructorPageComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ InstructorPageComponent ]
-    })
-    .compileComponents();
-  }));
+    beforeEach(async(() => {
+        TestBed.configureTestingModule({
+            declarations: [InstructorPageComponent],
+        }).compileComponents();
+    }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(InstructorPageComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(InstructorPageComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });
