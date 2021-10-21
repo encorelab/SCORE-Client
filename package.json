@@ -23,7 +23,6 @@
     "@angular/router": "^11.2.6",
     "@angular/upgrade": "^11.2.6",
     "@stomp/stompjs": "^5.4.4",
-    "@types/socket.io": "^2.1.4",
     "@tinymce/tinymce-angular": "^4.2.0",
     "angular": "1.7.9",
     "angular-animate": "1.7.8",

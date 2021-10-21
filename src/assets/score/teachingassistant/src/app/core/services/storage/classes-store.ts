@@ -1,28 +1,23 @@
-import {TeacherService} from "../../../../../../../site/src/app/teacher/teacher.service";
-import {Run} from "../../../../../../../site/src/app/domain/run";
-import {Injectable} from "@angular/core";
+import { TeacherService } from '../../../../../../../../../src/app/teacher/teacher.service';
+import { Run } from '../../../../../../../../../src/app/domain/run';
+import { Injectable } from '@angular/core';
 @Injectable({
-    providedIn: 'root'
+    providedIn: 'root',
 })
 export class ClassesStore {
-
     private _run: Run;
     private _runId: number;
 
-    constructor(private teacherService: TeacherService) {
-
-    }
+    constructor(private teacherService: TeacherService) {}
 
     loadInitialData(runId: number) {
-        this.teacherService.getRun(runId)
-            .subscribe(
-                run => {
-                    this._run = run;
-                    // console.log('runs ----', run);
-                },
-                err => console.log("Error retrieving run")
-            );
-
+        this.teacherService.getRun(runId).subscribe(
+            (run) => {
+                this._run = run;
+                // console.log('runs ----', run);
+            },
+            (err) => console.log('Error retrieving run'),
+        );
     }
 
     get runId(): number {

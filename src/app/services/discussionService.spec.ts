@@ -180,8 +180,8 @@ function getClassmateResponses() {
         expect(data.studentWorkList[0].studentData.response).toEqual('Hello World');
       });
     const expectedRequest =
-      '/student/data?runId=1&periodId=2&getStudentWork=true&getAnnotations=' +
-      'true&components=%7B%22nodeId%22:%22node1%22,%22componentId%22:%22component1%22%7D';
+      '/student/data?runId=1&getStudentWork=true&getAnnotations=true&periodId=2' +
+      '&components=%7B%22nodeId%22:%22node1%22,%22componentId%22:%22component1%22%7D';
     http
       .expectOne(expectedRequest)
       .flush({ studentWorkList: [{ studentData: { response: 'Hello World' } }] });

@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
-import { TeacherService } from '../../../../../../site/src/app/teacher/teacher.service';
+import { TeacherService } from '../../../../../../../../src/app/teacher/teacher.service';
 
 import { InstructorPageComponent } from './instructor-page.component';
 

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { MoveGroupMembersButtonComponent } from './move-group-members-button.component';
 
@@ -8,9 +9,9 @@ describe('MoveGroupMembersButtonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MoveGroupMembersButtonComponent ]
-    })
-    .compileComponents();
+      declarations: [MoveGroupMembersButtonComponent],
+      imports: [MatDialogModule]
+    }).compileComponents();
   });
 
   beforeEach(() => {
