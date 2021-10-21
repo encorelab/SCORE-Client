@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router, RouterEvent } from '@angular/router';
-import { ConfigService } from '../../../../site/src/app/services/config.service';
-import { TeacherRun } from '../../../../site/src/app/teacher/teacher-run';
+import { ConfigService } from '../../../../../../src/app/services/config.service';
+import { TeacherRun } from '../../../../../../src/app/teacher/teacher-run';
 import { Observable } from 'rxjs';
-import { Run } from '../../../../site/src/app/domain/run';
+import { Run } from '../../../../../../src/app/domain/run';
 import { ClassesStore } from './core/services/storage/classes-store';
 
 @Component({

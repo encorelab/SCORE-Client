@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { TeacherService } from '../../../../../../site/src/app/teacher/teacher.service';
-import { WebSocketService } from '../../core/services/websocket/websocket.service';
+import { TeacherService } from '../../../../../../../../src/app/teacher/teacher.service';
 import { ClassesStore } from '../../core/services/storage/classes-store';
-import { Run } from '../../../../../../site/src/app/domain/run';
-import { Workgroup } from '../../../../../../site/src/app/domain/workgroup';
+import { Run } from '../../../../../../../../src/app/domain/run';
+import { Workgroup } from '../../../../../../../../src/app/domain/workgroup';
 import { MatDialog } from '@angular/material/dialog';
 import { GoToNodeSelectComponent } from '../../core/components/go-to-node-select/go-to-node-select.component';
-import { Period } from '../../../../../../site/src/app/domain/period';
+import { Period } from '../../../../../../../../src/app/domain/period';
 import { MatTableDataSource } from '@angular/material/table';
+import { TeacherWebSocketService } from '../../../../../../wise5/services/teacherWebSocketService';
 
 @Component({
     selector: 'app-instructor-page',
@@ -25,11 +25,10 @@ export class InstructorPageComponent implements OnInit {
         private dialog: MatDialog,
         private classesStore: ClassesStore,
         private teacherService: TeacherService,
-        private websocketService: WebSocketService,
+        private websocketService: TeacherWebSocketService,
     ) {}
 
     ngOnInit() {
-        this.initIoConnection();
         this.run = this.classesStore.run;
         this.teacherService.getRun(303).subscribe(
             (run) => {
@@ -95,20 +94,10 @@ export class InstructorPageComponent implements OnInit {
     }
 
     pauseAllScreens(period: Period) {
-        this.websocketService._send(
-            `/app/pause/${this.run.id}/${period.id}`,
-            '',
-        );
+        this.websocketService.pauseScreens(period.id);
     }
 
     unpauseAllScreens(period: Period) {
-        this.websocketService._send(
-            `/app/unpause/${this.run.id}/${period.id}`,
-            '',
-        );
-    }
-
-    private initIoConnection(): void {
-        this.websocketService._connect();
+        this.websocketService.unPauseScreens(period.id);
     }
 }
