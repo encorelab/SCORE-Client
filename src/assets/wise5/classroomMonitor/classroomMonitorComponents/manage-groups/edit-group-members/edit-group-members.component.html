@@ -1,19 +1,23 @@
-<div fxLayout="column" fxLayout.gt-sm="row">
-  <div class="initial-members notice-bg-bg" fxFlex="100" fxFlex.gt-sm="33">
-    <div *ngIf="membersInGroup.size == 0" class="mat-small" i18n>No students added</div>
-    <div class="member-list" *ngIf="membersInGroup.size > 0">
-      <div class="member-list-item" *ngFor="let member of membersInGroup; let i=index;"
-          fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
-        <mat-icon class="secondary-text">account_circle</mat-icon>
-        <span class="mat-small">{{member.username}}</span>
-        <span fxFlex></span>
-        <button mat-icon-button (click)="deleteMemberEvent.next(member)" i18n-aria-label aria-label="Delete member">
-          <mat-icon class="secondary-text">close</mat-icon>
-        </button>
+<div fxLayout="column" fxLayout.gt-sm="row" fxLayoutGap="8px">
+  <div fxFlex="100" fxFlex.gt-sm="33">
+    <h4 i18n>Current members</h4>
+    <div class="initial-members notice-bg-bg">
+      <div *ngIf="membersInGroup.size == 0" class="mat-small" i18n>No students added</div>
+      <div class="member-list" *ngIf="membersInGroup.size > 0">
+        <div class="member-list-item" *ngFor="let member of membersInGroup; let i=index;"
+            fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
+          <mat-icon class="secondary-text">account_circle</mat-icon>
+          <span class="mat-small">{{member.username}}</span>
+          <span fxFlex></span>
+          <button mat-icon-button (click)="deleteMemberEvent.next(member)" i18n-aria-label aria-label="Delete member">
+            <mat-icon class="secondary-text">close</mat-icon>
+          </button>
+        </div>
       </div>
     </div>
   </div>
   <div fxFlex="100" fxFlex.gt-sm="67">
+    <h4 i18n>Unassigned</h4>
     <div fxLayout="row wrap" fxLayoutAlign="start start">
       <div class="member" *ngFor="let member of membersNotInGroup" >
         <button mat-stroked-button (click)="addMemberEvent.next(member)">
