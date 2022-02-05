@@ -25,6 +25,7 @@ import { ConfigService } from './services/configService';
 import { CRaterService } from './services/cRaterService';
 import './directives/components';
 import { ComponentService } from './components/componentService';
+import './components/dialogGuidance/dialogGuidanceStudentComponentModule';
 import './components/discussion/discussionComponentModule';
 import './components/draw/drawComponentModule';
 import './components/embedded/embeddedComponentModule';
@@ -74,7 +75,6 @@ import { NotebookNotesComponent } from '../../app/notebook/notebook-notes/notebo
 import { NotebookReportComponent } from '../../app/notebook/notebook-report/notebook-report.component';
 import { NotebookReportAnnotationsComponent } from '../../app/notebook/notebook-report-annotations/notebook-report-annotations.component';
 import EditNotebookItemController from './themes/default/notebook/editNotebookItemController';
-import './components/discussion/class-response/classResponseComponentModule';
 
 angular
   .module('common', [
@@ -82,9 +82,9 @@ angular
     'angular-toArrayFilter',
     'animationComponentModule',
     'audioOscillatorComponentModule',
-    'classResponseComponentModule',
     'components',
     'conceptMapComponentModule',
+    'dialogGuidanceStudentComponentModule',
     'discussionComponentModule',
     'drawComponentModule',
     'embeddedComponentModule',

@@ -229,7 +229,7 @@ export class StudentDataService extends DataService {
       }
     }
     this.studentData.events = resultData.events;
-    this.studentData.annotations = resultData.annotations;
+    this.studentData.annotations = this.getActiveAnnototations(resultData.annotations);
     this.AnnotationService.setAnnotations(this.studentData.annotations);
     this.populateHistories(this.studentData.events);
     this.updateNodeStatuses();
@@ -906,7 +906,7 @@ export class StudentDataService extends DataService {
     if (this.ConfigService.isPreview()) {
       return this.handlePreviewSaveToServer(studentWorkList, events, annotations);
     } else if (!this.ConfigService.isRunActive()) {
-      return this.upgrade.$injector.get('$q').defer().promise;
+      return Promise.resolve();
     } else {
       const params = {
         projectId: this.ConfigService.getProjectId(),

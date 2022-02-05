@@ -2440,7 +2440,7 @@ export class ProjectService {
 
   shouldIncludeInTotalScore(nodeId: string, componentId: string): boolean {
     return (
-      this.isActive(nodeId) &&
+      this.isNodeActive(nodeId) &&
       !this.getComponentByNodeIdAndComponentId(nodeId, componentId).excludeFromTotalScore
     );
   }
@@ -3212,6 +3212,10 @@ export class ProjectService {
     } else {
       return { name: params['tag'] };
     }
+  }
+
+  componentExists(nodeId: string, componentId: string): boolean {
+    return this.getComponentByNodeIdAndComponentId(nodeId, componentId) != null;
   }
 
   broadcastProjectChanged() {

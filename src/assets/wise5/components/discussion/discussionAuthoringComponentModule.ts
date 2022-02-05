@@ -5,20 +5,24 @@ import { downgradeComponent, downgradeInjectable } from '@angular/upgrade/static
 import { DiscussionService } from './discussionService';
 import { EditDiscussionAdvancedComponent } from './edit-discussion-advanced/edit-discussion-advanced.component';
 import { DiscussionAuthoring } from './discussion-authoring/discussion-authoring.component';
+import { EditDiscussionConnectedComponentsComponent } from './edit-discussion-connected-components/edit-discussion-connected-components.component';
 
 const discussionAuthoringComponentModule = angular
-  .module('discussionAuthoringComponentModule', ['pascalprecht.translate'])
+  .module('discussionAuthoringComponentModule', [])
   .service('DiscussionService', downgradeInjectable(DiscussionService))
-  .component('editDiscussionAdvanced', EditDiscussionAdvancedComponent)
   .directive(
     'discussionAuthoring',
     downgradeComponent({ component: DiscussionAuthoring }) as angular.IDirectiveFactory
   )
-  .config([
-    '$translatePartialLoaderProvider',
-    ($translatePartialLoaderProvider) => {
-      $translatePartialLoaderProvider.addPart('components/discussion/i18n');
-    }
-  ]);
+  .directive(
+    'editDiscussionAdvanced',
+    downgradeComponent({ component: EditDiscussionAdvancedComponent }) as angular.IDirectiveFactory
+  )
+  .directive(
+    'editDiscussionConnectedComponents',
+    downgradeComponent({
+      component: EditDiscussionConnectedComponentsComponent
+    }) as angular.IDirectiveFactory
+  );
 
 export default discussionAuthoringComponentModule;
