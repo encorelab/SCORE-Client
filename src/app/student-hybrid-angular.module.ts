@@ -16,10 +16,13 @@ import { AngularJSModule } from './common-hybrid-angular.module';
 import { NavItemComponent } from '../assets/wise5/vle/nav-item/nav-item.component';
 import { HtmlDialog } from '../assets/wise5/directives/html-dialog/html-dialog';
 import { MatchStudentModule } from '../assets/wise5/components/match/match-student/match-student.module';
+import { ShowMyWorkStudentModule } from '../assets/wise5/components/showMyWork/show-my-work-student/show-my-work-student.module';
 import { StudentComponentModule } from './student/student.component.module';
 import { SafeUrl } from '../assets/wise5/directives/safeUrl/safe-url.pipe';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { DialogGuidanceStudentModule } from '../assets/wise5/components/dialogGuidance/dialogGuidanceStudentModule';
+import { PeerChatStudentComponent } from '../assets/wise5/components/peerChat/peer-chat-student/peer-chat-student.component';
+import { PeerChatModule } from '../assets/wise5/components/peerChat/peer-chat.module';
 import { ComponentComponent } from '../assets/wise5/components/component/component.component';
 import { StepToolsComponent } from '../assets/wise5/themes/default/themeComponents/stepTools/step-tools.component';
 import { NavigationComponent } from '../assets/wise5/themes/default/navigation/navigation.component';
@@ -40,6 +43,7 @@ import { OutsideUrlStudentModule } from '../assets/wise5/components/outsideURL/o
 import { SummaryStudentModule } from '../assets/wise5/components/summary/summary-student/summary-student.module';
 import { SummaryDisplayModule } from '../assets/wise5/directives/summaryDisplay/summary-display.module';
 import { GenerateImageDialogComponent } from '../assets/wise5/directives/generate-image-dialog/generate-image-dialog.component';
+import { ShowGroupWorkStudentModule } from '../assets/wise5/components/showGroupWork/show-group-work-student/show-group-work-student.module';
 import { NotificationsMenuComponent } from '../assets/wise5/vle/notifications-menu/notifications-menu.component';
 import { StudentAccountMenuComponent } from '../assets/wise5/vle/student-account-menu/student-account-menu.component';
 
@@ -50,6 +54,7 @@ import { StudentAccountMenuComponent } from '../assets/wise5/vle/student-account
     HtmlDialog,
     NavigationComponent,
     NavItemComponent,
+    PeerChatStudentComponent,
     NotificationsMenuComponent,
     SafeUrl,
     StepToolsComponent,
@@ -72,6 +77,9 @@ import { StudentAccountMenuComponent } from '../assets/wise5/vle/student-account
     MultipleChoiceStudentModule,
     OpenResponseStudentModule,
     OutsideUrlStudentModule,
+    PeerChatModule,
+    ShowGroupWorkStudentModule,
+    ShowMyWorkStudentModule,
     StudentAssetsModule,
     StudentComponentModule,
     SummaryDisplayModule,

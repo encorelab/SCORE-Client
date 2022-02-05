@@ -63,6 +63,12 @@ import { EditOpenResponseAdvancedComponent } from '../../assets/wise5/components
 import { EditMatchAdvancedComponent } from '../../assets/wise5/components/match/edit-match-advanced/edit-match-advanced.component';
 import { EditSummaryAdvancedComponent } from '../../assets/wise5/components/summary/edit-summary-advanced/edit-summary-advanced.component';
 import { EditTableAdvancedComponent } from '../../assets/wise5/components/table/edit-table-advanced/edit-table-advanced.component';
+import { EditPeerChatAdvancedComponentComponent } from '../../assets/wise5/components/peerChat/edit-peer-chat-advanced-component/edit-peer-chat-advanced-component.component';
+import { PeerChatAuthoringComponent } from '../../assets/wise5/components/peerChat/peer-chat-authoring/peer-chat-authoring.component';
+import { ShowMyWorkAuthoringComponent } from '../../assets/wise5/components/showMyWork/show-my-work-authoring/show-my-work-authoring.component';
+import { EditShowMyWorkAdvancedComponent } from '../../assets/wise5/components/showMyWork/edit-show-my-work-advanced/edit-show-my-work-advanced.component';
+import { ShowGroupWorkAuthoringComponent } from '../../assets/wise5/components/showGroupWork/show-group-work-authoring/show-group-work-authoring.component';
+import { EditShowGroupWorkAdvancedComponent } from '../../assets/wise5/components/showGroupWork/edit-show-group-work-advanced/edit-show-group-work-advanced.component';
 
 @NgModule({
   declarations: [
@@ -115,6 +121,9 @@ import { EditTableAdvancedComponent } from '../../assets/wise5/components/table/
     EditMultipleChoiceConnectedComponentsComponent,
     EditOpenResponseAdvancedComponent,
     EditOutsideUrlAdvancedComponent,
+    EditPeerChatAdvancedComponentComponent,
+    EditShowGroupWorkAdvancedComponent,
+    EditShowMyWorkAdvancedComponent,
     EditSummaryAdvancedComponent,
     EditTableAdvancedComponent,
     EditTableConnectedComponentsComponent,
@@ -126,6 +135,9 @@ import { EditTableAdvancedComponent } from '../../assets/wise5/components/table/
     MultipleChoiceAuthoring,
     OpenResponseAuthoring,
     OutsideUrlAuthoring,
+    PeerChatAuthoringComponent,
+    ShowGroupWorkAuthoringComponent,
+    ShowMyWorkAuthoringComponent,
     SummaryAuthoring,
     TableAuthoring,
     WiseAuthoringTinymceEditorComponent
@@ -178,6 +190,9 @@ import { EditTableAdvancedComponent } from '../../assets/wise5/components/table/
     EditMultipleChoiceConnectedComponentsComponent,
     EditOpenResponseAdvancedComponent,
     EditOutsideUrlAdvancedComponent,
+    EditPeerChatAdvancedComponentComponent,
+    EditShowGroupWorkAdvancedComponent,
+    EditShowMyWorkAdvancedComponent,
     EditSummaryAdvancedComponent,
     EditTableAdvancedComponent,
     EditTableConnectedComponentsComponent,
@@ -189,6 +204,9 @@ import { EditTableAdvancedComponent } from '../../assets/wise5/components/table/
     MultipleChoiceAuthoring,
     OpenResponseAuthoring,
     OutsideUrlAuthoring,
+    PeerChatAuthoringComponent,
+    ShowGroupWorkAuthoringComponent,
+    ShowMyWorkAuthoringComponent,
     SummaryAuthoring,
     TableAuthoring,
     WiseAuthoringTinymceEditorComponent

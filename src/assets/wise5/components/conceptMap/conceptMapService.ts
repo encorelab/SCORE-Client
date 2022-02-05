@@ -8,7 +8,6 @@ import { StudentAssetService } from '../../services/studentAssetService';
 import ConceptMapNode from './conceptMapNode';
 import ConceptMapLink from './conceptMapLink';
 import { Injectable } from '@angular/core';
-import { UpgradeModule } from '@angular/upgrade/static';
 import { StudentDataService } from '../../services/studentDataService';
 import { UtilService } from '../../services/utilService';
 import { NodeService } from '../../services/nodeService';
@@ -16,7 +15,6 @@ import { NodeService } from '../../services/nodeService';
 @Injectable()
 export class ConceptMapService extends ComponentService {
   constructor(
-    private upgrade: UpgradeModule,
     private ConfigService: ConfigService,
     private NodeService: NodeService,
     private StudentAssetService: StudentAssetService,
@@ -26,20 +24,24 @@ export class ConceptMapService extends ComponentService {
     super(StudentDataService, UtilService);
   }
 
-  getComponentTypeLabel() {
-    return this.getTranslation('conceptMap.componentTypeLabel');
+  getComponentTypeLabel(): string {
+    return $localize`Concept Map`;
   }
 
-  getTranslation(key: string) {
-    return this.upgrade.$injector.get('$filter')('translate')(key);
+  getSVGId(domIdEnding: string): string {
+    return this.getElementId('svg', domIdEnding);
   }
 
-  getSVGId(nodeId: string, componentId: string): string {
-    return this.getElementId('svg', nodeId, componentId);
+  getConceptMapContainerId(domIdEnding: string): string {
+    return this.getElementId('concept-map-container', domIdEnding);
   }
 
-  getElementId(prefix: string, nodeId: string, componentId: string): string {
-    return `${prefix}-${nodeId}-${componentId}`;
+  getSelectNodeBarId(domIdEnding: string): string {
+    return this.getElementId('select-node-bar', domIdEnding);
+  }
+
+  getFeedbackContainerId(domIdEnding: string): string {
+    return this.getElementId('feedback-container', domIdEnding);
   }
 
   createComponent() {
@@ -1136,11 +1138,12 @@ export class ConceptMapService extends ComponentService {
   generateImageFromRenderedComponentState(componentState: any) {
     return new Promise((resolve, reject) => {
       // get the svg element. this will obtain an array.
-      let svgElement = angular.element(
-        document.querySelector(
-          `#${this.getSVGId(componentState.nodeId, componentState.componentId)}`
-        )
+      const id = this.getDomIdEnding(
+        componentState.nodeId,
+        componentState.componentId,
+        componentState
       );
+      let svgElement = angular.element(document.querySelector(`#${this.getSVGId(id)}`));
 
       if (svgElement != null && svgElement.length > 0) {
         // get the svg element

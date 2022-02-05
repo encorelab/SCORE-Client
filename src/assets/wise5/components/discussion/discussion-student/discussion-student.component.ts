@@ -11,7 +11,6 @@ import { UtilService } from '../../../services/utilService';
 import { StudentAssetRequest } from '../../../vle/studentAsset/StudentAssetRequest';
 import { ComponentStudent } from '../../component-student.component';
 import { ComponentService } from '../../componentService';
-import { ComponentStateRequest } from '../../ComponentStateRequest';
 import { DiscussionService } from '../discussionService';
 import * as angular from 'angular';
 
@@ -340,9 +339,6 @@ export class DiscussionStudent extends ComponentStudent {
   addAnnotation(annotation: any) {
     const annotations = this.componentAnnotations.concat(annotation);
     this.componentAnnotations = this.filterLatestAnnotationsByWorkgroup(annotations);
-  }
-  isWorkFromClassmate(componentState) {
-    return componentState.workgroupId !== this.ConfigService.getWorkgroupId();
   }
 
   isWorkFromThisComponent(componentState) {

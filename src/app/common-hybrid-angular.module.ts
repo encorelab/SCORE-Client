@@ -73,6 +73,11 @@ import { setUpLocationSync } from '@angular/router/upgrade';
 import { DialogGuidanceService } from '../assets/wise5/components/dialogGuidance/dialogGuidanceService';
 import { DialogResponseComponent } from '../assets/wise5/components/dialogGuidance/dialog-response/dialog-response.component';
 import { DialogResponsesComponent } from '../assets/wise5/components/dialogGuidance/dialog-responses/dialog-responses.component';
+import { PeerChatService } from '../assets/wise5/components/peerChat/peerChatService';
+import { HighchartsChartModule } from 'highcharts-angular';
+import { ShowMyWorkService } from '../assets/wise5/components/showMyWork/showMyWorkService';
+import { ShowGroupWorkService } from '../assets/wise5/components/showGroupWork/showGroupWorkService';
+import { PeerGroupService } from '../assets/wise5/services/peerGroupService';
 
 @Component({ template: `` })
 export class EmptyComponent {}
@@ -93,6 +98,7 @@ export class EmptyComponent {}
     EditorModule,
     FlexLayoutModule,
     FormsModule,
+    HighchartsChartModule,
     MatAutocompleteModule,
     MatButtonModule,
     MatCardModule,
@@ -145,9 +151,13 @@ export class EmptyComponent {}
     NotificationService,
     OutsideURLService,
     OpenResponseService,
+    PeerChatService,
+    PeerGroupService,
     ProjectLibraryService,
     { provide: ProjectService, useExisting: VLEProjectService },
     SessionService,
+    ShowGroupWorkService,
+    ShowMyWorkService,
     StudentAssetService,
     StudentDataService,
     StudentWebSocketService,

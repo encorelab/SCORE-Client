@@ -27,6 +27,9 @@ export abstract class ComponentStudent {
   componentState: any;
 
   @Input()
+  isDisabled: boolean = false;
+
+  @Input()
   mode: string;
 
   @Input()
@@ -44,7 +47,6 @@ export abstract class ComponentStudent {
   isSubmitDirty: boolean = false;
   isSubmit: boolean = false;
   isDirty: boolean = false;
-  isDisabled: boolean = false;
   isStudentAttachmentEnabled: boolean = false;
   submitCounter: number = 0;
   latestAnnotations: any;
@@ -185,6 +187,10 @@ export abstract class ComponentStudent {
 
   isForThisComponent(object: any) {
     return this.nodeId === object.nodeId && this.componentId === object.componentId;
+  }
+
+  isWorkFromClassmate(componentState: any): boolean {
+    return componentState.workgroupId !== this.ConfigService.getWorkgroupId();
   }
 
   subscribeToAttachStudentAsset() {
