@@ -63,7 +63,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
-import { ClassResponse } from '../assets/wise5/components/discussion/class-response/class-response.component';
 import { ComponentService } from '../assets/wise5/components/componentService';
 import { WiseLinkService } from './services/wiseLinkService';
 import { DataExportService } from '../assets/wise5/services/dataExportService';
@@ -71,13 +70,17 @@ import { MatChipsModule } from '@angular/material/chips';
 import { NotebookModule } from './notebook/notebook.module';
 import { MatSliderModule } from '@angular/material/slider';
 import { setUpLocationSync } from '@angular/router/upgrade';
+import { DialogGuidanceService } from '../assets/wise5/components/dialogGuidance/dialogGuidanceService';
+import { DialogResponseComponent } from '../assets/wise5/components/dialogGuidance/dialog-response/dialog-response.component';
+import { DialogResponsesComponent } from '../assets/wise5/components/dialogGuidance/dialog-responses/dialog-responses.component';
 
 @Component({ template: `` })
 export class EmptyComponent {}
 
 @NgModule({
   declarations: [
-    ClassResponse,
+    DialogResponseComponent,
+    DialogResponsesComponent,
     EmptyComponent,
     HelpIconComponent,
     NodeIconComponent,
@@ -128,6 +131,7 @@ export class EmptyComponent {}
     ConfigService,
     CRaterService,
     DataExportService,
+    DialogGuidanceService,
     DiscussionService,
     DrawService,
     EmbeddedService,
@@ -155,8 +159,9 @@ export class EmptyComponent {}
     WiseLinkService
   ],
   exports: [
-    ClassResponse,
     CommonModule,
+    DialogResponseComponent,
+    DialogResponsesComponent,
     DragDropModule,
     EditorModule,
     FlexLayoutModule,

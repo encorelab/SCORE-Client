@@ -323,10 +323,6 @@ export class AnnotationService {
     return this.getTotalScore(annotationsForNodeAndWorkgroup);
   }
 
-  componentExists(nodeId, componentId) {
-    return this.ProjectService.getComponentByNodeIdAndComponentId(nodeId, componentId) != null;
-  }
-
   /**
    * Create an auto score annotation
    * @param runId the run id

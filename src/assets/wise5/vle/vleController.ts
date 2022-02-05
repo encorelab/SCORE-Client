@@ -19,7 +19,6 @@ class VLEController {
   constraintsDisabled: boolean = false;
   currentNode: any;
   homePath: string;
-  maxScore: any;
   navFilter: any;
   navFilters: any;
   newNotifications: any;
@@ -35,7 +34,6 @@ class VLEController {
   reportEnabled: boolean = false;
   reportFullscreen: boolean = false;
   themePath: string;
-  totalScore: any;
   subscriptions: Subscription = new Subscription();
 
   static $inject = [
@@ -88,8 +86,6 @@ class VLEController {
 
     this.projectStyle = this.ProjectService.getStyle();
     this.projectName = this.ProjectService.getProjectTitle();
-    this.totalScore = this.StudentDataService.getTotalScore();
-    this.maxScore = this.StudentDataService.maxScore;
     if (this.NotebookService.isNotebookEnabled()) {
       this.notebookConfig = this.NotebookService.getStudentNotebookConfig();
       this.notesEnabled = this.notebookConfig.itemTypes.note.enabled;
@@ -198,14 +194,11 @@ class VLEController {
       this.$anchorScroll('node');
     });
 
-    this.notifications = this.NotificationService.notifications;
-    this.newNotifications = this.getNewNotifications();
-
+    this.processNotifications();
     this.subscriptions.add(
       this.NotificationService.notificationChanged$.subscribe(() => {
         // update new notifications
-        this.notifications = this.NotificationService.notifications;
-        this.newNotifications = this.getNewNotifications();
+        this.processNotifications();
       })
     );
 
@@ -306,22 +299,9 @@ class VLEController {
     this.subscriptions.unsubscribe();
   }
 
-  goHome() {
-    const nodeId = null;
-    const componentId = null;
-    const componentType = null;
-    const category = 'Navigation';
-    const event = 'goHomeButtonClicked';
-    const eventData = {};
-    this.StudentDataService.saveVLEEvent(
-      nodeId,
-      componentId,
-      componentType,
-      category,
-      event,
-      eventData
-    );
-    this.SessionService.goHome();
+  processNotifications(): void {
+    this.notifications = this.NotificationService.notifications;
+    this.newNotifications = this.NotificationService.getNewNotifications();
   }
 
   logOut(eventName = 'logOut') {
@@ -362,84 +342,6 @@ class VLEController {
   }
 
   /**
-   * Returns all notifications that have not been dismissed yet
-   * The newNotifications is an array of notification aggregate objects that looks like this:
-   * [
-   *  {
-   *    "nodeId": "node2",
-   *    "type": "DiscussionReply",   // ["DiscussionReply", "teacherToStudent"]
-   *    "notifications": [{ id: 1117} , { id: 1120 }]      // array of actual undismissed notifications with this nodeId and type
-   *  },
-   *  ...
-   * ]
-   * The annotation aggregates will be sorted by latest first -> oldest last
-   */
-  getNewNotifications() {
-    let newNotificationAggregates = [];
-    for (let notification of this.notifications) {
-      if (notification.timeDismissed == null) {
-        let notificationNodeId = notification.nodeId;
-        let notificationType = notification.type;
-        let newNotificationForNodeIdAndTypeExists = false;
-        for (let newNotificationAggregate of newNotificationAggregates) {
-          if (
-            newNotificationAggregate.nodeId == notificationNodeId &&
-            newNotificationAggregate.type == notificationType
-          ) {
-            newNotificationForNodeIdAndTypeExists = true;
-            newNotificationAggregate.notifications.push(notification);
-            if (notification.timeGenerated > newNotificationAggregate.latestNotificationTimestamp) {
-              newNotificationAggregate.latestNotificationTimestamp = notification.timeGenerated;
-            }
-          }
-        }
-        let notebookItemId = null; // if this notification was created because teacher commented on a notebook report.
-        if (!newNotificationForNodeIdAndTypeExists) {
-          let message = '';
-          if (notificationType === 'DiscussionReply') {
-            message = this.$translate('newRepliesOnDiscussionPost');
-          } else if (notificationType === 'teacherToStudent') {
-            message = this.$translate('newFeedbackFromTeacher');
-            if (notification.data != null) {
-              if (typeof notification.data === 'string') {
-                notification.data = angular.fromJson(notification.data);
-              }
-
-              if (notification.data.annotationId != null) {
-                let annotation = this.AnnotationService.getAnnotationById(
-                  notification.data.annotationId
-                );
-                if (annotation != null && annotation.notebookItemId != null) {
-                  notebookItemId = annotation.notebookItemId;
-                }
-              }
-            }
-          } else if (notificationType === 'CRaterResult') {
-            message = this.$translate('newFeedback');
-          } else {
-            message = notification.message;
-          }
-          let newNotificationAggregate = {
-            latestNotificationTimestamp: notification.timeGenerated,
-            message: message,
-            nodeId: notificationNodeId,
-            notebookItemId: notebookItemId,
-            notifications: [notification],
-            type: notificationType
-          };
-          newNotificationAggregates.push(newNotificationAggregate);
-        }
-      }
-    }
-
-    // sort the aggregates by latestNotificationTimestamp, latest -> oldest
-    newNotificationAggregates.sort((n1, n2) => {
-      return n2.latestNotificationTimestamp - n1.latestNotificationTimestamp;
-    });
-    return newNotificationAggregates;
-  }
-
-  /**
    * Returns all ambient notifications that have not been dismissed yet
    */
   getNewAmbientNotifications() {
@@ -447,20 +349,6 @@ class VLEController {
       let isAmbient = notification.data ? notification.data.isAmbient : false;
       return notification.timeDismissed == null && isAmbient;
     });
-  }
-
-  dismissNotification(event, notification) {
-    if (notification.data == null || notification.data.dismissCode == null) {
-      this.NotificationService.dismissNotification(notification);
-    } else {
-      // ask user to input dimiss code before dimissing it
-      let args = {
-        event: event,
-        notification: notification
-      };
-      this.NotificationService.broadcastViewCurrentAmbientNotification(args);
-      this.$mdMenu.hide();
-    }
   }
 
   /**
@@ -475,46 +363,6 @@ class VLEController {
         notification: ambientNotifications[0]
       };
       this.NotificationService.broadcastViewCurrentAmbientNotification(args);
-    }
-  }
-
-  /**
-   * Dismiss the notification aggregate object, which effectively dismisses all notifications
-   * for the nodeId and type of the aggregate object.
-   * @param event
-   * @param notificationAggregate
-   */
-  dismissNotificationAggregate(event, notificationAggregate) {
-    if (notificationAggregate != null && notificationAggregate.notifications != null) {
-      for (let notification of notificationAggregate.notifications) {
-        this.dismissNotification(event, notification);
-      }
-    }
-  }
-
-  /**
-   * Dismiss the specified notification aggregate object and visit the node
-   * @param notificationAggregate, which contains nodeId, type, and notifications of that nodeId and type
-   */
-  dismissNotificationAggregateAndVisitNode(event, notificationAggregate) {
-    if (notificationAggregate != null && notificationAggregate.notifications != null) {
-      for (const notification of notificationAggregate.notifications) {
-        if (notification.data == null || notification.data.dismissCode == null) {
-          // only dismiss notifications that don't require a dismiss code,
-          // but still allow them to move to the node
-          this.dismissNotification(event, notification);
-        }
-      }
-    }
-
-    let goToNodeId = notificationAggregate.nodeId;
-    let notebookItemId = notificationAggregate.notebookItemId;
-    if (goToNodeId != null) {
-      this.StudentDataService.endCurrentNodeAndSetCurrentNodeByNodeId(goToNodeId);
-    } else if (notebookItemId != null) {
-      // assume notification with notebookItemId is for the report for now,
-      // as we don't currently support annotations on notes
-      this.NotebookService.broadcastShowReportAnnotations();
     }
   }
 

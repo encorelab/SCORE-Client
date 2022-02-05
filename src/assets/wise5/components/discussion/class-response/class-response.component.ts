@@ -32,13 +32,13 @@ export class ClassResponse {
   response: any;
 
   @Input()
-  numreplies: number;
+  numReplies: number;
 
   @Input()
   mode: any;
 
   @Input()
-  isdisabled: any;
+  isDisabled: boolean;
 
   @Input()
   isvotingallowed: boolean;
@@ -66,7 +66,6 @@ export class ClassResponse {
   constructor(private ConfigService: ConfigService, private AnnotationService: AnnotationService) {}
 
   ngOnInit(): void {
-    this.isdisabled = this.isdisabled === 'true';
     this.injectLinksIntoResponse();
     this.injectLinksIntoReplies();
     if (this.hasAnyReply()) {
@@ -76,7 +75,7 @@ export class ClassResponse {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.numreplies != null && !changes.numreplies.isFirstChange()) {
+    if (changes.numReplies != null && !changes.numReplies.isFirstChange()) {
       this.expanded = true;
       this.injectLinksIntoReplies();
       this.showAllReplies();

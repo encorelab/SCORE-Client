@@ -56,8 +56,8 @@
       </div>
       <svg id="{{svgId}}"
           class="concept-map-svg"
-          [ngStyle]='{"background-image": background != null ? "url(" + background + ")" : "",
-          "background-size": backgroundSize}'>
+          [style.background-image]="backgroundUrl"
+          [style.background-size]="backgroundSize">
       </svg>
     </div>
     <div *ngIf="displayLinkTypeChooser"
@@ -112,6 +112,7 @@
       [isDirty]="isDirty"
       [isDisabled]="isDisabled"
       [isSaveButtonVisible]="isSaveButtonVisible"
+      [isSubmitButtonDisabled]="isSubmitButtonDisabled"
       [isSubmitButtonVisible]="isSubmitButtonVisible"
       [isSubmitDirty]="isSubmitDirty"
       [saveMessage]="saveMessage"
