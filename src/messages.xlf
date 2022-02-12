@@ -284,7 +284,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/assets/wise5/classroomMonitor/classroomMonitorComponents/peer-group/peer-group-dialog/peer-group-dialog.component.html</context>
-          <context context-type="linenumber">14</context>
+          <context context-type="linenumber">13</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/assets/wise5/classroomMonitor/classroomMonitorComponents/view-component-revisions/view-component-revisions.component.html</context>
@@ -819,6 +819,38 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/authoring-tool/edit-component-max-submit/edit-component-max-submit.component.html</context>
           <context context-type="linenumber">3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="bf53458f6b19dba9c15c339aa781d23b1370e9c8" datatype="html">
+        <source>Peer Group Activity Tag</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/authoring-tool/edit-component-peer-group-activity-tag/edit-component-peer-group-activity-tag.component.html</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/assets/wise5/components/showGroupWork/show-group-work-authoring/show-group-work-authoring.component.html</context>
+          <context context-type="linenumber">30</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="fe73bc1a92595cfbfa514767a069501f41f481fd" datatype="html">
+        <source>Edit Peer Group Activity Tag</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/authoring-tool/edit-component-peer-group-activity-tag/edit-component-peer-group-activity-tag.component.html</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="c42b84a8f0a424ed8a9d8ca931b63e32fb1a4615" datatype="html">
+        <source>Save Peer Group Activity Tag</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/authoring-tool/edit-component-peer-group-activity-tag/edit-component-peer-group-activity-tag.component.html</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7f8a7e8f687a6df9a66f413b60a50838ef791585" datatype="html">
+        <source>Cancel Edit Peer Group Activity Tag</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/authoring-tool/edit-component-peer-group-activity-tag/edit-component-peer-group-activity-tag.component.html</context>
+          <context context-type="linenumber">35</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6bc7f2c14cb3141e690735b278591defe07c68fb" datatype="html">
@@ -9729,8 +9761,8 @@ Click &quot;Cancel&quot; to keep the invalid JSON open so you can fix it.</sourc
           <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="2b077437ecbac737ec20e69f17994e9cb36386f5" datatype="html">
-        <source>Groupings for <x id="INTERPOLATION" equiv-text="{{ componentLabel }}"/> in <x id="INTERPOLATION_1" equiv-text="{{ stepNumber }}"/></source>
+      <trans-unit id="1122479349c26fc9252e6d4037890c2b43bd530f" datatype="html">
+        <source>Groupings for <x id="INTERPOLATION" equiv-text="{{ peerGroupActivityTag }}"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/assets/wise5/classroomMonitor/classroomMonitorComponents/peer-group/peer-group-dialog/peer-group-dialog.component.html</context>
           <context context-type="linenumber">2</context>
@@ -14677,13 +14709,6 @@ If this problem continues, let your teacher know and move on to the next activit
           <context context-type="linenumber">17</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="bf53458f6b19dba9c15c339aa781d23b1370e9c8" datatype="html">
-        <source>Peer Group Activity Tag</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/assets/wise5/components/showGroupWork/show-group-work-authoring/show-group-work-authoring.component.html</context>
-          <context context-type="linenumber">30</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="f5e5d449095ff67307e2d7c8a4da0147117406b0" datatype="html">
         <source> Show My Work </source>
         <context-group purpose="location">
@@ -14712,15 +14737,11 @@ If this problem continues, let your teacher know and move on to the next activit
           <context context-type="linenumber">64</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="3e4063d41615b0bdb15dd79a55e0334dabeb361f" datatype="html">
-        <source>(No response)</source>
+      <trans-unit id="eb510437a59aa977a4ae78f1c314756a0b1cba11" datatype="html">
+        <source> (Waiting for response...) </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/assets/wise5/components/showGroupWork/show-group-work-student/show-group-work-student.component.html</context>
-          <context context-type="linenumber">15</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/assets/wise5/components/showMyWork/show-my-work-student/show-my-work-student.component.html</context>
-          <context context-type="linenumber">4</context>
+          <context context-type="linenumber">17,18</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6296654944974704263" datatype="html">
@@ -14728,6 +14749,13 @@ If this problem continues, let your teacher know and move on to the next activit
         <context-group purpose="location">
           <context context-type="sourcefile">src/assets/wise5/components/showGroupWork/showGroupWorkService.ts</context>
           <context context-type="linenumber">16</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3e4063d41615b0bdb15dd79a55e0334dabeb361f" datatype="html">
+        <source>(No response)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/assets/wise5/components/showMyWork/show-my-work-student/show-my-work-student.component.html</context>
+          <context context-type="linenumber">4</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8147119602241675293" datatype="html">
@@ -15429,7 +15457,7 @@ If this problem continues, let your teacher know and move on to the next activit
         <source>Step Info</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/assets/wise5/services/nodeService.ts</context>
-          <context context-type="linenumber">726</context>
+          <context context-type="linenumber">725</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1384916903989385807" datatype="html">
