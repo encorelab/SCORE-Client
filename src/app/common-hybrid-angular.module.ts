@@ -48,17 +48,17 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
-import { HelpIconComponent } from '../assets/wise5/themes/default/themeComponents/helpIcon/help-icon.component';
 import { NodeStatusIcon } from '../assets/wise5/themes/default/themeComponents/nodeStatusIcon/node-status-icon.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MomentModule } from 'ngx-moment';
-import { EditorModule, TINYMCE_SCRIPT_SRC } from '@tinymce/tinymce-angular';
+import { EditorModule } from '@tinymce/tinymce-angular';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatRadioModule } from '@angular/material/radio';
@@ -78,6 +78,11 @@ import { HighchartsChartModule } from 'highcharts-angular';
 import { ShowMyWorkService } from '../assets/wise5/components/showMyWork/showMyWorkService';
 import { ShowGroupWorkService } from '../assets/wise5/components/showGroupWork/showGroupWorkService';
 import { PeerGroupService } from '../assets/wise5/services/peerGroupService';
+import { EditNotebookItemDialogModule } from '../assets/wise5/themes/default/notebook/edit-notebook-item-dialog/edit-notebook-item-dialog.module';
+import { ComputerAvatarService } from '../assets/wise5/services/computerAvatarService';
+import { StudentStatusService } from '../assets/wise5/services/studentStatusService';
+import { OpenResponseCompletionCriteriaService } from '../assets/wise5/components/openResponse/openResponseCompletionCriteriaService';
+import { ComponentServiceLookupService } from '../assets/wise5/services/componentServiceLookupService';
 
 @Component({ template: `` })
 export class EmptyComponent {}
@@ -87,7 +92,6 @@ export class EmptyComponent {}
     DialogResponseComponent,
     DialogResponsesComponent,
     EmptyComponent,
-    HelpIconComponent,
     NodeIconComponent,
     NodeStatusIcon
   ],
@@ -95,12 +99,14 @@ export class EmptyComponent {}
     UpgradeModule,
     CommonModule,
     DragDropModule,
+    EditNotebookItemDialogModule,
     EditorModule,
     FlexLayoutModule,
     FormsModule,
     HighchartsChartModule,
     MatAutocompleteModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatCardModule,
     MatCheckboxModule,
     MatDialogModule,
@@ -134,6 +140,8 @@ export class EmptyComponent {}
     AudioRecorderService,
     ConceptMapService,
     ComponentService,
+    ComponentServiceLookupService,
+    ComputerAvatarService,
     ConfigService,
     CRaterService,
     DataExportService,
@@ -150,6 +158,7 @@ export class EmptyComponent {}
     NotebookService,
     NotificationService,
     OutsideURLService,
+    OpenResponseCompletionCriteriaService,
     OpenResponseService,
     PeerChatService,
     PeerGroupService,
@@ -160,6 +169,7 @@ export class EmptyComponent {}
     ShowMyWorkService,
     StudentAssetService,
     StudentDataService,
+    StudentStatusService,
     StudentWebSocketService,
     SummaryService,
     TableService,
@@ -178,6 +188,7 @@ export class EmptyComponent {}
     FormsModule,
     MatAutocompleteModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatCardModule,
     MatCheckboxModule,
     MatChipsModule,

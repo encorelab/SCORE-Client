@@ -9,7 +9,7 @@ import { PeerGroupService } from '../../../../services/peerGroupService';
   styleUrls: ['./peer-group-period.component.scss']
 })
 export class PeerGroupPeriodComponent implements OnInit {
-  @Input() peerGroupActivityTag: string;
+  @Input() peerGroupingTag: string;
   @Input() period: any;
 
   UNASSIGNED_GROUP_ID = 0;
@@ -24,7 +24,7 @@ export class PeerGroupPeriodComponent implements OnInit {
   ngOnInit(): void {}
 
   ngOnChanges(): void {
-    this.PeerGroupService.retrievePeerGroupInfo(this.peerGroupActivityTag).subscribe(
+    this.PeerGroupService.retrievePeerGroupInfo(this.peerGroupingTag).subscribe(
       ({ peerGroups, workgroupsNotInPeerGroup }) => {
         for (const peerGroup of this.getPeerGroupsInPeriod(peerGroups, this.period.periodId)) {
           this.addGrouping(peerGroup);
@@ -71,7 +71,7 @@ export class PeerGroupPeriodComponent implements OnInit {
   createNewGroup(): Subscription {
     return this.PeerGroupService.createNewGroup(
       this.period.periodId,
-      this.peerGroupActivityTag
+      this.peerGroupingTag
     ).subscribe(
       (group) => {
         this.addGrouping(group);
@@ -150,14 +150,11 @@ export class PeerGroupPeriodComponent implements OnInit {
   }
 
   removeWorkgroupFromGroup(workgroupId: number, groupId: number): void {
-    for (const group of this.groupings) {
-      if (group.id === groupId) {
-        for (let w = 0; w < group.members.length; w++) {
-          if (group.members[w].id === workgroupId) {
-            group.members.splice(w, 1);
-            return;
-          }
-        }
+    const group = this.getGroup(groupId);
+    for (let w = 0; w < group.members.length; w++) {
+      if (group.members[w].id === workgroupId) {
+        group.members.splice(w, 1);
+        return;
       }
     }
   }
@@ -173,11 +170,6 @@ export class PeerGroupPeriodComponent implements OnInit {
   }
 
   getGroup(groupId: number): any {
-    for (const group of this.groupings) {
-      if (group.id === groupId) {
-        return group;
-      }
-    }
-    return null;
+    return this.groupings.find((group) => group.id === groupId);
   }
 }

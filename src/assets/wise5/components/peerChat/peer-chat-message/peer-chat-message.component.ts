@@ -13,12 +13,15 @@ export class PeerChatMessageComponent implements OnInit {
 
   @Input()
   displayNames: string;
-  
+
   @Input()
   myWorkgroupId: number;
 
   @Input()
   peerChatMessage: PeerChatMessage;
+
+  @Input()
+  isTeacher: boolean;
 
   isMyMessage: boolean;
   text: string;

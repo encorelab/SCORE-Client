@@ -19,31 +19,16 @@ export class PeerChatChatBoxComponent implements OnInit {
   @Input()
   workgroupInfos: any = {};
 
+  workgroupInfosWithoutTeachers: any[];
+
   @Output('onSubmit')
   submit: EventEmitter<string> = new EventEmitter<string>();
 
-  isSubmitEnabled: boolean = false;
-  messageText: string;
-
-  constructor() {}
-
-  ngOnInit(): void {}
-
-  responseChanged(): void {
-    this.isSubmitEnabled = this.messageText.length > 0;
+  ngOnInit(): void {
+    this.workgroupInfosWithoutTeachers = this.filterOutTeachers(this.workgroupInfos);
   }
 
-  keyPressed(event: any): void {
-    if (event.keyCode === 13) {
-      event.preventDefault();
-      if (this.isSubmitEnabled) {
-        this.submitResponse();
-      }
-    }
-  }
-
-  submitResponse(): void {
-    this.submit.emit(this.messageText);
-    this.messageText = '';
+  private filterOutTeachers(workgroupInfos: any): any[] {
+    return Object.values(workgroupInfos).filter((workgroupInfo: any) => !workgroupInfo.isTeacher);
   }
 }

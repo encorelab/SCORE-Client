@@ -20,11 +20,10 @@ import { PeerGroup } from '../../peerChat/PeerGroup';
 })
 export class ShowGroupWorkStudentComponent extends ComponentStudent {
   flexLayout: string = 'column';
+  isPeerGroupRetrieved: boolean = false;
   narrowComponentTypes: string[] = ['MultipleChoice', 'OpenResponse'];
-  peerGroup: PeerGroup = new PeerGroup();
+  peerGroup: PeerGroup;
   showWorkComponentContent: any;
-  showWorkNodeId: string;
-  studentWorkFromGroupMembers: any[];
   widthLg: number = 100;
   widthMd: number = 100;
   workgroupIdToWork = new Map();
@@ -58,48 +57,57 @@ export class ShowGroupWorkStudentComponent extends ComponentStudent {
 
   ngOnInit(): void {
     super.ngOnInit();
+    this.retrieveStudentWorkForPeerGroup();
+    this.setShowWorkComponentContent();
+  }
+
+  private retrieveStudentWorkForPeerGroup(): void {
     this.peerGroupService
-      .retrievePeerGroup(this.componentContent.peerGroupActivityTag)
-      .subscribe((peerGroup) => {
-        this.peerGroup = peerGroup;
-        this.setWorkgroupInfos();
-        this.peerGroupService
-          .retrieveStudentWork(
-            peerGroup,
-            this.nodeId,
-            this.componentId,
-            this.componentContent.showWorkNodeId,
-            this.componentContent.showWorkComponentId
-          )
-          .subscribe((studentWorkFromGroupMembers: any[]) => {
-            this.setStudentWorkFromGroupMembers(studentWorkFromGroupMembers);
-            this.setLayout();
-          });
+      .retrievePeerGroup(this.componentContent.peerGroupingTag, this.workgroupId)
+      .subscribe((peerGroup: PeerGroup) => {
+        if (peerGroup != null) {
+          this.peerGroup = this.componentContent.isShowMyWork
+            ? peerGroup
+            : this.removeMyWorkgroup(peerGroup);
+          this.setWorkgroupInfos();
+          this.peerGroupService
+            .retrieveStudentWork(
+              peerGroup,
+              this.nodeId,
+              this.componentId,
+              this.componentContent.showWorkNodeId,
+              this.componentContent.showWorkComponentId
+            )
+            .subscribe((studentWorkFromGroupMembers: any[]) => {
+              this.setStudentWorkFromGroupMembers(studentWorkFromGroupMembers);
+              this.setLayout();
+            });
+        }
+        this.isPeerGroupRetrieved = true;
       });
-    this.showWorkComponentContent = this.projectService.getComponentByNodeIdAndComponentId(
-      this.componentContent.showWorkNodeId,
-      this.componentContent.showWorkComponentId
-    );
-    this.showWorkComponentContent = this.projectService.injectAssetPaths(
-      this.showWorkComponentContent
-    );
-    this.showWorkNodeId = this.componentContent.showWorkNodeId;
   }
 
   setStudentWorkFromGroupMembers(studentWorkFromGroupMembers: any[]): void {
-    this.studentWorkFromGroupMembers = this.componentContent.isShowMyWork
-      ? studentWorkFromGroupMembers
-      : this.removeMyWork(studentWorkFromGroupMembers);
-    this.studentWorkFromGroupMembers.forEach((work) => {
+    studentWorkFromGroupMembers.forEach((work) => {
       this.workgroupIdToWork.set(work.workgroupId, work);
     });
   }
 
-  private removeMyWork(studentWorkList: any[]): any[] {
+  private setShowWorkComponentContent(): void {
+    this.showWorkComponentContent = this.projectService.injectAssetPaths(
+      this.projectService.getComponentByNodeIdAndComponentId(
+        this.componentContent.showWorkNodeId,
+        this.componentContent.showWorkComponentId
+      )
+    );
+  }
+
+  private removeMyWorkgroup(peerGroup: PeerGroup): PeerGroup {
     const myWorkgroupId = this.configService.getWorkgroupId();
-    return studentWorkList.filter((studentWork) => {
-      return studentWork.workgroupId !== myWorkgroupId;
+    peerGroup.members = peerGroup.members.filter((workgroup) => {
+      return workgroup.id !== myWorkgroupId;
     });
+    return peerGroup;
   }
 
   setWorkgroupInfos(): void {

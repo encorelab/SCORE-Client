@@ -291,12 +291,27 @@ export class ConfigService {
     }
   }
 
-  getTeacherWorkgroupId() {
+  getTeacherWorkgroupIds(): number[] {
+    const teacherWorkgroupIds = [];
+    teacherWorkgroupIds.push(this.getTeacherWorkgroupId());
+    teacherWorkgroupIds.push(...this.getSharedTeacherWorkgroupIds());
+    return teacherWorkgroupIds;
+  }
+
+  getTeacherWorkgroupId(): number {
     const teacherUserInfo = this.getTeacherUserInfo();
     if (teacherUserInfo != null) {
       return teacherUserInfo.workgroupId;
     }
     return null;
+  }
+
+  getSharedTeacherWorkgroupIds(): number[] {
+    const workgroupIds = [];
+    this.getSharedTeacherUserInfos().forEach((sharedTeacherUserInfo: any) => {
+      workgroupIds.push(sharedTeacherUserInfo.workgroupId);
+    });
+    return workgroupIds;
   }
 
   getTeacherUserInfo() {
@@ -565,15 +580,9 @@ export class ConfigService {
   }
 
   getUserIdsStringByWorkgroupId(workgroupId: number): string {
-    const translate = this.upgrade.$injector.get('$filter')('translate');
-    const ids = this.getUserIdsByWorkgroupId(workgroupId);
-    return ids.length > 0
-      ? ids
-          .map(function (id) {
-            return translate('studentId', { id: id });
-          })
-          .join(', ')
-      : '';
+    return this.getUserIdsByWorkgroupId(workgroupId)
+      .map((id) => $localize`Student ${id}`)
+      .join(', ');
   }
 
   isPreview() {

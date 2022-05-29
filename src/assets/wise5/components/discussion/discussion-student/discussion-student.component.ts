@@ -102,7 +102,7 @@ export class DiscussionStudent extends ComponentStudent {
             componentId: this.componentId
           });
         }
-        this.getClassmateResponses(retrieveWorkFromTheseComponents);
+        this.getClassmateResponsesFromComponents(retrieveWorkFromTheseComponents);
       } else {
         if (this.isClassmateResponsesGated()) {
           const componentState = this.componentState;
@@ -345,30 +345,31 @@ export class DiscussionStudent extends ComponentStudent {
     return this.isForThisComponent(componentState);
   }
 
-  getClassmateResponses(components = [{ nodeId: this.nodeId, componentId: this.componentId }]) {
-    if (this.isShowAllPostsMode()) {
-      const currentPeriodId = this.DiscussionService.TeacherDataService.getCurrentPeriod().periodId;
-      const postsForPeriod = this.DiscussionService.TeacherDataService.getComponentStatesByComponentId(
-        this.componentId
-      ).filter((componentState) => {
-        return currentPeriodId === -1 || componentState.periodId === currentPeriodId;
-      });
-      this.componentAnnotations = this.DiscussionService.TeacherDataService.getAnnotationsByNodeId(
-        this.nodeId
-      );
-      this.setClassResponses(postsForPeriod, this.componentAnnotations);
-    } else {
-      const runId = this.ConfigService.getRunId();
-      const periodId = this.componentContent.isSharedAcrossAllPeriods
-        ? null
-        : this.ConfigService.getPeriodId();
-      this.DiscussionService.getClassmateResponses(runId, periodId, components).then(
-        ({ studentWorkList, annotations }) => {
-          this.componentAnnotations = this.filterLatestAnnotationsByWorkgroup(annotations);
-          this.setClassResponses(studentWorkList, annotations);
-        }
-      );
-    }
+  getClassmateResponsesFromComponents(components: any[] = []): void {
+    const runId = this.ConfigService.getRunId();
+    const periodId = this.ConfigService.getPeriodId();
+    this.DiscussionService.getClassmateResponsesFromComponents(
+      runId,
+      periodId,
+      components
+    ).subscribe((response: any) => {
+      this.setClassResponses(response.studentWork, response.annotations);
+    });
+  }
+
+  getClassmateResponses(): void {
+    const runId = this.ConfigService.getRunId();
+    const periodId = this.componentContent.isSharedAcrossAllPeriods
+      ? null
+      : this.ConfigService.getPeriodId();
+    this.DiscussionService.getClassmateResponses(
+      runId,
+      periodId,
+      this.nodeId,
+      this.componentId
+    ).subscribe((response: any) => {
+      this.setClassResponses(response.studentWork, response.annotations);
+    });
   }
 
   filterLatestAnnotationsByWorkgroup(annotations) {

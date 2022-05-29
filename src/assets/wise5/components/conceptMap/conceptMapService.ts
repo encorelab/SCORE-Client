@@ -8,20 +8,16 @@ import { StudentAssetService } from '../../services/studentAssetService';
 import ConceptMapNode from './conceptMapNode';
 import ConceptMapLink from './conceptMapLink';
 import { Injectable } from '@angular/core';
-import { StudentDataService } from '../../services/studentDataService';
 import { UtilService } from '../../services/utilService';
-import { NodeService } from '../../services/nodeService';
 
 @Injectable()
 export class ConceptMapService extends ComponentService {
   constructor(
     private ConfigService: ConfigService,
-    private NodeService: NodeService,
     private StudentAssetService: StudentAssetService,
-    protected StudentDataService: StudentDataService,
     protected UtilService: UtilService
   ) {
-    super(StudentDataService, UtilService);
+    super(UtilService);
   }
 
   getComponentTypeLabel(): string {
@@ -63,27 +59,7 @@ export class ConceptMapService extends ComponentService {
     return component;
   }
 
-  createComponentStateObject(): any {
-    const componentState = this.NodeService.createNewComponentState();
-    componentState.studentData = {
-      conceptMapData: {
-        background: null,
-        backgroundPath: null,
-        links: [],
-        nodes: [],
-        stretchBackground: null
-      }
-    };
-    return componentState;
-  }
-
-  isCompleted(
-    component: any,
-    componentStates: any[],
-    componentEvents: any[],
-    nodeEvents: any[],
-    node: any
-  ) {
+  isCompleted(component: any, componentStates: any[], nodeEvents: any[], node: any) {
     if (componentStates != null && componentStates.length > 0) {
       if (this.isSubmitRequired(node, component)) {
         return this.hasComponentStateWithIsSubmitTrue(componentStates);

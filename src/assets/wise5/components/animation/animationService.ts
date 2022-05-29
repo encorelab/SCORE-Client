@@ -2,18 +2,9 @@
 
 import { ComponentService } from '../componentService';
 import { Injectable } from '@angular/core';
-import { UtilService } from '../../services/utilService';
-import { StudentDataService } from '../../services/studentDataService';
 
 @Injectable()
 export class AnimationService extends ComponentService {
-  constructor(
-    protected StudentDataService: StudentDataService,
-    protected UtilService: UtilService
-  ) {
-    super(StudentDataService, UtilService);
-  }
-
   getComponentTypeLabel(): string {
     return $localize`Animation`;
   }
@@ -36,13 +27,7 @@ export class AnimationService extends ComponentService {
     return component;
   }
 
-  isCompleted(
-    component: any,
-    componentStates: any[],
-    componentEvents: any[],
-    nodeEvents: any[],
-    node: any
-  ) {
+  isCompleted(component: any, componentStates: any[], nodeEvents: any[], node: any) {
     return componentStates.length > 0;
   }
 

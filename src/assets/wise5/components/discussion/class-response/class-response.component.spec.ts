@@ -1,7 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UpgradeModule } from '@angular/upgrade/static';
-import { configureTestSuite } from 'ng-bullet';
 import { MomentModule } from 'ngx-moment';
 import { AnnotationService } from '../../../services/annotationService';
 import { ConfigService } from '../../../services/configService';
@@ -12,10 +11,8 @@ let component: ClassResponse;
 let reply1: any = createComponentState('Hello');
 let reply2: any = createComponentState('World');
 
-class MockAnotationService {}
-
-describe('ClassResponse', () => {
-  configureTestSuite(() => {
+describe('ClassResponseComponent', () => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, MomentModule],
       declarations: [ClassResponse],
@@ -25,9 +22,6 @@ describe('ClassResponse', () => {
         UpgradeModule
       ]
     });
-  });
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ClassResponse);
     component = fixture.componentInstance;
     component.componentannotations = [];

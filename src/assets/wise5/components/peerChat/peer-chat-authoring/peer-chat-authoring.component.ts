@@ -1,12 +1,10 @@
 import { Component } from '@angular/core';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ProjectAssetService } from '../../../../../app/services/projectAssetService';
 import { ComponentAuthoring } from '../../../authoringTool/components/component-authoring.component';
 import { ConfigService } from '../../../services/configService';
 import { NodeService } from '../../../services/nodeService';
 import { TeacherProjectService } from '../../../services/teacherProjectService';
-import { UtilService } from '../../../services/utilService';
+import peerChatLogicOptions from './peer-chat-logic-options';
 
 @Component({
   selector: 'peer-chat-authoring',
@@ -14,7 +12,7 @@ import { UtilService } from '../../../services/utilService';
   styleUrls: ['./peer-chat-authoring.component.scss']
 })
 export class PeerChatAuthoringComponent extends ComponentAuthoring {
-  allowedShowWorkComponentTypes: string[] = [
+  allowedComponentTypes: string[] = [
     'ConceptMap',
     'Draw',
     'Graph',
@@ -24,40 +22,16 @@ export class PeerChatAuthoringComponent extends ComponentAuthoring {
     'OpenResponse',
     'Table'
   ];
-  inputChange: Subject<string> = new Subject<string>();
-  logicOptions = [
-    {
-      value: 'random',
-      text: $localize`Random`
-    },
-    {
-      value: 'maximizeSimilarIdeas',
-      text: $localize`Maximize Similar Ideas`
-    },
-    {
-      value: 'maximizeDifferentIdeas',
-      text: $localize`Maximize Different Ideas`
-    },
-    {
-      value: 'manual',
-      text: $localize`Manual`
-    }
-  ];
+  logicOptions = peerChatLogicOptions;
   nodeIds: string[];
 
   constructor(
-    protected ConfigService: ConfigService,
-    protected NodeService: NodeService,
-    protected ProjectAssetService: ProjectAssetService,
-    protected ProjectService: TeacherProjectService,
-    private UtilService: UtilService
+    protected configService: ConfigService,
+    protected nodeService: NodeService,
+    protected projectAssetService: ProjectAssetService,
+    protected projectService: TeacherProjectService
   ) {
-    super(ConfigService, NodeService, ProjectAssetService, ProjectService);
-    this.subscriptions.add(
-      this.inputChange.pipe(debounceTime(1000), distinctUntilChanged()).subscribe(() => {
-        this.componentChanged();
-      })
-    );
+    super(configService, nodeService, projectAssetService, projectService);
   }
 
   ngOnInit(): void {
@@ -77,17 +51,8 @@ export class PeerChatAuthoringComponent extends ComponentAuthoring {
     return this.ProjectService.getComponentsByNodeId(nodeId);
   }
 
-  isShowWorkComponentTypeAllowed(componentType: string): boolean {
-    return this.allowedShowWorkComponentTypes.includes(componentType);
-  }
-
-  showWorkNodeIdChanged(): void {
-    this.tryUpdateComponentId(
-      this.authoringComponentContent,
-      'showWorkNodeId',
-      'showWorkComponentId'
-    );
-    this.componentChanged();
+  isComponentTypeAllowed(componentType: string): boolean {
+    return this.allowedComponentTypes.includes(componentType);
   }
 
   tryUpdateComponentId(object: any, nodeIdFieldName: string, componentIdFieldName: string): void {
@@ -97,11 +62,6 @@ export class PeerChatAuthoringComponent extends ComponentAuthoring {
     } else if (components.length === 1) {
       object[componentIdFieldName] = components[0].id;
     }
-  }
-
-  addLogic(): void {
-    this.authoringComponentContent.logic.push({ name: 'random' });
-    this.componentChanged();
   }
 
   deleteLogic(index: number): void {
@@ -133,24 +93,15 @@ export class PeerChatAuthoringComponent extends ComponentAuthoring {
     this.componentChanged();
   }
 
-  moveQuestionUp(index: number): void {
-    this.UtilService.moveObjectUp(this.authoringComponentContent.questionBank, index);
-    this.componentChanged();
-  }
-
-  moveQuestionDown(index: number): void {
-    this.UtilService.moveObjectDown(this.authoringComponentContent.questionBank, index);
-    this.componentChanged();
-  }
-
   deleteQuestion(index: number): void {
-    if (confirm($localize`Are you sure you want to delete this question?`)) {
-      this.authoringComponentContent.questionBank.splice(index, 1);
-      this.componentChanged();
-    }
+    this.confirmAndRemove(
+      $localize`Are you sure you want to delete this question?`,
+      this.authoringComponentContent.questionBank,
+      index
+    );
   }
 
-  customTrackBy(index: number): any {
+  customTrackBy(index: number): number {
     return index;
   }
 }

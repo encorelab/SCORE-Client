@@ -1,8 +1,7 @@
-import 'svg.js';
+import SVG from 'svg.js';
 import 'svg.draggable.js';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { HtmlDialog } from '../../../directives/html-dialog/html-dialog';
 import { AnnotationService } from '../../../services/annotationService';
 import { ConfigService } from '../../../services/configService';
 import { NodeService } from '../../../services/nodeService';
@@ -14,6 +13,7 @@ import { UtilService } from '../../../services/utilService';
 import { ComponentStudent } from '../../component-student.component';
 import { ComponentService } from '../../componentService';
 import { ConceptMapService } from '../conceptMapService';
+import { DialogWithCloseComponent } from '../../../directives/dialog-with-close/dialog-with-close.component';
 
 @Component({
   selector: 'concept-map-student',
@@ -406,10 +406,9 @@ export class ConceptMapStudent extends ComponentStudent {
   }
 
   showFeedbackInPopup(feedbackText: string): void {
-    this.dialog.open(HtmlDialog, {
+    this.dialog.open(DialogWithCloseComponent, {
       data: {
         content: feedbackText,
-        isShowCloseButton: true,
         title: $localize`Feedback`
       }
     });
@@ -1474,7 +1473,16 @@ export class ConceptMapStudent extends ComponentStudent {
    * @return a component state with the merged student responses
    */
   createMergedComponentState(componentStates: any[]): any {
-    let componentStateToMergeInto: any = this.ConceptMapService.createComponentStateObject();
+    let componentStateToMergeInto: any = this.NodeService.createNewComponentState();
+    componentStateToMergeInto.studentData = {
+      conceptMapData: {
+        background: null,
+        backgroundPath: null,
+        links: [],
+        nodes: [],
+        stretchBackground: null
+      }
+    };
     for (const componentState of componentStates) {
       if (componentState.componentType === 'ConceptMap') {
         this.mergeConceptMapComponentState(componentStateToMergeInto, componentState);
@@ -1569,12 +1577,8 @@ export class ConceptMapStudent extends ComponentStudent {
     this.background = null;
   }
 
-  generateStarterState(): void {
-    this.NodeService.respondStarterState({
-      nodeId: this.nodeId,
-      componentId: this.componentId,
-      starterState: this.getConceptMapData()
-    });
+  generateStarterState(): any {
+    return this.getConceptMapData();
   }
 
   attachStudentAsset(studentAsset: any): void {

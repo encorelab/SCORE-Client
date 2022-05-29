@@ -2,6 +2,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { UpgradeModule } from '@angular/upgrade/static';
+import { PeerGrouping } from '../../../../../app/domain/peerGrouping';
 import { AnnotationService } from '../../../services/annotationService';
 import { ConfigService } from '../../../services/configService';
 import { NodeService } from '../../../services/nodeService';
@@ -16,6 +17,7 @@ import { UtilService } from '../../../services/utilService';
 import { MockService } from '../../animation/animation-student/animation-student.component.spec';
 import { ComponentService } from '../../componentService';
 import { PeerGroup } from '../../peerChat/PeerGroup';
+import { PeerGroupMember } from '../../peerChat/PeerGroupMember';
 import { ShowGroupWorkStudentComponent } from './show-group-work-student.component';
 
 class MockNotebookService {
@@ -99,19 +101,17 @@ describe('ShowGroupWorkStudentComponent', () => {
     spyOn(TestBed.inject(ProjectService), 'injectAssetPaths').and.returnValue({
       type: 'OpenResponse'
     });
-    component.studentWorkFromGroupMembers = [];
-    component.peerGroup = new PeerGroup();
-    component.peerGroup.members = [
-      { id: 1, periodId: 1 },
-      { id: 2, periodId: 1 },
-      { id: 3, periodId: 1 }
-    ];
+    component.peerGroup = new PeerGroup(
+      1,
+      [new PeerGroupMember(1, 1), new PeerGroupMember(2, 1), new PeerGroupMember(3, 1)],
+      new PeerGrouping()
+    );
     component.setWorkgroupInfos();
     spyOn(component, 'subscribeToSubscriptions').and.callFake(() => {});
     fixture.detectChanges();
   });
 
-  setStudentWork();
+  setStudentWorkFromGroupMembers();
   setLayout();
   setWidths();
 });
@@ -122,20 +122,11 @@ function createComponentState(workgroupId: number): any {
   };
 }
 
-function setStudentWork() {
-  describe('setStudentWork', () => {
-    it('should set student work from group members including my work', () => {
+function setStudentWorkFromGroupMembers() {
+  describe('setStudentWorkFromGroupMembers', () => {
+    it('should add entry to workgroupIdToWork for each student work', () => {
       component.setStudentWorkFromGroupMembers(studentWork);
-      expect(component.studentWorkFromGroupMembers.length).toEqual(2);
-      expect(Object.keys(component.workgroupInfos).length).toEqual(3);
-    });
-
-    it('should set student work from group members not including my work', () => {
-      component.componentContent.isShowMyWork = false;
-      spyOn(TestBed.inject(ConfigService), 'getWorkgroupId').and.returnValue(1);
-      component.setStudentWorkFromGroupMembers(studentWork);
-      expect(component.studentWorkFromGroupMembers.length).toEqual(1);
-      expect(Object.keys(component.workgroupInfos).length).toEqual(3);
+      expect(component.workgroupIdToWork.size).toEqual(2);
     });
   });
 }
