@@ -1,0 +1,23 @@
+<h1 mat-dialog-title i18n>Create Group</h1>
+<div mat-dialog-content class="info-block">
+  <h3 i18n>Enter a new group name</h3>
+  <edit-group-name [groupNameForm]="groupNameForm"></edit-group-name>
+  <mat-divider></mat-divider>
+  <h3 i18n>Select students to add to your new group (optional):</h3>
+  <edit-group-members
+      [membersInGroup]="membersInGroup"
+      [membersNotInGroup]="membersNotInGroup"
+      (addMemberEvent)="addMember($event)"
+      (deleteMemberEvent)="deleteMember($event)"></edit-group-members>
+  <p class="info mat-small" i18n>*Note: You can always add or remove students to this group by editing the group.</p>
+</div>
+<div mat-dialog-actions fxLayoutAlign="end" fxLayoutGap="8px">
+  <button mat-button mat-dialog-close [disabled]="isProcessing" i18n>Cancel</button>
+  <button mat-flat-button
+          color="primary"
+          (click)="saveChanges()"
+          [disabled]="groupNameForm.invalid || isProcessing">
+    <mat-progress-bar *ngIf="isProcessing" mode="indeterminate"></mat-progress-bar>
+    <ng-container i18n>Create</ng-container>
+  </button>
+</div>

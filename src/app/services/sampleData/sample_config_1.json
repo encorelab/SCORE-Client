@@ -19,9 +19,24 @@
             "userIds": [8],
             "periodName": "1",
             "username": "k t (kt0101)"
+          },
+          {
+            "periodId": 1,
+            "userIds": [6],
+            "users": [{ "id": 6 }],
+            "periodName": "1"
           }
         ],
-        "sharedTeacherUserInfos": [],
+        "sharedTeacherUserInfos": [
+          {
+            "workgroupId": 100,
+            "username": "aa"
+          },
+          {
+            "workgroupId": 101,
+            "username": "bb"
+          }
+        ],
         "periods": [
           {
             "periodId": 1,

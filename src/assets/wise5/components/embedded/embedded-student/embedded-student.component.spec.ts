@@ -3,7 +3,6 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { UpgradeModule } from '@angular/upgrade/static';
-import { configureTestSuite } from 'ng-bullet';
 import { AnnotationService } from '../../../services/annotationService';
 import { ConfigService } from '../../../services/configService';
 import { NodeService } from '../../../services/nodeService';
@@ -49,8 +48,8 @@ const patrickName = 'Patrick';
 const spongebobAge = 34;
 const spongebobName = 'Spongebob';
 
-describe('EmbeddedStudent', () => {
-  configureTestSuite(() => {
+describe('EmbeddedStudentComponent', () => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, MatDialogModule, UpgradeModule],
       declarations: [EmbeddedStudent],
@@ -70,9 +69,6 @@ describe('EmbeddedStudent', () => {
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
-  });
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(EmbeddedStudent);
     spyOn(TestBed.inject(AnnotationService), 'getLatestComponentAnnotations').and.returnValue({
       score: 0,
@@ -90,22 +86,22 @@ describe('EmbeddedStudent', () => {
       return true;
     });
     spyOn(component, 'subscribeToNotebookItemChosen').and.callFake(() => {});
-    spyOn(component, 'subscribeToSiblingComponentStudentDataChanged').and.callFake(() => {});
     spyOn(component, 'studentDataChanged').and.callFake(() => {});
     fixture.detectChanges();
   });
 
-  setWidthAndHeight();
-  initializeMessageEventListener();
   createComponentStateObject();
-  handleStudentWorkMessage();
-  sendLatestWorkToApplication();
-  getLatestStudentWorkFromOtherComponents();
   getAllStudentWorkFromOtherComponents();
+  getLatestStudentWorkFromOtherComponents();
   handleConnectedComponents();
-  mergeComponentState();
-  sendMessageToApplication();
+  handleStudentWorkMessage();
+  initializeMessageEventListener();
   isPerformOverwrite();
+  mergeASpecificFieldInAComponentState();
+  mergeComponentState();
+  sendLatestWorkToApplication();
+  sendMessageToApplication();
+  setWidthAndHeight();
 });
 
 function setWidthAndHeight() {
@@ -190,13 +186,17 @@ function createComponentStateObject() {
 function handleStudentWorkMessage() {
   describe('handleStudentWorkMessage', () => {
     it('should handle student work message', () => {
+      const broadcastComponentSaveTriggeredSpy = spyOn(
+        TestBed.inject(StudentDataService),
+        'broadcastComponentSaveTriggered'
+      );
       const spongebobStudentData = createStudentDataWithNameAndAge(spongebobName, spongebobAge);
       const messageEventData = {
         studentData: spongebobStudentData
       };
       component.handleStudentWorkMessage(messageEventData);
       expect(component.studentData).toEqual(spongebobStudentData);
-      expect(component.studentDataChanged).toHaveBeenCalled();
+      expect(broadcastComponentSaveTriggeredSpy).toHaveBeenCalled();
     });
   });
 }
@@ -390,5 +390,40 @@ function isPerformOverwrite() {
       mergeField.action = 'read';
       expect(component.isPerformOverwrite(mergeField, firstTime)).toEqual(false);
     });
+  });
+}
+
+function mergeASpecificFieldInAComponentState() {
+  it('should merge a specific field in a component state', () => {
+    const toComponentState = {
+      componentType: 'Embedded',
+      studentData: {
+        modelScore: 1,
+        modelText: 'Try Again'
+      }
+    };
+    const fromComponentState = {
+      componentType: 'Embedded',
+      studentData: {
+        modelScore: 2,
+        modelText: 'Good Job'
+      }
+    };
+    const mergeFields = [
+      {
+        name: 'modelText',
+        when: 'always',
+        action: 'write'
+      }
+    ];
+    const firstTime = true;
+    const mergedComponentState = component.mergeComponentState(
+      toComponentState,
+      fromComponentState,
+      mergeFields,
+      firstTime
+    );
+    expect(mergedComponentState.studentData.modelScore).toEqual(1);
+    expect(mergedComponentState.studentData.modelText).toEqual('Good Job');
   });
 }

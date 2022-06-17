@@ -5,29 +5,25 @@ import * as html2canvas from 'html2canvas';
 import { Injectable } from '@angular/core';
 import { ComponentService } from '../componentService';
 import { StudentAssetService } from '../../services/studentAssetService';
-import { StudentDataService } from '../../services/studentDataService';
 import { UtilService } from '../../services/utilService';
-import { UpgradeModule } from '@angular/upgrade/static';
+import { ConfigService } from '../../services/configService';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class GraphService extends ComponentService {
   seriesColors: string[] = ['blue', 'red', 'green', 'orange', 'purple', 'black'];
 
   constructor(
-    private upgrade: UpgradeModule,
+    private configService: ConfigService,
+    private http: HttpClient,
     private StudentAssetService: StudentAssetService,
-    protected StudentDataService: StudentDataService,
     protected UtilService: UtilService
   ) {
-    super(StudentDataService, UtilService);
+    super(UtilService);
   }
 
-  getComponentTypeLabel() {
-    return this.getTranslation('graph.componentTypeLabel');
-  }
-
-  getTranslation(key: string) {
-    return this.upgrade.$injector.get('$filter')('translate')(key);
+  getComponentTypeLabel(): string {
+    return $localize`Graph`;
   }
 
   /**
@@ -49,19 +45,19 @@ export class GraphService extends ComponentService {
     component.graphType = 'line';
     component.xAxis = {
       title: {
-        text: this.getTranslation('graph.timeSeconds'),
+        text: $localize`Time (seconds)`,
         useHTML: true
       },
       min: 0,
       max: 100,
-      units: this.getTranslation('graph.secondsUnit'),
+      units: $localize`s`,
       locked: true,
       type: 'limits',
       allowDecimals: false
     };
     component.yAxis = {
       title: {
-        text: this.getTranslation('graph.positionMeters'),
+        text: $localize`Position (meters)`,
         useHTML: true,
         style: {
           color: null
@@ -74,13 +70,13 @@ export class GraphService extends ComponentService {
       },
       min: 0,
       max: 100,
-      units: this.getTranslation('graph.metersUnit'),
+      units: $localize`m`,
       locked: true,
       allowDecimals: false
     };
     component.series = [
       {
-        name: this.getTranslation('graph.prediction'),
+        name: $localize`Prediction`,
         data: [],
         color: 'blue',
         dashStyle: 'Solid',
@@ -94,13 +90,7 @@ export class GraphService extends ComponentService {
     return component;
   }
 
-  isCompleted(
-    component: any,
-    componentStates: any[],
-    componentEvents: any[],
-    nodeEvents: any[],
-    node: any
-  ) {
+  isCompleted(component: any, componentStates: any[], nodeEvents: any[], node: any) {
     if (this.canEdit(component)) {
       return this.hasCompletedComponentState(componentStates, node, component);
     } else {
@@ -505,5 +495,25 @@ export class GraphService extends ComponentService {
       }
     }
     return series;
+  }
+
+  getClassmateStudentWork(
+    nodeId: string,
+    componentId: string,
+    periodId: number,
+    showWorkNodeId: string,
+    showWorkComponentId: string,
+    showClassmateWorkSource: 'period' | 'class'
+  ) {
+    const runId = this.configService.getRunId();
+    if (showClassmateWorkSource === 'period') {
+      return this.http.get(
+        `/api/classmate/graph/student-work/${runId}/${nodeId}/${componentId}/${showWorkNodeId}/${showWorkComponentId}/period/${periodId}`
+      );
+    } else {
+      return this.http.get(
+        `/api/classmate/graph/student-work/${runId}/${nodeId}/${componentId}/${showWorkNodeId}/${showWorkComponentId}/class`
+      );
+    }
   }
 }

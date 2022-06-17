@@ -6,9 +6,7 @@ import SVG from 'svg.js';
 import { ComponentService } from '../componentService';
 import { StudentAssetService } from '../../services/studentAssetService';
 import { Injectable } from '@angular/core';
-import { UpgradeModule } from '@angular/upgrade/static';
 import { UtilService } from '../../services/utilService';
-import { StudentDataService } from '../../services/studentDataService';
 
 @Injectable()
 export class LabelService extends ComponentService {
@@ -18,17 +16,18 @@ export class LabelService extends ComponentService {
   defaultTextBackgroundColor: string = 'blue';
 
   constructor(
-    private upgrade: UpgradeModule,
     private StudentAssetService: StudentAssetService,
-    protected StudentDataService: StudentDataService,
     protected UtilService: UtilService
   ) {
-    super(StudentDataService, UtilService);
-    this.StudentAssetService = StudentAssetService;
+    super(UtilService);
   }
 
-  getComponentTypeLabel() {
-    return this.upgrade.$injector.get('$filter')('translate')('label.componentTypeLabel');
+  getComponentTypeLabel(): string {
+    return $localize`Label`;
+  }
+
+  getCanvasId(domIdEnding: string): string {
+    return this.getElementId('canvas', domIdEnding);
   }
 
   createComponent() {
@@ -48,13 +47,7 @@ export class LabelService extends ComponentService {
     return component;
   }
 
-  isCompleted(
-    component: any,
-    componentStates: any[],
-    componentEvents: any[],
-    nodeEvents: any[],
-    node: any
-  ) {
+  isCompleted(component: any, componentStates: any[], nodeEvents: any[], node: any) {
     if (!this.canEdit(component) && this.UtilService.hasNodeEnteredEvent(nodeEvents)) {
       return true;
     }

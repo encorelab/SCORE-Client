@@ -1,12 +1,13 @@
-import * as angular from 'angular';
 import { Injectable } from '@angular/core';
-import { UpgradeModule } from '@angular/upgrade/static';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ConfigService } from './configService';
 import { ProjectService } from './projectService';
 import { UtilService } from './utilService';
 import { Notification } from '../../../app/domain/notification';
 import { Observable, Subject } from 'rxjs';
+import { AnnotationService } from './annotationService';
+import { DismissAmbientNotificationDialogComponent } from '../vle/dismiss-ambient-notification-dialog/dismiss-ambient-notification-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Injectable()
 export class NotificationService {
@@ -23,7 +24,8 @@ export class NotificationService {
   public viewCurrentAmbientNotification$: Observable<any> = this.viewCurrentAmbientNotificationSource.asObservable();
 
   constructor(
-    private upgrade: UpgradeModule,
+    private annotationService: AnnotationService,
+    private dialog: MatDialog,
     private http: HttpClient,
     private ConfigService: ConfigService,
     private ProjectService: ProjectService,
@@ -102,6 +104,70 @@ export class NotificationService {
         });
         return this.notifications;
       });
+  }
+
+  getNewNotifications(): any[] {
+    let newNotificationAggregates = [];
+    for (const notification of this.notifications) {
+      if (notification.timeDismissed == null) {
+        let notificationNodeId = notification.nodeId;
+        let notificationType = notification.type;
+        let newNotificationForNodeIdAndTypeExists = false;
+        for (const newNotificationAggregate of newNotificationAggregates) {
+          if (
+            newNotificationAggregate.nodeId == notificationNodeId &&
+            newNotificationAggregate.type == notificationType
+          ) {
+            newNotificationForNodeIdAndTypeExists = true;
+            newNotificationAggregate.notifications.push(notification);
+            if (notification.timeGenerated > newNotificationAggregate.latestNotificationTimestamp) {
+              newNotificationAggregate.latestNotificationTimestamp = notification.timeGenerated;
+            }
+          }
+        }
+        let notebookItemId = null; // if this notification was created because teacher commented on a notebook report.
+        if (!newNotificationForNodeIdAndTypeExists) {
+          let message = '';
+          if (notificationType === 'DiscussionReply') {
+            message = $localize`You have new replies to your discussion post!`;
+          } else if (notificationType === 'teacherToStudent') {
+            message = $localize`You have new feedback from your teacher!`;
+            if (notification.data != null) {
+              if (typeof notification.data === 'string') {
+                notification.data = JSON.parse(notification.data);
+              }
+
+              const annotationId = (notification.data as any).annotationId;
+              if (annotationId != null) {
+                let annotation = this.annotationService.getAnnotationById(annotationId);
+                if (annotation != null && annotation.notebookItemId != null) {
+                  notebookItemId = annotation.notebookItemId;
+                }
+              }
+            }
+          } else if (notificationType === 'CRaterResult') {
+            message = $localize`You have new feedback!`;
+          } else {
+            message = notification.message;
+          }
+          const newNotificationAggregate = {
+            latestNotificationTimestamp: notification.timeGenerated,
+            message: message,
+            nodeId: notificationNodeId,
+            notebookItemId: notebookItemId,
+            notifications: [notification],
+            type: notificationType
+          };
+          newNotificationAggregates.push(newNotificationAggregate);
+        }
+      }
+    }
+
+    // sort the aggregates by latestNotificationTimestamp, latest -> oldest
+    newNotificationAggregates.sort((n1, n2) => {
+      return n2.latestNotificationTimestamp - n1.latestNotificationTimestamp;
+    });
+    return newNotificationAggregates;
   }
 
   setNotificationNodePositionAndTitle(notification: Notification) {
@@ -210,20 +276,103 @@ export class NotificationService {
     }
   }
 
-  dismissNotification(notification) {
+  dismissNotification(notification: Notification): void {
     if (this.ConfigService.isPreview()) {
-      return this.pretendServerRequest(notification);
+      this.pretendServerRequest(notification);
     }
-    notification.timeDismissed = Date.parse(new Date().toString());
-    return this.http
-      .post(`${this.ConfigService.getNotificationURL()}/dismiss`, notification)
-      .toPromise()
-      .then((notification: Notification) => {
-        this.addNotification(notification);
-      });
+    const notificationsToDismiss = this.getActiveNotificationsWithSameSource(
+      this.notifications,
+      notification
+    );
+    this.dismissNotifications(notificationsToDismiss);
   }
 
-  pretendServerRequest(notification) {
+  private getActiveNotificationsWithSameSource(
+    notifications: Notification[],
+    notificationToCompare: Notification
+  ): Notification[] {
+    const sourceKey = this.getSourceKey(notificationToCompare);
+    return notifications.filter(
+      (notification) =>
+        this.isActiveNotification(notification) && this.getSourceKey(notification) === sourceKey
+    );
+  }
+
+  dismissNotifications(notifications: Notification[]): void {
+    notifications.forEach((notification: any) => {
+      notification.timeDismissed = Date.parse(new Date().toString());
+      return this.http
+        .post(`${this.ConfigService.getNotificationURL()}/dismiss`, notification)
+        .subscribe((notification: Notification) => {
+          this.addNotification(notification);
+        });
+    });
+  }
+
+  getLatestActiveNotificationsFromUniqueSource(
+    notifications: Notification[],
+    workgroupId: number
+  ): Notification[] {
+    const notificationsToWorkgroup = this.getNotificationsSentToWorkgroup(
+      notifications,
+      workgroupId
+    );
+    const activeNotifications = this.getActiveNotifications(notificationsToWorkgroup);
+    return this.getLatestUniqueSourceNotifications(activeNotifications);
+  }
+
+  private getNotificationsSentToWorkgroup(
+    notifications: Notification[],
+    workgroupId: number
+  ): Notification[] {
+    return notifications.filter((notification) => notification.toWorkgroupId === workgroupId);
+  }
+
+  private getActiveNotifications(notifications: Notification[]): Notification[] {
+    return notifications.filter((notification) => {
+      return this.isActiveNotification(notification);
+    });
+  }
+
+  private isActiveNotification(notification: Notification): boolean {
+    return notification.timeDismissed == null;
+  }
+
+  getDismissedNotificationsForWorkgroup(
+    notifications: Notification[],
+    workgroupId: number
+  ): Notification[] {
+    const notificationsToWorkgroup = this.getNotificationsSentToWorkgroup(
+      notifications,
+      workgroupId
+    );
+    return this.getDismissedNotifications(notificationsToWorkgroup);
+  }
+
+  private getDismissedNotifications(notifications: Notification[]): Notification[] {
+    return notifications.filter((notification) => notification.timeDismissed != null);
+  }
+
+  private getLatestUniqueSourceNotifications(notifications: Notification[]): Notification[] {
+    const sourcesFound = new Set<string>();
+    const latestUniqueSourceNotifications = [];
+    for (let n = notifications.length - 1; n >= 0; n--) {
+      const notification = notifications[n];
+      const sourceKey = this.getSourceKey(notification);
+      if (!sourcesFound.has(sourceKey)) {
+        latestUniqueSourceNotifications.push(notification);
+        sourcesFound.add(sourceKey);
+      }
+    }
+    return latestUniqueSourceNotifications;
+  }
+
+  private getSourceKey(notification: Notification): string {
+    const { nodeId, componentId, fromWorkgroupId, toWorkgroupId, type } = notification;
+    return `${nodeId}-${componentId}-${fromWorkgroupId}-${toWorkgroupId}-${type}`;
+  }
+
+  private pretendServerRequest(notification) {
     return Promise.resolve(notification);
   }
 
@@ -233,7 +382,7 @@ export class NotificationService {
    * (e.g. nodeId, componentId, toWorkgroupId, fromWorkgroupId, periodId, type)
    * @returns array of notificaitons
    */
-  getNotifications(args) {
+  private getNotifications(args) {
     let notifications = this.notifications;
     for (const p in args) {
       if (args.hasOwnProperty(p) && args[p] !== null) {
@@ -290,7 +439,16 @@ export class NotificationService {
     this.broadcastNotificationChanged(notification);
   }
 
-  broadcastNotificationChanged(notification: any) {
+  displayAmbientNotification(notification: Notification): void {
+    const dialogRef = this.dialog.open(DismissAmbientNotificationDialogComponent, {
+      data: notification
+    });
+    dialogRef.componentInstance.dismiss$.subscribe((notification: Notification) => {
+      this.dismissNotification(notification);
+    });
+  }
+
+  broadcastNotificationChanged(notification: Notification) {
     this.notificationChangedSource.next(notification);
   }
 

@@ -3,7 +3,6 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { UpgradeModule } from '@angular/upgrade/static';
-import { configureTestSuite } from 'ng-bullet';
 import { AnnotationService } from '../../../services/annotationService';
 import { ConfigService } from '../../../services/configService';
 import { NodeService } from '../../../services/nodeService';
@@ -45,7 +44,7 @@ let nodeInstanceId1 = 'studentNode1';
 let nodeInstanceId2 = 'studentNode2';
 
 describe('ConceptMapStudent', () => {
-  configureTestSuite(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, MatDialogModule, UpgradeModule],
       declarations: [ConceptMapStudent],
@@ -65,9 +64,6 @@ describe('ConceptMapStudent', () => {
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
-  });
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ConceptMapStudent);
     spyOn(TestBed.inject(AnnotationService), 'getLatestComponentAnnotations').and.returnValue({
       score: 0,
@@ -105,27 +101,28 @@ describe('ConceptMapStudent', () => {
     component.populateConceptMapData(conceptMapData);
   });
 
+  addCommentAnnotation();
+  addNode();
+  addScoreAnnotation();
+  checkIfShouldPerformSubmit();
+  clearConceptMap();
+  createComponentStateObject();
+  getBackgroundFileName();
+  getConceptMapData();
+  getFeedbackFromResult();
+  getLinkById();
+  getNewConceptMapNodeId();
+  getNodeById();
+  makeIdsUnique();
+  mergeConceptMapComponentState();
   populateNodes();
   populateLinks();
-  setBackground();
-  setStudentWork();
-  checkIfShouldPerformSubmit();
-  getFeedbackFromResult();
-  createComponentStateObject();
-  addScoreAnnotation();
-  addCommentAnnotation();
-  getConceptMapData();
-  getBackgroundFileName();
-  getNewConceptMapNodeId();
-  addNode();
+  populateTheStudentWork();
   removeNode();
-  getNodeById();
-  getLinkById();
-  clearConceptMap();
-  mergeConceptMapComponentState();
-  makeIdsUnique();
-  setLinkCurveUp();
+  setBackground();
   setLinkCurveDown();
+  setLinkCurveUp();
+  setStudentWork();
 });
 
 function createNodeInstance(
@@ -580,4 +577,89 @@ function setLinkCurveDown() {
 function expectStartAndEndCurve(link: any, isCurveDirectionUp: boolean): void {
   expect(link.startCurveUp).toEqual(isCurveDirectionUp);
   expect(link.endCurveUp).toEqual(isCurveDirectionUp);
+}
+
+function populateTheStudentWork() {
+  it('should populate the student work', () => {
+    const componentState = {
+      clientSaveTime: 1542412588000,
+      isSubmit: false,
+      studentData: {
+        conceptMapData: {
+          nodes: [
+            {
+              originalId: 'node1',
+              instanceId: 'studentNode1',
+              fileName: 'sun.png',
+              filePath: '/wise/curriculum/546/assets/sun.png',
+              label: 'Sun',
+              x: 162,
+              y: 68,
+              width: 100,
+              height: 100,
+              outgoingLinks: [
+                {
+                  originalId: 'link1',
+                  instanceId: 'studentLink1',
+                  label: 'Solar Radiation'
+                }
+              ],
+              incomingLinks: []
+            },
+            {
+              originalId: 'node2',
+              instanceId: 'studentNode2',
+              fileName: 'Space.png',
+              filePath: '/wise/curriculum/546/assets/Space.png',
+              label: 'Space',
+              x: 416,
+              y: 185,
+              width: 100,
+              height: 100,
+              outgoingLinks: [],
+              incomingLinks: [
+                {
+                  originalId: 'link1',
+                  instanceId: 'studentLink1',
+                  label: 'Solar Radiation'
+                }
+              ]
+            }
+          ],
+          links: [
+            {
+              originalId: 'link1',
+              instanceId: 'studentLink1',
+              color: '#DDD266',
+              label: 'Solar Radiation',
+              curvature: 0,
+              startCurveUp: false,
+              endCurveUp: false,
+              sourceNodeOriginalId: 'node1',
+              sourceNodeInstanceId: 'studentNode1',
+              sourceNodeLabel: 'Sun',
+              destinationNodeOriginalId: 'node2',
+              destinationNodeInstanceId: 'studentNode2',
+              destinationNodeLabel: 'Space'
+            }
+          ]
+        },
+        submitCounter: 0
+      },
+      componentType: 'ConceptMap',
+      nodeId: 'node1',
+      componentId: 'ut00qpig10'
+    };
+    const setNodeMouseEventsSpy = spyOn(component, 'setNodeMouseEvents');
+    const setLinkMouseEventsSpy = spyOn(component, 'setLinkMouseEvents');
+    const moveLinkTextToFrontSpy = spyOn(component, 'moveLinkTextToFront');
+    const moveNodesToFrontSpy = spyOn(component, 'moveNodesToFront');
+    component.setStudentWork(componentState);
+    expect(setNodeMouseEventsSpy).toHaveBeenCalled();
+    expect(setLinkMouseEventsSpy).toHaveBeenCalled();
+    expect(moveLinkTextToFrontSpy).toHaveBeenCalled();
+    expect(moveNodesToFrontSpy).toHaveBeenCalled();
+    expect(component.nodes.length).toEqual(2);
+    expect(component.links.length).toEqual(1);
+  });
 }

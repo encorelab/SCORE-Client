@@ -14,40 +14,40 @@ import { MatListModule } from '@angular/material/list';
 import { DataService } from './services/data.service';
 import { AngularJSModule } from './common-hybrid-angular.module';
 import { NavItemComponent } from '../assets/wise5/vle/nav-item/nav-item.component';
-import { HtmlStudent } from '../assets/wise5/components/html/html-student/html-student.component';
-import { MultipleChoiceStudent } from '../assets/wise5/components/multipleChoice/multiple-choice-student/multiple-choice-student.component';
-import { OutsideUrlStudent } from '../assets/wise5/components/outsideURL/outside-url-student/outside-url-student.component';
-import { AudioOscillatorStudent } from '../assets/wise5/components/audioOscillator/audio-oscillator-student/audio-oscillator-student.component';
-import { LabelStudent } from '../assets/wise5/components/label/label-student/label-student.component';
-import { DrawStudent } from '../assets/wise5/components/draw/draw-student/draw-student.component';
-import { ConceptMapStudent } from '../assets/wise5/components/conceptMap/concept-map-student/concept-map-student.component';
-import { HtmlDialog } from '../assets/wise5/directives/html-dialog/html-dialog';
-import { MatchStudentModule } from '../assets/wise5/components/match/match-student/match-student.module';
 import { StudentComponentModule } from './student/student.component.module';
-import { AnimationStudent } from '../assets/wise5/components/animation/animation-student/animation-student.component';
-import { EmbeddedStudent } from '../assets/wise5/components/embedded/embedded-student/embedded-student.component';
-import { OpenResponseStudent } from '../assets/wise5/components/openResponse/open-response-student/open-response-student.component';
 import { SafeUrl } from '../assets/wise5/directives/safeUrl/safe-url.pipe';
-import { TableStudent } from '../assets/wise5/components/table/table-student/table-student.component';
+import { StepToolsComponent } from '../assets/wise5/themes/default/themeComponents/stepTools/step-tools.component';
+import { NavigationComponent } from '../assets/wise5/themes/default/navigation/navigation.component';
+import { SummaryDisplayModule } from '../assets/wise5/directives/summaryDisplay/summary-display.module';
+import { GenerateImageDialogComponent } from '../assets/wise5/directives/generate-image-dialog/generate-image-dialog.component';
+import { TopBarModule } from './student/top-bar/top-bar.module';
+import { StudentAssetsDialogModule } from '../assets/wise5/vle/studentAsset/student-assets-dialog/student-assets-dialog.module';
+import { ComponentStudentModule } from '../assets/wise5/components/component/component-student.module';
+import { NodeModule } from '../assets/wise5/vle/node/node.module';
+import { VLEComponent } from '../assets/wise5/vle/vle.component';
+import { NotebookModule } from './notebook/notebook.module';
+import { SimpleDialogModule } from '../assets/wise5/directives/simple-dialog.module';
 
 @NgModule({
   declarations: [
-    AnimationStudent,
-    AudioOscillatorStudent,
-    ConceptMapStudent,
-    DrawStudent,
-    EmbeddedStudent,
-    HtmlDialog,
-    HtmlStudent,
-    LabelStudent,
-    MultipleChoiceStudent,
+    GenerateImageDialogComponent,
+    NavigationComponent,
     NavItemComponent,
-    OpenResponseStudent,
-    OutsideUrlStudent,
     SafeUrl,
-    TableStudent
+    StepToolsComponent,
+    VLEComponent
   ],
-  imports: [AngularJSModule, MatchStudentModule, StudentComponentModule],
+  imports: [
+    AngularJSModule,
+    ComponentStudentModule,
+    NodeModule,
+    NotebookModule,
+    SimpleDialogModule,
+    StudentAssetsDialogModule,
+    StudentComponentModule,
+    SummaryDisplayModule,
+    TopBarModule
+  ],
   providers: [
     { provide: DataService, useExisting: StudentDataService },
     { provide: ProjectService, useExisting: VLEProjectService },

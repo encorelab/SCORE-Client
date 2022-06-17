@@ -1,9 +1,7 @@
-import 'svg.js';
+import SVG from 'svg.js';
 import 'svg.draggable.js';
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { UpgradeModule } from '@angular/upgrade/static';
-import { HtmlDialog } from '../../../directives/html-dialog/html-dialog';
 import { AnnotationService } from '../../../services/annotationService';
 import { ConfigService } from '../../../services/configService';
 import { NodeService } from '../../../services/nodeService';
@@ -15,6 +13,7 @@ import { UtilService } from '../../../services/utilService';
 import { ComponentStudent } from '../../component-student.component';
 import { ComponentService } from '../../componentService';
 import { ConceptMapService } from '../conceptMapService';
+import { DialogWithCloseComponent } from '../../../directives/dialog-with-close/dialog-with-close.component';
 
 @Component({
   selector: 'concept-map-student',
@@ -33,10 +32,12 @@ export class ConceptMapStudent extends ComponentStudent {
   availableLinks: any[] = [];
   background: any;
   backgroundSize: string;
+  backgroundUrl: string = '';
   componentStateId: number;
   componentTypesCanImportAsBackground: string[] = ['Draw', 'Embedded', 'Graph', 'Label', 'Table'];
   conceptMapContainerId: string;
   displayLinkTypeChooser: boolean = false;
+  domIdEnding: string;
   dragOverListenerFunction: any;
   draw: any;
   drawingLink: any;
@@ -66,24 +67,23 @@ export class ConceptMapStudent extends ComponentStudent {
     protected ComponentService: ComponentService,
     protected ConfigService: ConfigService,
     private ConceptMapService: ConceptMapService,
-    private dialog: MatDialog,
+    protected dialog: MatDialog,
     protected NodeService: NodeService,
     protected NotebookService: NotebookService,
     private ProjectService: ProjectService,
     protected StudentAssetService: StudentAssetService,
     protected StudentDataService: StudentDataService,
-    protected upgrade: UpgradeModule,
     protected UtilService: UtilService
   ) {
     super(
       AnnotationService,
       ComponentService,
       ConfigService,
+      dialog,
       NodeService,
       NotebookService,
       StudentAssetService,
       StudentDataService,
-      upgrade,
       UtilService
     );
   }
@@ -116,26 +116,15 @@ export class ConceptMapStudent extends ComponentStudent {
   }
 
   setIdsWithNodeIdComponentId(): void {
-    this.svgId = this.getSVGId(this.nodeId, this.componentId);
-    this.conceptMapContainerId = this.getConceptMapContainerId(this.nodeId, this.componentId);
-    this.selectNodeBarId = this.getSelectNodeBarId(this.nodeId, this.componentId);
-    this.feedbackContainerId = this.getFeedbackContainerId(this.nodeId, this.componentId);
-  }
-
-  getSVGId(nodeId: string, componentId: string): string {
-    return this.ConceptMapService.getSVGId(nodeId, componentId);
-  }
-
-  getConceptMapContainerId(nodeId: string, componentId: string): string {
-    return this.ConceptMapService.getElementId('concept-map-container', nodeId, componentId);
-  }
-
-  getSelectNodeBarId(nodeId: string, componentId: string): string {
-    return this.ConceptMapService.getElementId('select-node-bar', nodeId, componentId);
-  }
-
-  getFeedbackContainerId(nodeId: string, componentId: string): string {
-    return this.ConceptMapService.getElementId('feedback-container', nodeId, componentId);
+    this.domIdEnding = this.ConceptMapService.getDomIdEnding(
+      this.nodeId,
+      this.componentId,
+      this.componentState
+    );
+    this.svgId = this.ConceptMapService.getSVGId(this.domIdEnding);
+    this.conceptMapContainerId = this.ConceptMapService.getConceptMapContainerId(this.domIdEnding);
+    this.selectNodeBarId = this.ConceptMapService.getSelectNodeBarId(this.domIdEnding);
+    this.feedbackContainerId = this.ConceptMapService.getFeedbackContainerId(this.domIdEnding);
   }
 
   initializeWidth(): void {
@@ -174,7 +163,7 @@ export class ConceptMapStudent extends ComponentStudent {
     } else if (this.componentContentHasStarterConceptMap()) {
       this.populateConceptMapData(this.componentContent.starterConceptMap);
     }
-    if (this.hasMaxSubmitCount() && !this.hasSubmitsLeft()) {
+    if (this.hasMaxSubmitCountAndUsedAllSubmits()) {
       this.disableSubmitButton();
     }
     if (!this.isDisabled) {
@@ -417,10 +406,9 @@ export class ConceptMapStudent extends ComponentStudent {
   }
 
   showFeedbackInPopup(feedbackText: string): void {
-    this.dialog.open(HtmlDialog, {
+    this.dialog.open(DialogWithCloseComponent, {
       data: {
         content: feedbackText,
-        isShowCloseButton: true,
         title: $localize`Feedback`
       }
     });
@@ -1439,7 +1427,7 @@ export class ConceptMapStudent extends ComponentStudent {
   }
 
   snipImage(): void {
-    const svgElement = this.getElementById(this.getSVGId(this.nodeId, this.componentId), true);
+    const svgElement = this.getElementById(this.ConceptMapService.getSVGId(this.domIdEnding), true);
     const serializer = new XMLSerializer();
     const svgString = serializer.serializeToString(svgElement);
     this.ConceptMapService.getHrefToBase64ImageReplacements(svgString).then((images) => {
@@ -1485,7 +1473,16 @@ export class ConceptMapStudent extends ComponentStudent {
    * @return a component state with the merged student responses
    */
   createMergedComponentState(componentStates: any[]): any {
-    let componentStateToMergeInto: any = this.ConceptMapService.createComponentStateObject();
+    let componentStateToMergeInto: any = this.NodeService.createNewComponentState();
+    componentStateToMergeInto.studentData = {
+      conceptMapData: {
+        background: null,
+        backgroundPath: null,
+        links: [],
+        nodes: [],
+        stretchBackground: null
+      }
+    };
     for (const componentState of componentStates) {
       if (componentState.componentType === 'ConceptMap') {
         this.mergeConceptMapComponentState(componentStateToMergeInto, componentState);
@@ -1494,7 +1491,7 @@ export class ConceptMapStudent extends ComponentStudent {
       }
     }
     if (this.isBackgroundAvailable(this.componentContent)) {
-      const conceptMapData = componentStateToMergeInto.studentData.conceptMapdata;
+      const conceptMapData = componentStateToMergeInto.studentData.conceptMapData;
       conceptMapData.backgroundPath = this.componentContent.background;
       conceptMapData.stretchBackground = this.componentContent.stretchBackground;
     }
@@ -1555,8 +1552,21 @@ export class ConceptMapStudent extends ComponentStudent {
 
   setBackground(backgroundPath: string, stretchBackground: boolean): void {
     this.background = backgroundPath;
+    this.setBackgroundUrl(backgroundPath);
     this.stretchBackground = stretchBackground;
-    if (stretchBackground) {
+    this.setBackgroundSize(stretchBackground);
+  }
+
+  setBackgroundUrl(backgroundPath: string): void {
+    if (backgroundPath == null || backgroundPath === '') {
+      this.backgroundUrl = '';
+    } else {
+      this.backgroundUrl = `url("${backgroundPath}")`;
+    }
+  }
+
+  setBackgroundSize(isStretchBackground: boolean): void {
+    if (isStretchBackground) {
       this.backgroundSize = '100% 100%';
     } else {
       this.backgroundSize = '';
@@ -1567,12 +1577,8 @@ export class ConceptMapStudent extends ComponentStudent {
     this.background = null;
   }
 
-  generateStarterState(): void {
-    this.NodeService.respondStarterState({
-      nodeId: this.nodeId,
-      componentId: this.componentId,
-      starterState: this.getConceptMapData()
-    });
+  generateStarterState(): any {
+    return this.getConceptMapData();
   }
 
   attachStudentAsset(studentAsset: any): void {

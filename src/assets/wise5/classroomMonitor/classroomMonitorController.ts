@@ -121,6 +121,12 @@ class ClassroomMonitorController {
         type: 'primary',
         active: true
       },
+      'root.cm.manageGroups': {
+        name: $localize`Manage Groups`,
+        icon: 'group_work',
+        type: 'primary',
+        active: true
+      },
       'root.cm.taskDatatable': {
         name: this.$translate('tasks'),
         icon: 'fact_check',

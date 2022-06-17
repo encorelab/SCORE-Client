@@ -48,7 +48,7 @@ export class TeacherService {
   copyProject(project: Project, dialog: MatDialog) {
     dialog.open(CopyProjectDialogComponent, {
       data: { project: project },
-      panelClass: 'mat-dialog--sm'
+      panelClass: 'dialog-sm'
     });
   }
 
@@ -367,5 +367,17 @@ export class TeacherService {
       params,
       { headers }
     );
+  }
+
+  changeStudentPassword(
+    runId: number,
+    studentId: number,
+    newStudentPassword: string,
+    teacherPassword: string
+  ): Observable<any> {
+    let params = new HttpParams();
+    params = params.set('newStudentPassword', newStudentPassword);
+    params = params.set('teacherPassword', teacherPassword);
+    return this.http.post(`/api/teacher/run/${runId}/student/${studentId}/change-password`, params);
   }
 }

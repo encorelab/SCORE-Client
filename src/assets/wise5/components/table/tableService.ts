@@ -4,26 +4,22 @@ import * as angular from 'angular';
 import * as html2canvas from 'html2canvas';
 import { ComponentService } from '../componentService';
 import { StudentAssetService } from '../../services/studentAssetService';
-import { StudentDataService } from '../../services/studentDataService';
 import { UtilService } from '../../services/utilService';
 import { Injectable } from '@angular/core';
-import { UpgradeModule } from '@angular/upgrade/static';
 
 @Injectable()
 export class TableService extends ComponentService {
   $translate: any;
 
   constructor(
-    private upgrade: UpgradeModule,
     private StudentAssetService: StudentAssetService,
-    protected StudentDataService: StudentDataService,
     protected UtilService: UtilService
   ) {
-    super(StudentDataService, UtilService);
+    super(UtilService);
   }
 
-  getComponentTypeLabel() {
-    return this.upgrade.$injector.get('$filter')('translate')('table.componentTypeLabel');
+  getComponentTypeLabel(): string {
+    return $localize`Table`;
   }
 
   createComponent() {
@@ -92,7 +88,7 @@ export class TableService extends ComponentService {
     return `table-${nodeId}-${componentId}`;
   }
 
-  isCompleted(component, componentStates, componentEvents, nodeEvents, node) {
+  isCompleted(component, componentStates, nodeEvents, node) {
     if (!this.componentHasEditableCells(component)) {
       /*
        * The component does not have any editable cells so we will say

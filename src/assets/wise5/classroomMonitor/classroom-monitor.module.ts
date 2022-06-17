@@ -1,6 +1,7 @@
 'use strict';
 
 import * as angular from 'angular';
+import './classroomMonitorComponents/manage-groups/manage-groups.module';
 import './classroomMonitorComponents/manageStudents/manageStudentsModule';
 import './classroomMonitorComponents/milestones/milestones';
 import './classroomMonitorComponents/nodeGrading/nodeGrading';
@@ -24,6 +25,7 @@ export default angular
     'componentGrading',
     'cmShared',
     'dataExport',
+    'manageGroups',
     'manageStudents',
     'milestones',
     'nodeGrading',
@@ -80,14 +82,15 @@ export default angular
               'TeacherDataService',
               'config',
               (TeacherDataService, config) => {
+                TeacherDataService.currentPeriod = null;
                 return TeacherDataService.retrieveRunStatus();
               }
             ],
             studentStatuses: [
-              'StudentStatusService',
+              'ClassroomStatusService',
               'config',
-              (StudentStatusService, config) => {
-                return StudentStatusService.retrieveStudentStatuses();
+              (ClassroomStatusService, config) => {
+                return ClassroomStatusService.retrieveStudentStatuses();
               }
             ],
             achievements: [

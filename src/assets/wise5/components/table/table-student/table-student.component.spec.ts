@@ -1,10 +1,10 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserModule } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { UpgradeModule } from '@angular/upgrade/static';
-import { configureTestSuite } from 'ng-bullet';
 import { AnnotationService } from '../../../services/annotationService';
 import { ConfigService } from '../../../services/configService';
 import { NodeService } from '../../../services/nodeService';
@@ -41,10 +41,16 @@ const testTableData = createTableData([
   ['20', '200', '10']
 ]);
 
-describe('TableStudent', () => {
-  configureTestSuite(() => {
+describe('TableStudentComponent', () => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [BrowserModule, HttpClientTestingModule, NoopAnimationsModule, UpgradeModule],
+      imports: [
+        BrowserModule,
+        HttpClientTestingModule,
+        MatDialogModule,
+        NoopAnimationsModule,
+        UpgradeModule
+      ],
       declarations: [TableStudent],
       providers: [
         AnnotationService,
@@ -63,9 +69,6 @@ describe('TableStudent', () => {
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
-  });
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(TableStudent);
     spyOn(TestBed.inject(AnnotationService), 'getLatestComponentAnnotations').and.returnValue({
       score: 0,

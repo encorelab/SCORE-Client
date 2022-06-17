@@ -10,7 +10,7 @@ import { ComponentStudent } from '../../component-student.component';
 import { ComponentService } from '../../componentService';
 import { LabelService } from '../labelService';
 import { StudentAssetService } from '../../../services/studentAssetService';
-import { UpgradeModule } from '@angular/upgrade/static';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'label-student',
@@ -47,23 +47,23 @@ export class LabelStudent extends ComponentStudent {
     protected AnnotationService: AnnotationService,
     protected ComponentService: ComponentService,
     protected ConfigService: ConfigService,
+    protected dialog: MatDialog,
     private LabelService: LabelService,
     protected NodeService: NodeService,
     protected NotebookService: NotebookService,
     protected StudentAssetService: StudentAssetService,
     protected StudentDataService: StudentDataService,
-    protected upgrade: UpgradeModule,
     protected UtilService: UtilService
   ) {
     super(
       AnnotationService,
       ComponentService,
       ConfigService,
+      dialog,
       NodeService,
       NotebookService,
       StudentAssetService,
       StudentDataService,
-      upgrade,
       UtilService
     );
   }
@@ -71,7 +71,12 @@ export class LabelStudent extends ComponentStudent {
   ngOnInit(): void {
     super.ngOnInit();
     this.enableFabricTextPadding();
-    this.canvasId = `canvas_${this.nodeId}_${this.componentId}`;
+    const domIdEnding = this.LabelService.getDomIdEnding(
+      this.nodeId,
+      this.componentId,
+      this.componentState
+    );
+    this.canvasId = this.LabelService.getCanvasId(domIdEnding);
     this.initializeComponent(this.componentContent);
   }
 
@@ -866,12 +871,8 @@ export class LabelStudent extends ComponentStudent {
     return showWorkConnectedComponentCount;
   }
 
-  generateStarterState(): void {
-    this.NodeService.respondStarterState({
-      nodeId: this.nodeId,
-      componentId: this.componentId,
-      starterState: this.getLabelData()
-    });
+  generateStarterState(): any {
+    return this.getLabelData();
   }
 
   attachStudentAsset(studentAsset: any): any {

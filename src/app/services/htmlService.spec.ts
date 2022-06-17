@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { UpgradeModule } from '@angular/upgrade/static';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { StudentDataService } from '../../assets/wise5/services/studentDataService';
 import { UtilService } from '../../assets/wise5/services/utilService';
 import { HTMLService } from '../../assets/wise5/components/html/htmlService';
 import { AnnotationService } from '../../assets/wise5/services/annotationService';
@@ -13,7 +12,7 @@ import { SessionService } from '../../assets/wise5/services/sessionService';
 
 let service: HTMLService;
 
-describe('TableService', () => {
+describe('HTMLService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, UpgradeModule],
@@ -24,19 +23,11 @@ describe('TableService', () => {
         HTMLService,
         SessionService,
         StudentAssetService,
-        StudentDataService,
         TagService,
         UtilService
       ]
     });
     service = TestBed.get(HTMLService);
-    spyOn(service, 'getTranslation').and.callFake((key: string) => {
-      if (key === 'html.componentTypelabel') {
-        return 'HTML';
-      } else if (key === 'html.enterHTMLHere') {
-        return 'Enter html here';
-      }
-    });
   });
   createComponent();
   isCompleted();
@@ -52,12 +43,12 @@ function createComponent() {
 
 function isCompleted() {
   function expectIsCompleted(nodeEvents: any[], expectedResult: boolean) {
-    expect(service.isCompleted({}, [], [], nodeEvents)).toEqual(expectedResult);
+    expect(service.isCompleted({}, [], nodeEvents, null)).toEqual(expectedResult);
   }
-  it('should check if is compeleted when there are no node entered events', () => {
+  it('should check if is completed when there are no node entered events', () => {
     expectIsCompleted([], false);
   });
-  it('should check if is compeleted when there is a node entered event', () => {
+  it('should check if is completed when there is a node entered event', () => {
     expectIsCompleted([{ event: 'nodeEntered' }], true);
   });
 }

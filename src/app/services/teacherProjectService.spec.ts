@@ -8,7 +8,6 @@ import demoProjectJSON_import from './sampleData/curriculum/Demo.project.json';
 import scootersProjectJSON_import from './sampleData/curriculum/SelfPropelledVehiclesChallenge.project.json';
 import teacherProjctJSON_import from './sampleData/curriculum/TeacherProjectServiceSpec.project.json';
 import { SessionService } from '../../assets/wise5/services/sessionService';
-import { CopyNodesService } from '../../assets/wise5/services/copyNodesService';
 let service: TeacherProjectService;
 let configService: ConfigService;
 let utilService: UtilService;
@@ -16,6 +15,7 @@ let http: HttpTestingController;
 let demoProjectJSON: any;
 let scootersProjectJSON: any;
 let teacherProjectJSON: any;
+let objects;
 
 const scootersProjectJSONString = JSON.stringify(demoProjectJSON_import);
 const scootersProjectName = 'scooters';
@@ -30,13 +30,7 @@ describe('TeacherProjectService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, UpgradeModule],
-      providers: [
-        TeacherProjectService,
-        ConfigService,
-        CopyNodesService,
-        SessionService,
-        UtilService
-      ]
+      providers: [TeacherProjectService, ConfigService, SessionService, UtilService]
     });
     http = TestBed.inject(HttpTestingController);
     service = TestBed.inject(TeacherProjectService);
@@ -87,6 +81,8 @@ describe('TeacherProjectService', () => {
   getOldToNewIds();
   replaceOldIds();
   replaceIds();
+  moveObjectUp();
+  moveObjectDown();
 });
 
 function createNormalSpy() {
@@ -811,5 +807,53 @@ function replaceIds() {
       const expectedString = '"node10", "node10", "node2", "node10", "node11", "node11"';
       expect(service.replaceIds(string, 'node1', 'node10')).toEqual(expectedString);
     });
+  });
+}
+
+function moveObjectUp() {
+  describe('moveObjectUp()', () => {
+    beforeEach(() => {
+      objects = [1, 2, 3];
+    });
+    moveObjectUpTopElement();
+    moveObjectUpNotTopElement();
+  });
+}
+
+function moveObjectUpTopElement() {
+  it('should not move an object up when the object is the top element', () => {
+    service.moveObjectUp(objects, 0);
+    expect(objects).toEqual([1, 2, 3]);
+  });
+}
+
+function moveObjectUpNotTopElement() {
+  it('should move an object up when the object is not the top element', () => {
+    service.moveObjectUp(objects, 1);
+    expect(objects).toEqual([2, 1, 3]);
+  });
+}
+
+function moveObjectDown() {
+  describe('moveObjectDown()', () => {
+    beforeEach(() => {
+      objects = [1, 2, 3];
+    });
+    moveObjectDownNotBottomElement();
+    moveObjectDownIsBottomElement();
+  });
+}
+
+function moveObjectDownNotBottomElement() {
+  it('should move an object down when the object is not the bottom element', () => {
+    service.moveObjectDown(objects, 1);
+    expect(objects).toEqual([1, 3, 2]);
+  });
+}
+
+function moveObjectDownIsBottomElement() {
+  it('should not move an object down when the object is the bottom element', () => {
+    service.moveObjectDown(objects, 2);
+    expect(objects).toEqual([1, 2, 3]);
   });
 }

@@ -1,16 +1,17 @@
-import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { UpgradeModule } from '@angular/upgrade/static';
 import { AnnotationService } from '../../assets/wise5/services/annotationService';
 import { ConfigService } from '../../assets/wise5/services/configService';
 import { ProjectService } from '../../assets/wise5/services/projectService';
 import { StudentAssetService } from '../../assets/wise5/services/studentAssetService';
-import { StudentDataService } from '../../assets/wise5/services/studentDataService';
 import { TagService } from '../../assets/wise5/services/tagService';
 import { UtilService } from '../../assets/wise5/services/utilService';
 import { GraphService } from '../../assets/wise5/components/graph/graphService';
 import { SessionService } from '../../assets/wise5/services/sessionService';
 
+let http: HttpTestingController;
+const runId: number = 1;
 let service: GraphService;
 
 describe('GraphService', () => {
@@ -24,22 +25,13 @@ describe('GraphService', () => {
         ProjectService,
         SessionService,
         StudentAssetService,
-        StudentDataService,
         TagService,
         UtilService
       ]
     });
     service = TestBed.get(GraphService);
-    spyOn(service, 'getTranslation').and.callFake((key: string) => {
-      const keyToTranslation = {
-        'graph.timeSeconds': 'Time (seconds)',
-        'graph.secondsUnit': 's',
-        'graph.positionMeters': 'Position (meters)',
-        'graph.metersUnit': 'm',
-        'graph.prediction': 'Prediction'
-      };
-      return keyToTranslation[key];
-    });
+    http = TestBed.inject(HttpTestingController);
+    spyOn(TestBed.inject(ConfigService), 'getRunId').and.returnValue(runId);
   });
   createComponent();
   isCompleted();
@@ -58,6 +50,9 @@ describe('GraphService', () => {
   seriesHasDataPoint();
   generateImageFromRenderedComponentState();
   getHighchartsDiv();
+  getTheSeriesFromTheTrials();
+  getTheCategoryByIndex();
+  getClassmateStudentWork();
 });
 
 function createComponentState(studentData: any, isSubmit: boolean = false) {
@@ -149,7 +144,7 @@ function isCompleted() {
     node: any,
     expectedResult: boolean
   ) {
-    expect(service.isCompleted(component, componentStates, [], nodeEvents, node)).toEqual(
+    expect(service.isCompleted(component, componentStates, nodeEvents, node)).toEqual(
       expectedResult
     );
   }
@@ -426,4 +421,102 @@ function generateImageFromRenderedComponentState() {
 
 function getHighchartsDiv() {
   // TODO
+}
+
+function getTheSeriesFromTheTrials() {
+  it('should get the series from the trials', () => {
+    const trials = [
+      {
+        name: 'Trial 1',
+        show: true,
+        series: [
+          {
+            name: 'Prediction',
+            data: [
+              [0, 0],
+              [10, 20],
+              [20, 40]
+            ]
+          },
+          {
+            name: 'Actual',
+            data: [
+              [0, 0],
+              [10, 30],
+              [20, 60]
+            ]
+          }
+        ],
+        id: 'u3ijj5vfxd'
+      },
+      {
+        name: 'Trial 2',
+        show: true,
+        series: [
+          {
+            name: 'Prediction',
+            data: [
+              [0, 0],
+              [30, 20],
+              [40, 40]
+            ]
+          },
+          {
+            name: 'Actual',
+            data: [
+              [0, 0],
+              [30, 30],
+              [40, 60]
+            ]
+          }
+        ],
+        id: 'u3ijj5vfxd'
+      }
+    ];
+    const series = service.getSeriesFromTrials(trials);
+    expect(series.length).toEqual(4);
+  });
+}
+
+function getTheCategoryByIndex() {
+  it('should get the category by index', () => {
+    const xAxis = {
+      categories: ['Computers', 'Phones', 'Pizzas']
+    };
+    expect(service.getCategoryByIndex(0, xAxis)).toEqual('Computers');
+    expect(service.getCategoryByIndex(1, xAxis)).toEqual('Phones');
+    expect(service.getCategoryByIndex(2, xAxis)).toEqual('Pizzas');
+  });
+}
+
+function getClassmateStudentWork() {
+  const componentId1 = 'component1';
+  const componentId2 = 'component2';
+  const nodeId1 = 'node1';
+  const nodeId2 = 'node2';
+  const periodId = 100;
+  it('should get classmate student work from period', () => {
+    service
+      .getClassmateStudentWork(nodeId2, componentId2, periodId, nodeId1, componentId1, 'period')
+      .subscribe();
+    http
+      .expectOne(
+        `/api/classmate/graph/student-work/${runId}/${nodeId2}/${componentId2}/${nodeId1}/${componentId1}/period/${periodId}`
+      )
+      .flush([]);
+  });
+
+  it(
+    'should get classmate student work from class',
+    waitForAsync(() => {
+      service
+        .getClassmateStudentWork(nodeId2, componentId2, periodId, nodeId1, componentId1, 'class')
+        .subscribe();
+      http
+        .expectOne(
+          `/api/classmate/graph/student-work/${runId}/${nodeId2}/${componentId2}/${nodeId1}/${componentId1}/class`
+        )
+        .flush([]);
+    })
+  );
 }

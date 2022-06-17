@@ -3,7 +3,7 @@
 import { Directive } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ConfigService } from '../../services/configService';
-import { StudentStatusService } from '../../services/studentStatusService';
+import { ClassroomStatusService } from '../../services/classroomStatusService';
 import { TeacherDataService } from '../../services/teacherDataService';
 
 @Directive()
@@ -32,8 +32,8 @@ class StudentProgressController {
     '$mdDialog',
     '$scope',
     '$state',
+    'ClassroomStatusService',
     'ConfigService',
-    'StudentStatusService',
     'TeacherDataService'
   ];
 
@@ -41,8 +41,8 @@ class StudentProgressController {
     private $mdDialog: any,
     private $scope: any,
     private $state: any,
+    private classroomStatusService: ClassroomStatusService,
     private ConfigService: ConfigService,
-    private StudentStatusService: StudentStatusService,
     private TeacherDataService: TeacherDataService
   ) {
     this.teacherWorkgroupId = this.ConfigService.getWorkgroupId();
@@ -51,7 +51,7 @@ class StudentProgressController {
     this.students = [];
     this.initializeStudents();
     this.subscriptions.add(
-      this.StudentStatusService.studentStatusReceived$.subscribe((args) => {
+      this.classroomStatusService.studentStatusReceived$.subscribe((args) => {
         const studentStatus = args.studentStatus;
         const workgroupId = studentStatus.workgroupId;
         this.updateTeam(workgroupId);
@@ -92,7 +92,9 @@ class StudentProgressController {
   }
 
   getCurrentNodeForWorkgroupId(workgroupId) {
-    return this.StudentStatusService.getCurrentNodePositionAndNodeTitleForWorkgroupId(workgroupId);
+    return this.classroomStatusService.getCurrentNodePositionAndNodeTitleForWorkgroupId(
+      workgroupId
+    );
   }
 
   /**
@@ -103,7 +105,7 @@ class StudentProgressController {
    * between 0 and 100)
    */
   getStudentProjectCompletion(workgroupId) {
-    return this.StudentStatusService.getStudentProjectCompletion(workgroupId, true);
+    return this.classroomStatusService.getStudentProjectCompletion(workgroupId, true);
   }
 
   isWorkgroupShown(workgroup) {
@@ -139,7 +141,7 @@ class StudentProgressController {
     let location = this.getCurrentNodeForWorkgroupId(workgroupId);
     let completion = this.getStudentProjectCompletion(workgroupId);
     let score = this.getStudentTotalScore(workgroupId);
-    let maxScore = this.StudentStatusService.getMaxScoreForWorkgroupId(workgroupId);
+    let maxScore = this.classroomStatusService.getMaxScoreForWorkgroupId(workgroupId);
     maxScore = maxScore ? maxScore : 0;
 
     for (let i = 0; i < this.teams.length; i++) {
@@ -214,23 +216,7 @@ class StudentProgressController {
       clickOutsideToClose: true,
       escapeToClose: true
     });
-
-    // this.dialog.open(GoToNodeSelectComponent, {
-    //     minWidth: '600px',
-    //     maxHeight: '800px',
-    //     data: { workgroup: workgroup, run: this.run },
-    //     panelClass: 'mat-dialog--md',
-    // });
   }
-
-  // chooseNodeToSendPeriod(period: Period) {
-  //     this.dialog.open(GoToNodeSelectComponent, {
-  //         minWidth: '600px',
-  //         maxHeight: '800px',
-  //         data: { period: period, run: this.run },
-  //         panelClass: 'mat-dialog--md',
-  //     });
-  // }
 }
 
 export default StudentProgressController;

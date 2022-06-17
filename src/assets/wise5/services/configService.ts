@@ -3,10 +3,13 @@
 import { Injectable } from '@angular/core';
 import { UpgradeModule } from '@angular/upgrade/static';
 import { HttpClient } from '@angular/common/http';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable()
 export class ConfigService {
   public config: any = null;
+  private configRetrievedSource: Subject<any> = new Subject<any>();
+  public configRetrieved$: Observable<any> = this.configRetrievedSource.asObservable();
 
   constructor(private upgrade: UpgradeModule, private http: HttpClient) {}
 
@@ -64,7 +67,7 @@ export class ConfigService {
             myUserInfo.workgroupId = Math.floor(100 * Math.random()) + 1;
           }
         }
-
+        this.configRetrievedSource.next(configJSON);
         return configJSON;
       });
   }
@@ -288,12 +291,27 @@ export class ConfigService {
     }
   }
 
-  getTeacherWorkgroupId() {
+  getTeacherWorkgroupIds(): number[] {
+    const teacherWorkgroupIds = [];
+    teacherWorkgroupIds.push(this.getTeacherWorkgroupId());
+    teacherWorkgroupIds.push(...this.getSharedTeacherWorkgroupIds());
+    return teacherWorkgroupIds;
+  }
+
+  getTeacherWorkgroupId(): number {
     const teacherUserInfo = this.getTeacherUserInfo();
     if (teacherUserInfo != null) {
       return teacherUserInfo.workgroupId;
     }
     return null;
+  }
+
+  getSharedTeacherWorkgroupIds(): number[] {
+    const workgroupIds = [];
+    this.getSharedTeacherUserInfos().forEach((sharedTeacherUserInfo: any) => {
+      workgroupIds.push(sharedTeacherUserInfo.workgroupId);
+    });
+    return workgroupIds;
   }
 
   getTeacherUserInfo() {
@@ -369,6 +387,30 @@ export class ConfigService {
       canGradeStudentWork: this.config.canGradeStudentWork && !this.isSwitchedUser(),
       canAuthorProject: this.config.canAuthorProject && !this.isSwitchedUser()
     };
+  }
+
+  private getAllUserInfoInPeriod(periodId: number): any {
+    return this.getClassmateUserInfos()
+      .map((userInfo) => {
+        return userInfo.periodId === periodId ? userInfo : [];
+      })
+      .flat();
+  }
+
+  getAllUsersInPeriod(periodId: number): any[] {
+    return this.getAllUserInfoInPeriod(periodId)
+      .map((userInfo) => userInfo.users)
+      .flat();
+  }
+
+  getUsersNotInWorkgroupInPeriod(periodId: number): any[] {
+    const users = [];
+    this.getAllUserInfoInPeriod(periodId).forEach((userInfo) => {
+      if (userInfo.workgroupId == null) {
+        users.push(...userInfo.users);
+      }
+    });
+    return users;
   }
 
   getUserInfoByWorkgroupId(workgroupId) {
@@ -514,33 +556,33 @@ export class ConfigService {
     return usernamesObjects;
   }
 
-  getDisplayUsernamesByWorkgroupId(workgroupId) {
+  getDisplayUsernamesByWorkgroupId(workgroupId: number): string {
     let usernames = '';
     if (workgroupId != null) {
       if (this.getPermissions().canViewStudentNames) {
-        let names = this.getUsernamesByWorkgroupId(workgroupId);
-        let l = names.length;
-        for (let i = 0; i < l; i++) {
-          let name = names[i].name;
-          usernames += name;
-
-          if (i < l - 1) {
-            usernames += ', ';
-          }
-        }
+        usernames = this.getUsernamesStringByWorkgroupId(workgroupId);
       } else {
-        // current user is not allowed to view student names, so return string with student ids
-        let userIds = this.getUserIdsByWorkgroupId(workgroupId);
-        for (let i = 0; i < userIds.length; i++) {
-          let id = userIds[i];
-          if (i !== 0) {
-            usernames += ', ';
-          }
-          usernames += this.upgrade.$injector.get('$filter')('translate')('studentId', { id: id });
-        }
+        usernames = this.getUserIdsStringByWorkgroupId(workgroupId);
       }
     }
     return usernames;
+  }
+
+  getUsernamesStringByWorkgroupId(workgroupId: number): string {
+    const names = this.getUsernamesByWorkgroupId(workgroupId);
+    return names.length > 0
+      ? names
+          .map(function (obj) {
+            return obj.name;
+          })
+          .join(', ')
+      : '';
+  }
+
+  getUserIdsStringByWorkgroupId(workgroupId: number): string {
+    return this.getUserIdsByWorkgroupId(workgroupId)
+      .map((id) => $localize`Student ${id}`)
+      .join(', ');
   }
 
   isPreview() {
@@ -955,5 +997,9 @@ export class ConfigService {
         .convertMillisecondsToFormattedDateTime(this.getEndDate());
     }
     return '';
+  }
+
+  isGoogleUser() {
+    return this.getMyUserInfo().isGoogleUser;
   }
 }
