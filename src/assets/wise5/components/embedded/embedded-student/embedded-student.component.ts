@@ -101,7 +101,12 @@ export class EmbeddedStudent extends ComponentStudent {
       this.componentId
     );
     this.componentType = this.componentContent.type;
-    this.setURL(this.componentContent.url);
+    const ckBoardUrl = this.ConfigService.getConfigParam('ckBoardUrl');
+    if (this.componentContent.url.startsWith(ckBoardUrl)) {
+      this.setURL(this.addWorkgroupIdParameter(this.componentContent.url));
+    } else {
+      this.setURL(this.componentContent.url);
+    }
     this.initializeMessageEventListener();
     this.broadcastDoneRenderingComponent();
     if (this.componentState != null) {
@@ -115,6 +120,14 @@ export class EmbeddedStudent extends ComponentStudent {
   ngOnDestroy(): void {
     super.ngOnDestroy();
     window.removeEventListener('message', this.messageEventListener);
+  }
+
+  addWorkgroupIdParameter(url: string): string {
+    if (url.includes('?')) {
+      return `${url}&workgroup-id=${this.workgroupId}`;
+    } else {
+      return `${url}?workgroup-id=${this.workgroupId}`;
+    }
   }
 
   setWidthAndHeight(width: number, height: number): void {
