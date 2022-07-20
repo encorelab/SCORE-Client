@@ -115,7 +115,6 @@ function createDiscussionComponent(starterSentence: string) {
 
 function createComponent() {
   it('should create a discussion component', () => {
-    spyOn(service, 'getTranslation').and.returnValue('');
     const component = service.createComponent();
     expect(component.type).toEqual('Discussion');
     expect(component.prompt).toEqual('');
