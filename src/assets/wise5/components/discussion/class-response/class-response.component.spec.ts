@@ -4,6 +4,9 @@ import { UpgradeModule } from '@angular/upgrade/static';
 import { MomentModule } from 'ngx-moment';
 import { AnnotationService } from '../../../services/annotationService';
 import { ConfigService } from '../../../services/configService';
+import { ProjectService } from '../../../services/projectService';
+import { SessionService } from '../../../services/sessionService';
+import { UtilService } from '../../../services/utilService';
 import { ClassResponse } from './class-response.component';
 
 let fixture: ComponentFixture<ClassResponse>;
@@ -17,9 +20,12 @@ describe('ClassResponseComponent', () => {
       imports: [HttpClientTestingModule, MomentModule],
       declarations: [ClassResponse],
       providers: [
-        { provide: AnnotationService, useClass: MockAnotationService },
+        AnnotationService,
         ConfigService,
-        UpgradeModule
+        UpgradeModule,
+        ProjectService,
+        SessionService,
+        UtilService
       ]
     });
     fixture = TestBed.createComponent(ClassResponse);
