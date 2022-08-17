@@ -93,9 +93,12 @@ export class UserService {
     const logInURL = `${this.configService.getContextPath()}/api/j_acegi_security_check`;
     this.http
       .post(logInURL, httpParams, { headers: headers, responseType: 'text' })
-      .subscribe((response) => {
+      .subscribe((response: any) => {
         try {
           response = JSON.parse(response);
+          if (response.redirectUrl != null) {
+            window.location.href = response.redirectUrl;
+          }
         } catch (e) {}
         this.retrieveUser(credentials.username).subscribe((user) => {
           return callback && callback(response);
