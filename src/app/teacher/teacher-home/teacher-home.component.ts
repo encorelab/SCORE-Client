@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 export class TeacherHomeComponent implements OnInit {
   @ViewChild('tabs', { static: true }) tabs: MatTabGroup;
 
+  ckBoardUrl: string;
   user: User = new User();
   authoringToolLink: string = '';
   discourseUrl: string;
@@ -34,6 +35,7 @@ export class TeacherHomeComponent implements OnInit {
     this.configService.getConfig().subscribe((config) => {
       if (config != null) {
         this.authoringToolLink = `${this.configService.getContextPath()}/teacher/edit/home`;
+        this.ckBoardUrl = this.configService.getCkBoardUrl();
         this.discourseUrl = this.configService.getDiscourseURL();
       }
     });

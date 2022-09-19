@@ -31,6 +31,10 @@ export class ConfigService {
     return this.config$.getValue().contextPath;
   }
 
+  getCkBoardUrl() {
+    return this.config$.getValue().ckBoardUrl;
+  }
+
   getDiscourseURL() {
     return this.config$.getValue().discourseURL;
   }
