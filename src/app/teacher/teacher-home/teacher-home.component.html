@@ -10,6 +10,13 @@
       [ngClass.xs]="{ 'mat-display-1': false }">
     <mat-icon>home</mat-icon><span i18n>Teacher Home</span>
   </h1>
+  <a *ngIf="ckBoardUrl != null && ckBoardUrl !== ''"
+      mat-raised-button
+      color="primary"
+      [href]="ckBoardUrl"
+      i18n>
+    Go to CK Board
+  </a>
   <discourse-recent-activity *ngIf="discourseUrl"
       [baseUrl]="discourseUrl"
       category="latest"
