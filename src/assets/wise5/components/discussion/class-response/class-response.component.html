@@ -131,8 +131,6 @@
       </mat-list>
       <mat-divider></mat-divider>
     </div>
-<<<<<<< HEAD
-=======
     <mat-list class="comments">
       <mat-list-item [ngClass]="{'animate-show': !isLast}"
           *ngFor="let reply of repliesToShow">
@@ -140,7 +138,7 @@
           class="mat-40"
           style="color: {{getAvatarColorForWorkgroupId(reply.workgroupId)}}">
           account_circle
-        </mat-icon> 
+        </mat-icon>
         <h3 matLine>
           <span class="mat-body-2">{{ reply.usernames }}</span>&nbsp;
           <save-time-message [saveTime]="adjustClientSaveTime(reply.serverSaveTime)"
@@ -185,7 +183,6 @@
       </mat-list-item>
     </mat-list>
     <mat-divider></mat-divider>
->>>>>>> 18530a220b4d7b8df0949455efec2c15b4ba1aba
   </div>
   <div class="new-reply" fxLayout="row" *ngIf="mode === 'student' && !isDisabled">
     <textarea class="new-reply-input"
