@@ -115,11 +115,4 @@ export class TeacherWebSocketService {
       body: JSON.stringify(node)
     });
   }
-
-  sendRequestApprovedMessageToStudent(workgroupId: number, runId: number) {
-    this.rxStomp.publish({
-      destination: `/app/api/teacher/run/${runId}/workgroup-to-next-node/${workgroupId}`,
-      body: null
-    });
-  }
 }

@@ -47,6 +47,11 @@ import { ComponentStudentModule } from '../../assets/wise5/components/component/
 import { PreviewComponentModule } from '../../assets/wise5/authoringTool/components/preview-component/preview-component.module';
 import { NotebookWorkgroupGradingComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/notebook/notebook-workgroup-grading/notebook-workgroup-grading.component';
 import { ProjectProgressComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/studentProgress/project-progress/project-progress.component';
+import { PauseScreensMenuComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/pause-screens-menu/pause-screens-menu.component';
+import { StepItemComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/studentGrading/step-item/step-item.component';
+import { StudentGradingToolsComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/studentGrading/student-grading-tools/student-grading-tools.component';
+import { ToolBarComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/shared/tool-bar/tool-bar.component';
+import { StepToolsComponent } from '../../assets/wise5/common/stepTools/step-tools.component';
 
 @NgModule({
   declarations: [
@@ -75,12 +80,17 @@ import { ProjectProgressComponent } from '../../assets/wise5/classroomMonitor/cl
     NavItemProgressComponent,
     NodeInfoComponent,
     NotebookWorkgroupGradingComponent,
+    PauseScreensMenuComponent,
     ProjectProgressComponent,
     RemoveUserConfirmDialogComponent,
     ShowStudentInfoComponent,
     StatusIconComponent,
     StepInfoComponent,
+    StepItemComponent,
+    StepToolsComponent,
+    StudentGradingToolsComponent,
     TeacherSummaryDisplay,
+    ToolBarComponent,
     ViewComponentRevisionsComponent,
     WorkgroupComponentGradingComponent,
     WorkgroupInfoComponent,
@@ -96,7 +106,6 @@ import { ProjectProgressComponent } from '../../assets/wise5/classroomMonitor/cl
     ComponentGradingModule,
     ComponentStudentModule,
     HighchartsChartModule,
-    ManageGroupsModule,
     PeerGroupGradingModule,
     PreviewComponentModule,
     SelectPeriodModule
