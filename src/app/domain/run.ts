@@ -1,7 +1,6 @@
 import { Project } from './project';
 import { User } from './user';
-import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { Period } from "./period";
+import { Period } from './period';
 
 export class Run {
   id: number;
@@ -12,14 +11,12 @@ export class Run {
   isRandomPeriodAssignment: boolean;
   isLockedAfterEndDate: boolean;
   lastRun: string;
-  projectThumb: string;
   numStudents: number;
   maxStudentsPerTeam: number;
   periods: Period[];
   owner: User;
   sharedOwners: User[] = [];
   project: Project;
-  private sharedOwners$: BehaviorSubject<any[]> = new BehaviorSubject<any[]>(this.sharedOwners);
 
   static readonly VIEW_STUDENT_WORK_PERMISSION: number = 1;
   static readonly GRADE_AND_MANAGE_PERMISSION: number = 2;
@@ -82,26 +79,23 @@ export class Run {
     return user.permissions.includes(permission);
   }
 
-  isScheduled(now) {
+  isScheduled(now: number): boolean {
     return now < this.startTime;
   }
 
-  isActive(now) {
+  isActive(now: number): boolean {
     return !this.isScheduled(now) && !this.isCompleted(now);
   }
 
-  isCompleted(now) {
-    if (this.hasEndTime()) {
-      return this.endTime <= now;
-    }
-    return false;
+  isCompleted(now: number): boolean {
+    return this.hasEndTime() && this.endTime <= now;
   }
 
   isTAToolEnabled() {
     return JSON.parse(this.project.metadata.tools).isTAToolEnabled;
   }
 
-  hasEndTime() {
+  private hasEndTime(): boolean {
     return this.endTime != null;
   }
 }

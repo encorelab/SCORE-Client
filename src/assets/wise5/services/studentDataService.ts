@@ -5,12 +5,12 @@ import { ConfigService } from './configService';
 import { AnnotationService } from './annotationService';
 import { ProjectService } from './projectService';
 import { UtilService } from './utilService';
-import { UpgradeModule } from '@angular/upgrade/static';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import * as angular from 'angular';
 import { TagService } from './tagService';
 import { Observable, Subject } from 'rxjs';
 import { DataService } from '../../../app/services/data.service';
+import { ComponentServiceLookupService } from './componentServiceLookupService';
+import { NotebookService } from './notebookService';
 
 @Injectable()
 export class StudentDataService extends DataService {
@@ -81,9 +81,6 @@ export class StudentDataService extends DataService {
     }
   };
 
-  $translate: any;
-  private deleteKeyPressedSource: Subject<any> = new Subject<any>();
-  public deleteKeyPressed$: Observable<any> = this.deleteKeyPressedSource.asObservable();
   private nodeClickLockedSource: Subject<any> = new Subject<any>();
   public nodeClickLocked$: Observable<any> = this.nodeClickLockedSource.asObservable();
   private componentDirtySource: Subject<boolean> = new Subject<boolean>();
@@ -94,10 +91,6 @@ export class StudentDataService extends DataService {
   public componentSubmitDirty$: Observable<any> = this.componentSubmitDirtySource.asObservable();
   private componentSubmitTriggeredSource: Subject<boolean> = new Subject<boolean>();
   public componentSubmitTriggered$: Observable<any> = this.componentSubmitTriggeredSource.asObservable();
-  private notebookItemAnnotationReceivedSource: Subject<boolean> = new Subject<boolean>();
-  public notebookItemAnnotationReceived$ = this.notebookItemAnnotationReceivedSource.asObservable();
-  private pauseScreenSource: Subject<boolean> = new Subject<boolean>();
-  public pauseScreen$: Observable<any> = this.pauseScreenSource.asObservable();
   private componentStudentDataSource: Subject<any> = new Subject<any>();
   public componentStudentData$: Observable<any> = this.componentStudentDataSource.asObservable();
   private studentWorkSavedToServerSource: Subject<any> = new Subject<any>();
@@ -108,19 +101,19 @@ export class StudentDataService extends DataService {
   public nodeStatusesChanged$: Observable<any> = this.nodeStatusesChangedSource.asObservable();
 
   constructor(
-    upgrade: UpgradeModule,
     public http: HttpClient,
     private AnnotationService: AnnotationService,
+    private componentServiceLookupService: ComponentServiceLookupService,
     private ConfigService: ConfigService,
-    ProjectService: ProjectService,
+    private notebookService: NotebookService,
+    protected ProjectService: ProjectService,
     private TagService: TagService,
     private UtilService: UtilService
   ) {
-    super(upgrade, ProjectService);
-  }
-
-  pauseScreen(doPause: boolean) {
-    this.pauseScreenSource.next(doPause);
+    super(ProjectService);
+    this.notebookService.notebookUpdated$.subscribe(() => {
+      this.updateNodeStatuses();
+    });
   }
 
   broadcastComponentStudentData(componentStudentData: any) {
@@ -132,7 +125,6 @@ export class StudentDataService extends DataService {
     if (this.ConfigService.isPreview()) {
       this.retrieveStudentDataForPreview();
     } else {
-      this.initializeStudentTasks();
       return this.retrieveStudentDataForSignedInStudent();
     }
   }
@@ -553,16 +545,12 @@ export class StudentDataService extends DataService {
   }
 
   evaluateChoiceChosenCriteria(criteria: any): boolean {
-    const serviceName = 'MultipleChoiceService';
-    if (this.upgrade.$injector.has(serviceName)) {
-      const service = this.upgrade.$injector.get(serviceName);
-      const latestComponentState = this.getLatestComponentStateByNodeIdAndComponentId(
-        criteria.params.nodeId,
-        criteria.params.componentId
-      );
-      return latestComponentState != null && service.choiceChosen(criteria, latestComponentState);
-    }
-    return false;
+    const service = this.componentServiceLookupService.getService('MultipleChoice');
+    const latestComponentState = this.getLatestComponentStateByNodeIdAndComponentId(
+      criteria.params.nodeId,
+      criteria.params.componentId
+    );
+    return latestComponentState != null && service.choiceChosen(criteria, latestComponentState);
   }
 
   evaluateScoreCriteria(criteria: any): boolean {
@@ -654,9 +642,8 @@ export class StudentDataService extends DataService {
     const params = criteria.params;
     const nodeId = params.nodeId;
     const requiredNumberOfNotes = params.requiredNumberOfNotes;
-    const notebookService = this.upgrade.$injector.get('NotebookService');
     try {
-      const notebook = notebookService.getNotebookByWorkgroup();
+      const notebook = this.notebookService.getNotebookByWorkgroup();
       const notebookItemsByNodeId = this.getNotebookItemsByNodeId(notebook, nodeId);
       return notebookItemsByNodeId.length >= requiredNumberOfNotes;
     } catch (e) {}
@@ -670,7 +657,7 @@ export class StudentDataService extends DataService {
     const requiredNumberOfFilledRows = params.requiredNumberOfFilledRows;
     const tableHasHeaderRow = params.tableHasHeaderRow;
     const requireAllCellsInARowToBeFilled = params.requireAllCellsInARowToBeFilled;
-    const tableService = this.upgrade.$injector.get('TableService');
+    const tableService = this.componentServiceLookupService.getService('Table');
     const componentState = this.getLatestComponentStateByNodeIdAndComponentId(nodeId, componentId);
     return (
       componentState != null &&
@@ -766,20 +753,6 @@ export class StudentDataService extends DataService {
     this.studentData.annotations.push(annotation);
   }
 
-  handleAnnotationReceived(annotation) {
-    this.studentData.annotations.push(annotation);
-    if (annotation.notebookItemId) {
-      this.broadcastNotebookItemAnnotationReceived({ annotation: annotation });
-    } else {
-      this.AnnotationService.broadcastAnnotationReceived({ annotation: annotation });
-    }
-    this.updateNodeStatuses();
-  }
-
-  broadcastNotebookItemAnnotationReceived(args: any) {
-    this.notebookItemAnnotationReceivedSource.next(args);
-  }
-
   saveComponentEvent(component, category, event, data) {
     if (component == null || category == null || event == null) {
       alert(
@@ -863,9 +836,9 @@ export class StudentDataService extends DataService {
         projectId: this.ConfigService.getProjectId(),
         runId: this.ConfigService.getRunId(),
         workgroupId: this.ConfigService.getWorkgroupId(),
-        studentWorkList: angular.toJson(studentWorkList),
-        events: angular.toJson(events),
-        annotations: angular.toJson(annotations)
+        studentWorkList: JSON.stringify(studentWorkList),
+        events: JSON.stringify(events),
+        annotations: JSON.stringify(annotations)
       };
       return this.http
         .post(this.ConfigService.getConfigParam('studentDataURL'), params)
@@ -989,55 +962,6 @@ export class StudentDataService extends DataService {
         requestType: type
       };
       this.http.post('/api/tasks/taskrequest', taskParams).toPromise();
-    }
-  }
-
-  initializeStudentTasks() {
-    if (!this.ConfigService.isPreview() && this.ConfigService.isRunActive()) {
-      const studentStatusURL = this.ConfigService.getStudentStatusURL();
-      if (studentStatusURL != null) {
-        const runId = this.ConfigService.getRunId();
-        const periodId = this.ConfigService.getPeriodId();
-        const periodName = this.ConfigService.getPeriodName();
-        const projectId = this.ConfigService.getProjectId();
-        const workgroupId = this.ConfigService.getWorkgroupId();
-        const userInfo = this.ConfigService.getUserInfoByWorkgroupId(workgroupId);
-        const username = userInfo.username;
-        let nodes = this.ProjectService.getNodes();
-
-        // console.log("PERIOD ID PROJECT", periodId, periodName);
-
-        //cycle through all the nodes and check if they have tasks
-
-        const tasksObj = {
-          nodes: []
-        };
-
-        for (let node of nodes) {
-          if (!this.ProjectService.isGroupNode(node.id)) {
-            if (node.task) {
-              const nodeJSON = {
-                id: node.id,
-                title: node.title,
-                duration: node.task.duration
-              };
-              tasksObj.nodes.push(nodeJSON);
-            }
-          }
-        }
-
-        const nodesJSON = angular.toJson(tasksObj);
-        const taskParams = {
-          runId: runId,
-          periodId: periodId,
-          periodName: periodName,
-          projectId: projectId,
-          workgroupId: workgroupId,
-          username: username,
-          tasks: nodesJSON
-        };
-        this.http.post('/api/task', taskParams).toPromise();
-      }
     }
   }
 
@@ -1370,7 +1294,7 @@ export class StudentDataService extends DataService {
     if (component != null) {
       const node = this.ProjectService.getNodeById(nodeId);
       const componentType = component.type;
-      const service = this.upgrade.$injector.get(componentType + 'Service');
+      const service = this.componentServiceLookupService.getService(componentType);
       if (['OpenResponse', 'Discussion'].includes(componentType)) {
         return service.isCompletedV2(node, component, this.studentData);
       } else {
@@ -1536,9 +1460,6 @@ export class StudentDataService extends DataService {
   }
   broadcastComponentSubmitTriggered(args: any) {
     this.componentSubmitTriggeredSource.next(args);
-  }
-  broadcastDeleteKeyPressed() {
-    this.deleteKeyPressedSource.next();
   }
   setNavItemExpanded(nodeId: string, isExpanded: boolean) {
     this.navItemIsExpandedSource.next({ nodeId: nodeId, isExpanded: isExpanded });

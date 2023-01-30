@@ -3,6 +3,7 @@ import { PeerGroupingTestingModule } from '../peer-grouping-testing.module';
 import { SelectPeerGroupingOptionComponent } from './select-peer-grouping-option.component';
 import { getDialogOpenSpy } from '../peer-grouping-testing-helper';
 import { PeerGrouping } from '../../../../../app/domain/peerGrouping';
+import { StudentTeacherCommonServicesModule } from '../../../../../app/student-teacher-common-services.module';
 
 let component: SelectPeerGroupingOptionComponent;
 let deleteEventSpy: jasmine.Spy;
@@ -13,7 +14,7 @@ const tag1: string = 'tag1';
 describe('SelectPeerGroupingOptionComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PeerGroupingTestingModule],
+      imports: [PeerGroupingTestingModule, StudentTeacherCommonServicesModule],
       declarations: [SelectPeerGroupingOptionComponent]
     }).compileComponents();
   });

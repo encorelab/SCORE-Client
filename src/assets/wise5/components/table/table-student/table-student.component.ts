@@ -1,5 +1,6 @@
 import * as html2canvas from 'html2canvas';
 import { Component, ViewEncapsulation } from '@angular/core';
+import { Tabulator } from 'tabulator-tables';
 import { AnnotationService } from '../../../services/annotationService';
 import { ConfigService } from '../../../services/configService';
 import { NodeService } from '../../../services/nodeService';
@@ -12,6 +13,8 @@ import { ComponentStudent } from '../../component-student.component';
 import { ComponentService } from '../../componentService';
 import { TableService } from '../tableService';
 import { MatDialog } from '@angular/material/dialog';
+import { TabulatorData } from '../TabulatorData';
+import { TabulatorDataService } from '../tabulatorDataService';
 
 @Component({
   selector: 'table-student',
@@ -20,6 +23,7 @@ import { MatDialog } from '@angular/material/dialog';
   encapsulation: ViewEncapsulation.None
 })
 export class TableStudent extends ComponentStudent {
+  columnIndexToIsUsed: Map<number, boolean> = new Map();
   columnNames: string[];
   dataExplorerColumnToIsDisabled: any = {};
   dataExplorerGraphTypes: any[];
@@ -37,8 +41,10 @@ export class TableStudent extends ComponentStudent {
   latestConnectedComponentState: any;
   notebookConfig: any;
   numDataExplorerSeries: number;
+  selectedRowIndices: number[] = [];
   tableData: any;
   tableId: string;
+  tabulatorData: TabulatorData;
 
   constructor(
     protected AnnotationService: AnnotationService,
@@ -51,6 +57,7 @@ export class TableStudent extends ComponentStudent {
     protected StudentAssetService: StudentAssetService,
     protected StudentDataService: StudentDataService,
     private TableService: TableService,
+    private TabulatorDataService: TabulatorDataService,
     protected UtilService: UtilService
   ) {
     super(
@@ -129,6 +136,7 @@ export class TableStudent extends ComponentStudent {
       if (this.componentContent.dataExplorerDataToColumn != null) {
         this.setDataExplorerDataToColumn();
       }
+      this.updateColumnsUsed();
     }
 
     if (this.hasMaxSubmitCountAndUsedAllSubmits()) {
@@ -137,18 +145,7 @@ export class TableStudent extends ComponentStudent {
 
     this.disableComponentIfNecessary();
 
-    if (
-      this.isDataExplorerEnabled &&
-      this.componentContent.dataExplorerDataToColumn != null &&
-      this.isAllDataExplorerSeriesSpecified()
-    ) {
-      // All the data explorer series have been fixed to display a specific column so we will call
-      // studentDataChanged() immediately to generate the table student data which will then be sent
-      // to the graph component so the graph can immediately be displayed. If we did not do this,
-      // the graph may not ever be displayed since it requires the student to change the table data.
-      // If all the data explorer series have been fixed to display a specific column and all the
-      // table data cells are not editable by the student, the student may not ever be able to
-      // change the table to generate table data to be sent to the graph.
+    if (this.isDataExplorerEnabled && this.componentContent.dataExplorerDataToColumn != null) {
       setTimeout(() => {
         this.studentDataChanged();
       }, 1000);
@@ -189,9 +186,7 @@ export class TableStudent extends ComponentStudent {
     this.dataExplorerSeries[dataExplorerSeriesIndex].xColumn = columnIndex;
     this.dataExplorerXColumn = columnIndex;
     this.setDataExplorerXColumnIsDisabled();
-    if (this.isDataExplorerXAxisLabelEmpty()) {
-      this.updateDataExplorerXAxisLabel(columnIndex);
-    }
+    this.updateDataExplorerXAxisLabel(columnIndex);
   }
 
   isDataExplorerXAxisLabelEmpty(): boolean {
@@ -285,23 +280,7 @@ export class TableStudent extends ComponentStudent {
         componentId: this.componentId,
         isDirty: false
       });
-      const isAutoSave = componentState.isAutoSave;
-      const isSubmit = componentState.isSubmit;
-      const serverSaveTime = componentState.serverSaveTime;
-      const clientSaveTime = this.ConfigService.convertToClientTimestamp(serverSaveTime);
-      if (isSubmit) {
-        this.setSubmittedMessage(clientSaveTime);
-        this.lockIfNecessary();
-        this.isSubmitDirty = false;
-        this.StudentDataService.broadcastComponentSubmitDirty({
-          componentId: this.componentId,
-          isDirty: false
-        });
-      } else if (isAutoSave) {
-        this.setAutoSavedMessage(clientSaveTime);
-      } else {
-        this.setSavedMessage(clientSaveTime);
-      }
+      this.latestComponentState = componentState;
     }
   }
 
@@ -337,6 +316,7 @@ export class TableStudent extends ComponentStudent {
        */
       this.tableData = this.getCopyOfTableData(this.componentContent.tableData);
     }
+    this.setTabulatorData();
   }
 
   /**
@@ -365,6 +345,7 @@ export class TableStudent extends ComponentStudent {
           this.setDataExplorerDataToColumn();
         }
       }
+      this.setTabulatorData();
       this.studentDataChanged();
     }
   }
@@ -396,6 +377,10 @@ export class TableStudent extends ComponentStudent {
           this.submitCounter = submitCounter;
         }
 
+        this.selectedRowIndices = studentData.selectedRowIndices
+          ? studentData.selectedRowIndices
+          : [];
+
         this.processLatestStudentWork();
       }
     }
@@ -411,6 +396,7 @@ export class TableStudent extends ComponentStudent {
     const componentState: any = this.NodeService.createNewComponentState();
     const studentData: any = {};
     studentData.tableData = this.getCopyOfTableData(this.tableData);
+    studentData.selectedRowIndices = this.getSelectedRowIndices();
     studentData.isDataExplorerEnabled = this.isDataExplorerEnabled;
     studentData.dataExplorerGraphType = this.dataExplorerGraphType;
     studentData.dataExplorerXAxisLabel = this.dataExplorerXAxisLabel;
@@ -909,7 +895,7 @@ export class TableStudent extends ComponentStudent {
     html2canvas(tableElement).then((canvas: any) => {
       const base64Image = canvas.toDataURL('image/png');
       const imageObject = this.UtilService.getImageObjectFromBase64String(base64Image);
-      this.NotebookService.addNote(imageObject);
+      this.NotebookService.addNote(this.StudentDataService.getCurrentNodeId(), imageObject);
     });
   }
 
@@ -937,6 +923,7 @@ export class TableStudent extends ComponentStudent {
       }
     }
     if (isStudentDataChanged) {
+      this.setTabulatorData();
       this.studentDataChanged();
     }
   }
@@ -1010,11 +997,12 @@ export class TableStudent extends ComponentStudent {
   studentDataChanged() {
     if (this.isDataExplorerEnabled) {
       this.updateColumnNames();
+      this.updateColumnsUsed();
       this.updateDataExplorerSeriesNames();
     }
     this.setIsDirtyAndBroadcast();
     this.setIsSubmitDirtyAndBroadcast();
-    this.clearSaveText();
+    this.clearLatestComponentState();
     const action = 'change';
     this.createComponentStateAndBroadcast(action);
   }
@@ -1024,6 +1012,22 @@ export class TableStudent extends ComponentStudent {
     this.columnNames = firstRow.map((cell: any): string => {
       return cell.text;
     });
+  }
+
+  updateColumnsUsed(): void {
+    const firstRow = this.tableData[0];
+    for (let c = 0; c < firstRow.length; c++) {
+      this.columnIndexToIsUsed.set(c, this.isColumnUsed(c));
+    }
+  }
+
+  isColumnUsed(columnIndex: number): boolean {
+    return (
+      columnIndex === this.dataExplorerXColumn ||
+      this.dataExplorerSeries.some((series) => {
+        return series.yColumn === columnIndex;
+      })
+    );
   }
 
   updateDataExplorerSeriesNames() {
@@ -1045,21 +1049,17 @@ export class TableStudent extends ComponentStudent {
     for (const singleSeries of this.dataExplorerSeries) {
       singleSeries.xColumn = this.dataExplorerXColumn;
     }
-    if (this.isDataExplorerXAxisLabelEmpty()) {
-      this.updateDataExplorerXAxisLabel(this.dataExplorerXColumn);
-    }
+    this.updateDataExplorerXAxisLabel(this.dataExplorerXColumn);
     this.studentDataChanged();
   }
 
-  dataExplorerYColumnChanged(index) {
+  dataExplorerYColumnChanged(index: number): void {
     const yColumn = this.dataExplorerSeries[index].yColumn;
     this.dataExplorerSeries[index].name = this.columnNames[yColumn];
     if (!this.isDataExplorerOneYAxis()) {
       this.setDataExplorerSeriesYAxis(index);
     }
-    if (this.isDataExplorerYAxisLabelEmpty(index)) {
-      this.updateDataExplorerYAxisLabel(index, yColumn);
-    }
+    this.updateDataExplorerYAxisLabel(index, yColumn);
     this.studentDataChanged();
   }
 
@@ -1159,9 +1159,36 @@ export class TableStudent extends ComponentStudent {
         componentId: this.componentId
       });
     }
+    this.setTabulatorData();
   }
 
   attachStudentAsset(studentAsset: any): void {
     // TODO: make sure the asset is a csv file then populate the csv data into the table
+  }
+
+  private setTabulatorData(): void {
+    this.tabulatorData = this.TabulatorDataService.convertTableDataToTabulator(
+      this.tableData,
+      this.componentContent.globalCellSize
+    );
+  }
+
+  tabulatorCellChanged(cell: Tabulator.CellComponent): void {
+    const columnIndex = parseInt(cell.getColumn().getField());
+    const rowIndex = cell.getRow().getIndex() + 1;
+    this.tableData[rowIndex][columnIndex].text = cell.getValue();
+    this.studentDataChanged();
+  }
+
+  tabulatorRowSelectionChanged(rows: Tabulator.RowComponent[]): void {
+    this.selectedRowIndices = [];
+    for (const row of rows) {
+      this.selectedRowIndices.push(row.getIndex());
+    }
+    this.studentDataChanged();
+  }
+
+  private getSelectedRowIndices(): number[] {
+    return this.componentContent.enableRowSelection ? this.selectedRowIndices : [];
   }
 }

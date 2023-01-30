@@ -1,6 +1,5 @@
 'use strict';
 
-import * as angular from 'angular';
 import * as html2canvas from 'html2canvas';
 import { Injectable } from '@angular/core';
 import { ComponentService } from '../componentService';
@@ -317,12 +316,7 @@ export class GraphService extends ComponentService {
   }
 
   getHighchartsDiv(componentId: string) {
-    const highchartsDiv = angular.element('#chart_' + componentId).find('.highcharts-container');
-    if (highchartsDiv != null && highchartsDiv.length > 0) {
-      return highchartsDiv[0];
-    } else {
-      return null;
-    }
+    return document.querySelector(`#chart_${componentId} .highcharts-container`);
   }
 
   isMultipleYAxes(yAxis: any): boolean {
@@ -338,32 +332,21 @@ export class GraphService extends ComponentService {
     return function () {
       let text = '';
       if (thisGraphService.isLimitXAxisType(xAxis)) {
-        text = thisGraphService.getSeriesText(this.series);
-        const xText = thisGraphService.getAxisTextForLimitGraph(
+        text = thisGraphService.getLimitAxisTypeTooltip(
+          this,
           this.series,
-          this.x,
-          'xAxis',
           xAxis,
-          roundValuesTo
-        );
-        const yText = thisGraphService.getAxisTextForLimitGraph(
-          this.series,
-          this.y,
-          'yAxis',
           yAxis,
           roundValuesTo
         );
-        text += thisGraphService.combineXTextAndYText(xText, yText);
       } else if (thisGraphService.isCategoriesXAxisType(xAxis)) {
-        text = thisGraphService.getSeriesText(this.series);
-        const xText = thisGraphService.getXTextForCategoriesGraph(
-          this.point,
-          this.x,
+        text = thisGraphService.getCategoriesAxisTypeTooltip(
+          this,
+          this.series,
           xAxis,
+          yAxis,
           roundValuesTo
         );
-        const yText = thisGraphService.getYTextForCategoriesGraph(this.y, roundValuesTo);
-        text += xText + ' ' + yText;
       }
       if (thisGraphService.pointHasCustomTooltip(this.point)) {
         text += '<br/>' + this.point.tooltip;
@@ -380,12 +363,21 @@ export class GraphService extends ComponentService {
     return xAxis.type === 'categories';
   }
 
+  getLimitAxisTypeTooltip(
+    point: any,
+    series: any,
+    xAxis: any,
+    yAxis: any,
+    roundValuesTo: string
+  ): string {
+    const seriesName = this.getSeriesText(series);
+    const xText = this.getAxisTextForLimitGraph(series, point.x, 'xAxis', xAxis, roundValuesTo);
+    const yText = this.getAxisTextForLimitGraph(series, point.y, 'yAxis', yAxis, roundValuesTo);
+    return this.combineSeriesNameXTextYText(seriesName, xText, yText);
+  }
+
   getSeriesText(series: any): string {
-    let text = '';
-    if (series.name !== '') {
-      text = '<b>' + series.name + '</b><br/>';
-    }
-    return text;
+    return series.name === '' ? '' : `<b>${series.name}</b>`;
   }
 
   getAxisTextForLimitGraph(
@@ -395,27 +387,94 @@ export class GraphService extends ComponentService {
     axisObj: any,
     roundValuesTo: string
   ): string {
-    let text = `${this.performRounding(num, roundValuesTo)}`;
-    const axisUnits = this.getAxisUnits(series, axisName, axisObj);
-    if (axisUnits != null && axisUnits !== '') {
-      text += ' ' + axisUnits;
-    }
-    return text;
+    const label = this.getAxisTitle(series, axisObj);
+    const value = this.getValueForLimitGraph(series, num, roundValuesTo);
+    const units = this.getAxisUnits(series, axisName, axisObj);
+    return this.getPointDisplay(label, value, units);
   }
 
-  combineXTextAndYText(xText: string, yText: string): string {
-    let text = xText;
+  getAxisTitle(series: any, axisObj: any): string {
+    if (Array.isArray(axisObj)) {
+      if (axisObj[series.index].title.text == null || axisObj[series.index].title.text === '') {
+        return series.name;
+      } else {
+        return axisObj[series.index].title.text;
+      }
+    } else if (axisObj.title.text == null || axisObj.title.text === '') {
+      return series.name;
+    } else {
+      return axisObj.title.text;
+    }
+  }
+
+  getValueForLimitGraph(series: any, num: number, roundValuesTo: string): any {
+    if (
+      series.data[num] != null &&
+      series.data[num].category === num &&
+      series.data[num].name != null
+    ) {
+      return series.data[num].name;
+    } else {
+      return this.performRounding(num, roundValuesTo);
+    }
+  }
+
+  getPointDisplay(label: string, value: any, units: string): string {
+    return `${label}: <b>${value} ${units}</b>`;
+  }
+
+  combineSeriesNameXTextYText(seriesName: string, xText: string, yText: string): string {
+    let text = '';
+    if (seriesName !== '') {
+      text += seriesName + '<br/>';
+    }
     if (xText !== '') {
-      text += ', ';
+      text += xText + '<br/>';
     }
-    text += yText;
+    if (yText !== '') {
+      text += yText + '<br/>';
+    }
     return text;
   }
 
-  getXTextForCategoriesGraph(point: any, x: number, xAxis: any, roundValuesTo: string): any {
+  getCategoriesAxisTypeTooltip(
+    point: any,
+    series: any,
+    xAxis: any,
+    yAxis: any,
+    roundValuesTo: string
+  ): string {
+    const seriesName = this.getSeriesText(series);
+    const xText = this.getXTextForCategoriesGraph(
+      series,
+      point.point,
+      point.x,
+      xAxis,
+      roundValuesTo
+    );
+    const yText = this.getYTextForCategoriesGraph(series, point.y, yAxis, roundValuesTo);
+    return this.combineSeriesNameXTextYText(seriesName, xText, yText);
+  }
+
+  getXTextForCategoriesGraph(
+    series: any,
+    point: any,
+    x: number,
+    xAxis: any,
+    roundValuesTo: string
+  ): string {
+    const label = xAxis.title.text;
+    const value = this.getXValueForCategoriesGraph(point, x, xAxis, roundValuesTo);
+    const units = this.getAxisUnits(series, xAxis.name, xAxis);
+    return this.getPointDisplay(label, value, units);
+  }
+
+  getXValueForCategoriesGraph(point: any, x: number, xAxis: any, roundValuesTo: string): any {
     const category = this.getCategoryByIndex(point.index, xAxis);
     if (category != null) {
       return category;
+    } else if (point.category === x && point.name != null) {
+      return point.name;
     } else {
       return this.performRounding(x, roundValuesTo);
     }
@@ -428,8 +487,11 @@ export class GraphService extends ComponentService {
     return null;
   }
 
-  getYTextForCategoriesGraph(y: number, roundValuesTo: string) {
-    return this.performRounding(y, roundValuesTo);
+  getYTextForCategoriesGraph(series: any, y: number, axis: any, roundValuesTo: string): string {
+    const label = this.getAxisTitle(series, axis);
+    const value = this.performRounding(y, roundValuesTo);
+    const units = this.getAxisUnits(series, axis.name, axis);
+    return this.getPointDisplay(label, value, units);
   }
 
   performRounding(number: number, roundValuesTo: string): number {

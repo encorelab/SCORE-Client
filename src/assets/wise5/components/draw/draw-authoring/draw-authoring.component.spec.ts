@@ -1,11 +1,10 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { StudentTeacherCommonServicesModule } from '../../../../../app/student-teacher-common-services.module';
 import { TeacherProjectService } from '../../../services/teacherProjectService';
 import { DrawAuthoring } from './draw-authoring.component';
 import { DrawAuthoringModule } from './draw-authoring.module';
-
-export class MockConfigService {}
 
 let component: DrawAuthoring;
 let fixture: ComponentFixture<DrawAuthoring>;
@@ -43,7 +42,12 @@ const componentContent = {
 describe('DrawAuthoringComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [BrowserAnimationsModule, DrawAuthoringModule, HttpClientTestingModule]
+      imports: [
+        BrowserAnimationsModule,
+        DrawAuthoringModule,
+        HttpClientTestingModule,
+        StudentTeacherCommonServicesModule
+      ]
     });
     fixture = TestBed.createComponent(DrawAuthoring);
     component = fixture.componentInstance;

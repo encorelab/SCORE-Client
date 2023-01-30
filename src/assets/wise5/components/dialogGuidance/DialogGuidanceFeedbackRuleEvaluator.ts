@@ -1,14 +1,15 @@
 import { CRaterResponse } from './CRaterResponse';
 import { DialogGuidanceStudentComponent } from './dialog-guidance-student/dialog-guidance-student.component';
 import { FeedbackRule } from './FeedbackRule';
+import { HasKIScoreTermEvaluator } from './TermEvaluator/HasKIScoreTermEvaluator';
+import { IdeaCountTermEvaluator } from './TermEvaluator/IdeaCountTermEvaluator';
+import { IdeaTermEvaluator } from './TermEvaluator/IdeaTermEvaluator';
+import { TermEvaluator } from './TermEvaluator/TermEvaluator';
 
 export class DialogGuidanceFeedbackRuleEvaluator {
-  component: DialogGuidanceStudentComponent;
   defaultFeedback = $localize`Thanks for submitting your response.`;
 
-  constructor(component: DialogGuidanceStudentComponent) {
-    this.component = component;
-  }
+  constructor(private component: DialogGuidanceStudentComponent) {}
 
   getFeedbackRule(response: CRaterResponse): FeedbackRule {
     for (const feedbackRule of this.component.componentContent.feedbackRules) {
@@ -114,12 +115,24 @@ export class DialogGuidanceFeedbackRuleEvaluator {
     return !this.evaluateTerm(termStack.pop(), response);
   }
 
-  private evaluateOrExpression(term1: string, term2: string, response: CRaterResponse): boolean {
-    return this.evaluateTerm(term1, response) || this.evaluateTerm(term2, response);
+  private evaluateTerm(term: string, response: CRaterResponse): boolean {
+    let evaluator: TermEvaluator;
+    if (this.isHasKIScoreTerm(term)) {
+      evaluator = new HasKIScoreTermEvaluator(term);
+    } else if (this.isIdeaCountTerm(term)) {
+      evaluator = new IdeaCountTermEvaluator(term);
+    } else {
+      evaluator = new IdeaTermEvaluator(term);
+    }
+    return evaluator.evaluate(response);
   }
 
-  private evaluateTerm(term: string, response: CRaterResponse): boolean {
-    return term === 'true' || response.getDetectedIdeaNames().includes(term);
+  private isHasKIScoreTerm(term: string): boolean {
+    return /hasKIScore\([1-5]\)/.test(term);
+  }
+
+  private isIdeaCountTerm(term: string): boolean {
+    return /ideaCount(MoreThan|Equals|LessThan)\([\d+]\)/.test(term);
   }
 
   private getDefaultRule(feedbackRules: FeedbackRule[]): FeedbackRule {

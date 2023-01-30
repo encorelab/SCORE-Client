@@ -4,7 +4,6 @@ import { StudentRunListItemComponent } from './student-run-list-item.component';
 import { Observable } from 'rxjs';
 import { Config } from '../../domain/config';
 import { ConfigService } from '../../services/config.service';
-import { MomentModule } from 'ngx-moment';
 import { Project } from '../../domain/project';
 import { User } from '../../domain/user';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
@@ -43,7 +42,7 @@ describe('StudentRunListItemComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [MomentModule, BrowserAnimationsModule, MatDialogModule],
+      imports: [BrowserAnimationsModule, MatDialogModule],
       declarations: [StudentRunListItemComponent],
       providers: [
         { provide: ConfigService, useClass: MockConfigService },
@@ -60,7 +59,6 @@ describe('StudentRunListItemComponent', () => {
     const owner = new User();
     owner.displayName = 'Mr. Happy';
     run.owner = owner;
-    run.projectThumb = 'Happy.png';
     run.startTime = new Date('2018-10-17T00:00:00.0').getTime();
     const project: Project = new Project();
     project.id = 1;

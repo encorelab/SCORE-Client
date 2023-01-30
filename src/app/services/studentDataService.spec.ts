@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { UpgradeModule } from '@angular/upgrade/static';
 import { StudentDataService } from '../../assets/wise5/services/studentDataService';
 import { ConfigService } from '../../assets/wise5/services/configService';
 import { AnnotationService } from '../../assets/wise5/services/annotationService';
 import { ProjectService } from '../../assets/wise5/services/projectService';
 import { UtilService } from '../../assets/wise5/services/utilService';
 import { TagService } from '../../assets/wise5/services/tagService';
-import { SessionService } from '../../assets/wise5/services/sessionService';
+import { MatDialogModule } from '@angular/material/dialog';
+import { StudentTeacherCommonServicesModule } from '../student-teacher-common-services.module';
 
 let $injector, $rootScope;
 let http: HttpTestingController;
@@ -17,32 +17,21 @@ let annotationService: AnnotationService;
 let projectService: ProjectService;
 let tagService: TagService;
 let utilService: UtilService;
-let upgrade: UpgradeModule;
 let criteria1: any;
 let criteria2: any;
 
 describe('StudentDataService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, UpgradeModule],
-      providers: [
-        AnnotationService,
-        ConfigService,
-        ProjectService,
-        SessionService,
-        StudentDataService,
-        TagService,
-        UtilService
-      ]
+      imports: [HttpClientTestingModule, MatDialogModule, StudentTeacherCommonServicesModule]
     });
-    http = TestBed.get(HttpTestingController);
-    service = TestBed.get(StudentDataService);
-    configService = TestBed.get(ConfigService);
-    annotationService = TestBed.get(AnnotationService);
-    projectService = TestBed.get(ProjectService);
-    tagService = TestBed.get(TagService);
-    utilService = TestBed.get(UtilService);
-    upgrade = TestBed.get(UpgradeModule);
+    http = TestBed.inject(HttpTestingController);
+    service = TestBed.inject(StudentDataService);
+    configService = TestBed.inject(ConfigService);
+    annotationService = TestBed.inject(AnnotationService);
+    projectService = TestBed.inject(ProjectService);
+    tagService = TestBed.inject(TagService);
+    utilService = TestBed.inject(UtilService);
     criteria1 = {
       name: 'isCompleted',
       params: {

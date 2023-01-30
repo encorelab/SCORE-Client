@@ -17,7 +17,6 @@ import NotebookGradingController from './notebook/notebookGradingController';
 import StudentGradingController from './studentGrading/studentGradingController';
 import StudentProgressController from './studentProgress/studentProgressController';
 import { downgradeComponent } from '@angular/upgrade/static';
-import { TaskDatatableComponent } from '../../score/teachingassistant/src/app/core/components/task-datatable/task-datatable.component';
 import { GoToNodeSelectComponent } from '../../score/teachingassistant/src/app/core/components/go-to-node-select/go-to-node-select.component';
 
 export default angular
@@ -38,10 +37,6 @@ export default angular
   .controller('NotebookGradingController', NotebookGradingController)
   .controller('StudentGradingController', StudentGradingController)
   .controller('StudentProgressController', StudentProgressController)
-  .directive(
-    'taskDatatable',
-    downgradeComponent({ component: TaskDatatableComponent }) as angular.IDirectiveFactory
-  )
   .directive(
     'goToNodeSelectComponent',
     downgradeComponent({ component: GoToNodeSelectComponent }) as angular.IDirectiveFactory
