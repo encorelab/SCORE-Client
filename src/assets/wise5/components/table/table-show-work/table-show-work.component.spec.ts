@@ -32,7 +32,6 @@ describe('TableShowWorkComponent', () => {
     fixture.detectChanges();
     component.componentContent = { globalCellSize: 10 };
   });
-
   calculateColumnNames();
   setupTable();
 });

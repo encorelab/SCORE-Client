@@ -9,6 +9,8 @@ import { AchievementService } from './achievementService';
 import { RxStomp } from '@stomp/rx-stomp';
 import { Message } from '@stomp/stompjs';
 import { Tag } from '../../../app/domain/tag';
+import { RxStomp } from '@stomp/rx-stomp';
+import { Message } from '@stomp/stompjs';
 
 @Injectable()
 export class TeacherWebSocketService {

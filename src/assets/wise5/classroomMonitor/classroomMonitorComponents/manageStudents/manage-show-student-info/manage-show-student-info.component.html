@@ -16,15 +16,13 @@
       <tr>
         <td><strong i18n>Most Recent Login</strong></td>
         <td>
-          {{ user.lastLoginTime | date : 'fullDate' }},
-          {{ user.lastLoginTime | date : 'shortTime' }}
+          {{ user.lastLoginTime | date: 'fullDate' }},
+          {{ user.lastLoginTime | date: 'shortTime' }}
         </td>
       </tr>
       <tr>
         <td><strong i18n>Registration Date</strong></td>
-        <td>
-          {{ user.signUpTime | date : 'fullDate' }}, {{ user.signUpTime | date : 'shortTime' }}
-        </td>
+        <td>{{ user.signUpTime | date: 'fullDate' }}, {{ user.signUpTime | date: 'shortTime' }}</td>
       </tr>
       <tr>
         <td><strong i18n>Number of Logins</strong></td>

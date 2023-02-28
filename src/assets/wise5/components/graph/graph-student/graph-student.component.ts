@@ -408,6 +408,33 @@ export class GraphStudent extends ComponentStudent {
     }
   }
 
+  private handleConnectedComponentData(studentData: any, connectedComponent: any): void {
+    const rows = studentData.tableData;
+    const data = this.convertRowDataToSeriesData(rows, connectedComponent);
+    let seriesIndex = connectedComponent.seriesIndex;
+    if (seriesIndex == null) {
+      seriesIndex = 0;
+    }
+    if (this.isStudentDataVersion1()) {
+      let series = this.series[seriesIndex];
+      if (series == null) {
+        series = {};
+        this.series[seriesIndex] = series;
+      }
+      series.data = data;
+    } else {
+      const trial = this.activeTrial;
+      if (trial != null && trial.series != null) {
+        let series = trial.series[seriesIndex];
+        if (series == null) {
+          series = {};
+          this.series[seriesIndex] = series;
+        }
+        series.data = data;
+      }
+    }
+  }
+
   isSingleYAxis(yAxis) {
     return !Array.isArray(yAxis);
   }

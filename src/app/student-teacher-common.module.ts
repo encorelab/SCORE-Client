@@ -21,6 +21,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { EditorModule } from '@tinymce/tinymce-angular';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatTableModule } from '@angular/material/table';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -73,6 +74,7 @@ import { MatMenuModule } from '@angular/material/menu';
     MatSidenavModule,
     MatSliderModule,
     MatTabsModule,
+    MatTableModule,
     MatToolbarModule,
     MatSlideToggleModule,
     MatTooltipModule,
@@ -110,6 +112,7 @@ import { MatMenuModule } from '@angular/material/menu';
     MatSliderModule,
     MatSlideToggleModule,
     MatTabsModule,
+    MatTableModule,
     MatToolbarModule,
     MatTooltipModule,
     MathModule,
