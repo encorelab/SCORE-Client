@@ -3,31 +3,14 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserModule } from '@angular/platform-browser';
-import { UpgradeModule } from '@angular/upgrade/static';
 import { of } from 'rxjs';
+import { StudentTeacherCommonServicesModule } from '../../../../../app/student-teacher-common-services.module';
 import { AnnotationService } from '../../../services/annotationService';
 import { ConfigService } from '../../../services/configService';
-import { NodeService } from '../../../services/nodeService';
-import { NotebookService } from '../../../services/notebookService';
 import { NotificationService } from '../../../services/notificationService';
 import { ProjectService } from '../../../services/projectService';
-import { SessionService } from '../../../services/sessionService';
-import { StudentAssetService } from '../../../services/studentAssetService';
-import { StudentDataService } from '../../../services/studentDataService';
-import { TagService } from '../../../services/tagService';
-import { UtilService } from '../../../services/utilService';
-import { ComponentService } from '../../componentService';
 import { DiscussionService } from '../discussionService';
 import { DiscussionStudent } from './discussion-student.component';
-
-class MockNotebookService {
-  addNote() {}
-}
-class MockNodeService {
-  createNewComponentState() {
-    return {};
-  }
-}
 
 let component: DiscussionStudent;
 const componentId = 'component1';
@@ -40,23 +23,13 @@ let saveNotificationToServerSpy;
 describe('DiscussionStudentComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [BrowserModule, HttpClientTestingModule, MatDialogModule, UpgradeModule],
-      declarations: [DiscussionStudent],
-      providers: [
-        AnnotationService,
-        ComponentService,
-        ConfigService,
-        DiscussionService,
-        { provide: NodeService, useClass: MockNodeService },
-        { provide: NotebookService, useClass: MockNotebookService },
-        NotificationService,
-        ProjectService,
-        SessionService,
-        StudentAssetService,
-        StudentDataService,
-        TagService,
-        UtilService
+      imports: [
+        BrowserModule,
+        HttpClientTestingModule,
+        MatDialogModule,
+        StudentTeacherCommonServicesModule
       ],
+      declarations: [DiscussionStudent],
       schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(DiscussionStudent);

@@ -1,17 +1,14 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { UpgradeModule } from '@angular/upgrade/static';
-import { AnnotationService } from '../../services/annotationService';
-import { ConfigService } from '../../services/configService';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { ProjectService } from '../../services/projectService';
 import { SessionService } from '../../services/sessionService';
 import { StudentDataService } from '../../services/studentDataService';
-import { TagService } from '../../services/tagService';
-import { UtilService } from '../../services/utilService';
 import { StudentAccountMenuComponent } from './student-account-menu.component';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatDialogModule } from '@angular/material/dialog';
+import { StudentTeacherCommonServicesModule } from '../../../../app/student-teacher-common-services.module';
 
 class MockProjectService {
   rootNode = {};
@@ -33,21 +30,14 @@ describe('StudentAccountMenuComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         HttpClientTestingModule,
+        MatDialogModule,
         MatDividerModule,
         MatIconModule,
         MatMenuModule,
-        UpgradeModule
+        StudentTeacherCommonServicesModule
       ],
       declarations: [StudentAccountMenuComponent],
-      providers: [
-        AnnotationService,
-        ConfigService,
-        { provide: ProjectService, useClass: MockProjectService },
-        SessionService,
-        StudentDataService,
-        TagService,
-        UtilService
-      ]
+      providers: [{ provide: ProjectService, useClass: MockProjectService }]
     });
     fixture = TestBed.createComponent(StudentAccountMenuComponent);
     component = fixture.componentInstance;

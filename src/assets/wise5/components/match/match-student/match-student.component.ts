@@ -222,28 +222,23 @@ export class MatchStudent extends ComponentStudent {
     if (latestComponentState == null) {
       return;
     }
-    const clientSaveTime = this.getClientSaveTime(latestComponentState);
+    this.latestComponentState = latestComponentState;
     if (latestComponentState.isSubmit) {
-      this.setGeneralComponentStatus(latestComponentState.isCorrect, false, clientSaveTime);
+      this.setGeneralComponentStatus(latestComponentState.isCorrect, false);
       this.checkAnswer();
     } else {
       const latestSubmitComponentState = this.getLatestSubmitComponentState();
       if (latestSubmitComponentState != null) {
         this.showFeedbackOnUnchangedChoices(latestSubmitComponentState);
       } else {
-        this.setGeneralComponentStatus(null, false, clientSaveTime);
+        this.setGeneralComponentStatus(null, false);
       }
     }
   }
 
-  setGeneralComponentStatus(
-    isCorrect: boolean,
-    isSubmitDirty: boolean,
-    clientSaveTime: number
-  ): void {
+  setGeneralComponentStatus(isCorrect: boolean, isSubmitDirty: boolean): void {
     this.isCorrect = isCorrect;
     this.setIsSubmitDirty(isSubmitDirty);
-    this.setSavedMessage(clientSaveTime);
   }
 
   getLatestComponentState(): any {
@@ -266,7 +261,7 @@ export class MatchStudent extends ComponentStudent {
       if (latestComponentState != null) {
         this.isCorrect = null;
         this.setIsSubmitDirty(true);
-        this.setSavedMessage(latestComponentState.clientSaveTime);
+        this.latestComponentState = latestComponentState;
       }
     }
   }
@@ -285,10 +280,7 @@ export class MatchStudent extends ComponentStudent {
 
   setIsSubmitDirty(isSubmitDirty: boolean): void {
     this.isSubmitDirty = isSubmitDirty;
-    this.StudentDataService.broadcastComponentSubmitDirty({
-      componentId: this.componentId,
-      isDirty: isSubmitDirty
-    });
+    this.emitComponentSubmitDirty(isSubmitDirty);
   }
 
   getBucketIds(): string[] {

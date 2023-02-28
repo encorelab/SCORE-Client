@@ -1,6 +1,5 @@
 'use strict';
 
-import * as angular from 'angular';
 import * as html2canvas from 'html2canvas';
 import { ComponentService } from '../componentService';
 import { StudentAssetService } from '../../services/studentAssetService';
@@ -9,8 +8,6 @@ import { Injectable } from '@angular/core';
 
 @Injectable()
 export class TableService extends ComponentService {
-  $translate: any;
-
   constructor(
     private StudentAssetService: StudentAssetService,
     protected UtilService: UtilService
@@ -150,28 +147,39 @@ export class TableService extends ComponentService {
     if (componentState != null) {
       const studentData = componentState.studentData;
       if (studentData != null) {
-        const studentTableData = studentData.tableData;
-        const componentContentTableData = componentContent.tableData;
-        if (studentTableData != null) {
-          const studentRows = studentTableData;
-          for (let r = 0; r < studentRows.length; r++) {
-            const studentRow = studentRows[r];
-            if (studentRow != null) {
-              for (let c = 0; c < studentRow.length; c++) {
-                const studentCell = this.getTableDataCellValue(r, c, studentTableData);
-                const componentContentCell = this.getTableDataCellValue(
-                  r,
-                  c,
-                  componentContentTableData
-                );
-                if (studentCell !== componentContentCell) {
-                  /*
-                   * the cell values are not the same which means
-                   * the student has changed the table
-                   */
-                  return true;
-                }
-              }
+        return (
+          this.studentDataHasSelectedRows(studentData) ||
+          this.studentDataHasTableData(studentData, componentContent)
+        );
+      }
+    }
+  }
+
+  private studentDataHasSelectedRows(studentData: any): boolean {
+    return studentData.selectedRowIndices != null;
+  }
+
+  private studentDataHasTableData(studentData: any, componentContent: any): boolean {
+    const studentTableData = studentData.tableData;
+    if (studentTableData != null) {
+      const componentContentTableData = componentContent.tableData;
+      const studentRows = studentTableData;
+      for (let r = 0; r < studentRows.length; r++) {
+        const studentRow = studentRows[r];
+        if (studentRow != null) {
+          for (let c = 0; c < studentRow.length; c++) {
+            const studentCell = this.getTableDataCellValue(r, c, studentTableData);
+            const componentContentCell = this.getTableDataCellValue(
+              r,
+              c,
+              componentContentTableData
+            );
+            if (studentCell !== componentContentCell) {
+              /*
+               * the cell values are not the same which means
+               * the student has changed the table
+               */
+              return true;
             }
           }
         }
@@ -209,11 +217,10 @@ export class TableService extends ComponentService {
    */
   generateImageFromRenderedComponentState(componentState) {
     const promise = new Promise((resolve, reject) => {
-      let tableElement = angular.element(
-        document.querySelector('#table_' + componentState.nodeId + '_' + componentState.componentId)
+      let tableElement = document.querySelector(
+        `#table-${componentState.nodeId}-${componentState.componentId}`
       );
-      if (tableElement != null && tableElement.length > 0) {
-        tableElement = tableElement[0];
+      if (tableElement != null) {
         // convert the table element to a canvas element
         html2canvas(tableElement).then((canvas) => {
           // get the canvas as a base64 string

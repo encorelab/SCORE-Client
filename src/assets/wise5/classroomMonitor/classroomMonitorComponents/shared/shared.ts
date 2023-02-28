@@ -2,11 +2,9 @@
 
 import { ComponentNewWorkBadgeComponent } from '../../../../../app/classroom-monitor/component-new-work-badge/component-new-work-badge.component';
 import MainMenu from './mainMenu/mainMenu';
-import NodeInfo from './nodeInfo/nodeInfo';
+import { NodeInfoComponent } from './node-info/node-info.component';
 import NotificationsMenu from './notificationsMenu/notificationsMenu';
-import PauseScreensMenu from './pauseScreensMenu/pauseScreensMenu';
 import { StatusIconComponent } from '../../../../../app/classroom-monitor/status-icon/status-icon.component';
-import Toolbar from './toolbar/toolbar';
 import TopBar from './topBar/topBar';
 import { WorkgroupNodeStatusComponent } from '../../../../../app/classroom-monitor/workgroup-node-status/workgroup-node-status.component';
 import { WorkgroupSelectAutocompleteComponent } from '../../../../../app/classroom-monitor/workgroup-select/workgroup-select-autocomplete/workgroup-select-autocomplete.component';
@@ -15,6 +13,8 @@ import { AlertStatusCornerComponent } from '../../../../../app/classroom-monitor
 import * as angular from 'angular';
 import { WorkgroupNodeScoreComponent } from './workgroupNodeScore/workgroup-node-score.component';
 import { downgradeComponent } from '@angular/upgrade/static';
+import { PauseScreensMenuComponent } from '../pause-screens-menu/pause-screens-menu.component';
+import { ToolBarComponent } from './tool-bar/tool-bar.component';
 
 const Shared = angular
   .module('cmShared', [])
@@ -27,14 +27,23 @@ const Shared = angular
     downgradeComponent({ component: ComponentNewWorkBadgeComponent }) as angular.IDirectiveFactory
   )
   .component('cmMainMenu', MainMenu)
+  .directive(
+    'nodeInfo',
+    downgradeComponent({ component: NodeInfoComponent }) as angular.IDirectiveFactory
+  )
   .component('notificationsMenu', NotificationsMenu)
-  .component('nodeInfo', NodeInfo)
-  .component('pauseScreensMenu', PauseScreensMenu)
+  .directive(
+    'pauseScreensMenu',
+    downgradeComponent({ component: PauseScreensMenuComponent }) as angular.IDirectiveFactory
+  )
   .directive(
     'statusIcon',
     downgradeComponent({ component: StatusIconComponent }) as angular.IDirectiveFactory
   )
-  .component('cmToolbar', Toolbar)
+  .directive(
+    'cmToolbar',
+    downgradeComponent({ component: ToolBarComponent }) as angular.IDirectiveFactory
+  )
   .component('cmTopBar', TopBar)
   .directive(
     'workgroupNodeScore',

@@ -1,7 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { UpgradeModule } from '@angular/upgrade/static';
-import { MomentModule } from 'ngx-moment';
 import { AnnotationService } from '../../../services/annotationService';
 import { ConfigService } from '../../../services/configService';
 import { ProjectService } from '../../../services/projectService';
@@ -17,7 +16,7 @@ let reply2: any = createComponentState('World');
 describe('ClassResponseComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, MomentModule],
+      imports: [HttpClientTestingModule],
       declarations: [ClassResponse],
       providers: [
         AnnotationService,

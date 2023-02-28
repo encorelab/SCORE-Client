@@ -2,10 +2,10 @@
 
 import { AnnotationService } from '../../../../services/annotationService';
 import { ConfigService } from '../../../../services/configService';
-import { NodeService } from '../../../../services/nodeService';
 import { MilestoneService } from '../../../../services/milestoneService';
+import { NodeInfoService } from '../../../../services/nodeInfoService';
 import { NotificationService } from '../../../../services/notificationService';
-import { PeerGroupService } from '../../../../services/peerGroupService';
+import { TeacherPeerGroupService } from '../../../../services/teacherPeerGroupService';
 import { ClassroomStatusService } from '../../../../services/classroomStatusService';
 import { TeacherDataService } from '../../../../services/teacherDataService';
 import * as angular from 'angular';
@@ -52,9 +52,9 @@ export class NodeGradingViewController {
     'ClassroomStatusService',
     'ConfigService',
     'MilestoneService',
-    'NodeService',
+    'NodeInfoService',
     'NotificationService',
-    'PeerGroupService',
+    'TeacherPeerGroupService',
     'ProjectService',
     'TeacherDataService'
   ];
@@ -65,9 +65,9 @@ export class NodeGradingViewController {
     protected classroomStatusService: ClassroomStatusService,
     protected ConfigService: ConfigService,
     protected MilestoneService: MilestoneService,
-    protected NodeService: NodeService,
+    protected nodeInfoService: NodeInfoService,
     protected NotificationService: NotificationService,
-    protected PeerGroupService: PeerGroupService,
+    protected PeerGroupService: TeacherPeerGroupService,
     protected ProjectService: TeacherProjectService,
     protected TeacherDataService: TeacherDataService
   ) {}
@@ -304,7 +304,7 @@ export class NodeGradingViewController {
   }
 
   showRubric($event) {
-    this.NodeService.showNodeInfo(this.nodeId, $event);
+    this.nodeInfoService.showNodeInfo(this.nodeId, $event);
   }
 
   setSort(value) {

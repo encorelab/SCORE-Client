@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
+import { ComponentState } from '../../../../app/domain/componentState';
 import { Node } from '../../common/Node';
 import { ComponentService } from '../../components/componentService';
 import { ComponentStateWrapper } from '../../components/ComponentStateWrapper';
@@ -23,16 +24,15 @@ export class NodeComponent implements OnInit {
   dirtyComponentIds: any = [];
   dirtySubmitComponentIds: any = [];
   endedAndLockedMessage: string;
-  idToIsPulsing: any = {};
   isDisabled: boolean;
-  mode: any;
   node: Node;
   nodeContent: any;
   nodeId: string;
   nodeStatus: any;
+  pulseRubricIcon: boolean = true;
   rubric: any;
-  rubricTour: any;
-  saveMessage: any;
+  latestComponentState: ComponentState;
+  showRubric: boolean;
   submit: boolean = false;
   subscriptions: Subscription = new Subscription();
   teacherWorkgroupId: number;
@@ -70,13 +70,6 @@ export class NodeComponent implements OnInit {
     this.teacherWorkgroupId = this.configService.getTeacherWorkgroupId();
     this.isDisabled = !this.configService.isRunActive();
 
-    this.saveMessage = {
-      text: '',
-      time: ''
-    };
-
-    this.rubric = null;
-    this.mode = this.configService.getMode();
     this.initializeNode();
     this.startAutoSaveInterval();
     this.registerExitListener();
@@ -146,6 +139,7 @@ export class NodeComponent implements OnInit {
   }
 
   initializeNode(): void {
+    this.clearLatestComponentState();
     this.nodeId = this.studentDataService.getCurrentNodeId();
     this.node = this.projectService.getNode(this.nodeId);
     this.nodeContent = this.projectService.getNodeById(this.nodeId);
@@ -163,12 +157,7 @@ export class NodeComponent implements OnInit {
       this.nodeId
     );
     if (latestComponentState) {
-      const latestClientSaveTime = latestComponentState.clientSaveTime;
-      if (latestComponentState.isSubmit) {
-        this.setSubmittedMessage(latestClientSaveTime);
-      } else {
-        this.setSavedMessage(latestClientSaveTime);
-      }
+      this.latestComponentState = latestComponentState;
     }
 
     const nodeId = this.nodeId;
@@ -188,8 +177,8 @@ export class NodeComponent implements OnInit {
       eventData
     );
 
-    this.rubric = this.node.rubric;
-    this.initializeIdToIsPulsing();
+    this.rubric = this.projectService.replaceAssetPaths(this.node.rubric);
+    this.showRubric = this.rubric != null && this.rubric != '' && this.configService.isPreview();
 
     const script = this.nodeContent.script;
     if (script != null) {
@@ -209,25 +198,6 @@ export class NodeComponent implements OnInit {
       this.nodeService.evaluateTransitionLogic();
     }
     this.subscriptions.unsubscribe();
-  }
-
-  private initializeIdToIsPulsing(): void {
-    this.idToIsPulsing[this.node.id] = true;
-    this.node.components.forEach((component) => {
-      this.idToIsPulsing[component.id] = true;
-    });
-  }
-
-  stopPulsing(id: string): void {
-    this.idToIsPulsing[id] = false;
-  }
-
-  isShowNodeRubric(): boolean {
-    return this.rubric != null && this.rubric != '' && this.mode === 'preview';
-  }
-
-  isShowComponentRubric(component: any): boolean {
-    return component.rubric != null && component.rubric != '' && this.mode === 'preview';
   }
 
   saveButtonClicked(): void {
@@ -251,25 +221,8 @@ export class NodeComponent implements OnInit {
     });
   }
 
-  private setSavedMessage(time: any): void {
-    this.setSaveText($localize`Saved`, time);
-  }
-
-  private setAutoSavedMessage(time: any): void {
-    this.setSaveText($localize`Auto Saved`, time);
-  }
-
-  private setSubmittedMessage(time: any): void {
-    this.setSaveText($localize`Submitted`, time);
-  }
-
-  private setSaveText(message: string, time: any): void {
-    this.saveMessage.text = message;
-    this.saveMessage.time = time;
-  }
-
-  private clearSaveText(): void {
-    this.setSaveText('', null);
+  private clearLatestComponentState(): void {
+    this.latestComponentState = null;
   }
 
   private startAutoSaveInterval(): void {
@@ -343,18 +296,9 @@ export class NodeComponent implements OnInit {
               }
               const studentWorkList = savedStudentDataResponse.studentWorkList;
               if (!componentId && studentWorkList && studentWorkList.length) {
-                const latestStudentWork = studentWorkList[studentWorkList.length - 1];
-                const serverSaveTime = latestStudentWork.serverSaveTime;
-                const clientSaveTime = this.configService.convertToClientTimestamp(serverSaveTime);
-                if (isAutoSave) {
-                  this.setAutoSavedMessage(clientSaveTime);
-                } else if (isSubmit) {
-                  this.setSubmittedMessage(clientSaveTime);
-                } else {
-                  this.setSavedMessage(clientSaveTime);
-                }
+                this.latestComponentState = studentWorkList[studentWorkList.length - 1];
               } else {
-                this.clearSaveText();
+                this.clearLatestComponentState();
               }
             }
             return savedStudentDataResponse;
@@ -559,10 +503,6 @@ export class NodeComponent implements OnInit {
         this.nodeUnloaded(this.nodeId);
       })
     );
-  }
-
-  replaceAssetPaths(content: string): string {
-    return this.projectService.replaceAssetPaths(content);
   }
 
   saveComponentState($event: any): Promise<any> {

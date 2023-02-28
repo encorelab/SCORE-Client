@@ -2,27 +2,17 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
-import { UpgradeModule } from '@angular/upgrade/static';
 import { WorkgroupService } from '../../../../../../app/services/workgroup.service';
-import { AchievementService } from '../../../../services/achievementService';
-import { AnnotationService } from '../../../../services/annotationService';
-import { ConfigService } from '../../../../services/configService';
-import { NotificationService } from '../../../../services/notificationService';
-import { ProjectService } from '../../../../services/projectService';
-import { SessionService } from '../../../../services/sessionService';
-import { StudentDataService } from '../../../../services/studentDataService';
-import { StudentStatusService } from '../../../../services/studentStatusService';
-import { TagService } from '../../../../services/tagService';
 import { TeacherDataService } from '../../../../services/teacherDataService';
 import { TeacherProjectService } from '../../../../services/teacherProjectService';
 import { TeacherWebSocketService } from '../../../../services/teacherWebSocketService';
-import { UtilService } from '../../../../services/utilService';
 import { SelectPeriodComponent } from '../../select-period/select-period.component';
 import { PeerGroupDialogComponent } from './peer-group-dialog.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CommonModule } from '@angular/common';
 import { ClassroomStatusService } from '../../../../services/classroomStatusService';
 import { PeerGrouping } from '../../../../../../app/domain/peerGrouping';
+import { StudentTeacherCommonServicesModule } from '../../../../../../app/student-teacher-common-services.module';
 
 describe('PeerGroupDialogComponent', () => {
   let component: PeerGroupDialogComponent;
@@ -36,25 +26,15 @@ describe('PeerGroupDialogComponent', () => {
         CommonModule,
         HttpClientTestingModule,
         MatDialogModule,
-        MatSelectModule
+        MatSelectModule,
+        StudentTeacherCommonServicesModule
       ],
       providers: [
-        AchievementService,
-        AnnotationService,
         ClassroomStatusService,
-        ConfigService,
         { provide: MAT_DIALOG_DATA, useValue: {} },
-        NotificationService,
-        ProjectService,
-        SessionService,
-        StudentDataService,
-        StudentStatusService,
-        TagService,
         TeacherDataService,
         TeacherProjectService,
         TeacherWebSocketService,
-        UpgradeModule,
-        UtilService,
         WorkgroupService
       ]
     }).compileComponents();
@@ -76,8 +56,6 @@ describe('PeerGroupDialogComponent', () => {
       { periodId: 1, periodName: '1' },
       { id: 2, periodName: '2' }
     ]);
-    spyOn(TestBed.inject(ProjectService), 'getComponentType').and.returnValue('PeerChat');
-    spyOn(TestBed.inject(UtilService), 'getComponentTypeLabel').and.returnValue('Peer Chat');
     spyOn(TestBed.inject(WorkgroupService), 'getWorkgroupsInPeriod').and.returnValue(new Map());
     component = fixture.componentInstance;
     fixture.detectChanges();

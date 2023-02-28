@@ -2,32 +2,20 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { UpgradeModule } from '@angular/upgrade/static';
+import { of } from 'rxjs';
+import { StudentTeacherCommonServicesModule } from '../../../../../app/student-teacher-common-services.module';
 import { AnnotationService } from '../../../services/annotationService';
-import { ConfigService } from '../../../services/configService';
-import { NodeService } from '../../../services/nodeService';
 import { NotebookService } from '../../../services/notebookService';
-import { ProjectService } from '../../../services/projectService';
-import { SessionService } from '../../../services/sessionService';
-import { StudentAssetService } from '../../../services/studentAssetService';
-import { StudentDataService } from '../../../services/studentDataService';
-import { TagService } from '../../../services/tagService';
-import { UtilService } from '../../../services/utilService';
-import { ComponentService } from '../../componentService';
 
 import { ShowMyWorkStudentComponent } from './show-my-work-student.component';
 
 class MockService {}
 
 class MockNotebookService {
+  notebookUpdated$: any = of({});
+
   isNotebookEnabled() {
     return false;
-  }
-}
-
-class MockNodeService {
-  createNewComponentState() {
-    return {};
   }
 }
 
@@ -37,21 +25,11 @@ describe('ShowMyWorkStudentComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, MatCardModule, UpgradeModule],
+      imports: [HttpClientTestingModule, MatCardModule, StudentTeacherCommonServicesModule],
       declarations: [ShowMyWorkStudentComponent],
       providers: [
-        AnnotationService,
-        { provide: ComponentService, useClass: MockService },
-        { provide: ConfigService, useClass: MockService },
         { provide: MatDialog, useClass: MockService },
-        { provide: NodeService, useClass: MockNodeService },
-        { provide: NotebookService, useClass: MockNotebookService },
-        ProjectService,
-        SessionService,
-        { provide: StudentAssetService, useClass: MockService },
-        StudentDataService,
-        TagService,
-        { provide: UtilService, useClass: MockService }
+        { provide: NotebookService, useClass: MockNotebookService }
       ]
     }).compileComponents();
   });

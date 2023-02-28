@@ -1,7 +1,6 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
-import { UpgradeModule } from '@angular/upgrade/static';
 import { AnnotationService } from '../../../services/annotationService';
 import { ConfigService } from '../../../services/configService';
 import { NodeService } from '../../../services/nodeService';
@@ -31,8 +30,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { PeerChatModule } from '../peer-chat.module';
 import { PeerGrouping } from '../../../../../app/domain/peerGrouping';
-
-class MockService {}
+import { PauseScreenService } from '../../../services/pauseScreenService';
 
 export class MockNodeService {
   createNewComponentState() {
@@ -134,8 +132,7 @@ describe('PeerChatStudentComponent', () => {
         MatFormFieldModule,
         MatIconModule,
         MatInputModule,
-        PeerChatModule,
-        UpgradeModule
+        PeerChatModule
       ],
       declarations: [ComponentHeader, PeerChatStudentComponent, PossibleScoreComponent],
       providers: [
@@ -143,8 +140,9 @@ describe('PeerChatStudentComponent', () => {
         ComponentService,
         ConfigService,
         { provide: NodeService, useClass: MockNodeService },
-        { provide: NotebookService, useClass: MockService },
+        NotebookService,
         NotificationService,
+        PauseScreenService,
         PeerChatService,
         PeerGroupService,
         ProjectService,
@@ -243,7 +241,7 @@ function createComponentState() {
     ];
     const sendMessageToClassmateSpy = spyOn(
       TestBed.inject(StudentWebSocketService),
-      'sendMessageToClassmate'
+      'sendStudentWorkToClassmate'
     );
     const saveNotificationToServerSpy = spyOn(
       TestBed.inject(NotificationService),

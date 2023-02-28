@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { defer, Observable } from 'rxjs';
-import { MomentModule } from 'ngx-moment';
 import { TeacherRunListComponent } from './teacher-run-list.component';
 import { TeacherService } from '../teacher.service';
 import { Project } from '../../domain/project';
@@ -8,6 +7,7 @@ import { TeacherRun } from '../teacher-run';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ConfigService } from '../../services/config.service';
 import { RouterTestingModule } from '@angular/router/testing';
+import { UserService } from '../../services/user.service';
 
 class TeacherScheduleStubComponent {}
 
@@ -53,14 +53,7 @@ export class MockTeacherService {
       observer.complete();
     });
   }
-  getSharedRuns(): Observable<TeacherRun[]> {
-    const runs: TeacherRun[] = [];
-    return Observable.create((observer) => {
-      observer.next(runs);
-      observer.complete();
-    });
-  }
-  newRunSource$ = fakeAsyncResponse({
+  runs$ = fakeAsyncResponse({
     id: 3,
     name: 'Global Climate Change',
     periods: [
@@ -76,6 +69,12 @@ export class MockConfigService {
   }
 }
 
+export class MockUserService {
+  getUserId(): number {
+    return 1;
+  }
+}
+
 describe('TeacherRunListComponent', () => {
   let component: TeacherRunListComponent;
   let fixture: ComponentFixture<TeacherRunListComponent>;
@@ -85,14 +84,14 @@ describe('TeacherRunListComponent', () => {
       TestBed.configureTestingModule({
         declarations: [TeacherRunListComponent],
         imports: [
-          MomentModule,
           RouterTestingModule.withRoutes([
             { path: 'teacher/home/schedule', component: TeacherScheduleStubComponent }
           ])
         ],
         providers: [
           { provide: TeacherService, useClass: MockTeacherService },
-          { provide: ConfigService, useClass: MockConfigService }
+          { provide: ConfigService, useClass: MockConfigService },
+          { provide: UserService, useClass: MockUserService }
         ],
         schemas: [NO_ERRORS_SCHEMA]
       });

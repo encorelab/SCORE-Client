@@ -1,145 +1,103 @@
 'use strict';
 
 import { Injectable } from '@angular/core';
-import { UpgradeModule } from '@angular/upgrade/static';
 import { AnnotationService } from './annotationService';
-import { ConfigService } from './configService';
 import { TagService } from './tagService';
 import { StudentDataService } from './studentDataService';
-import { NotificationService } from './notificationService';
+import { NodeService } from './nodeService';
 import { ProjectService } from './projectService';
-import * as angular from 'angular';
-import { Notification } from '../../../app/domain/notification';
+import { Message } from '@stomp/stompjs';
+import { NotebookService } from './notebookService';
+import { StompService } from './stompService';
 
 @Injectable()
 export class StudentWebSocketService {
-  runId: number;
-  periodId: any;
-  stomp: any;
-  workgroupId: number;
-
   constructor(
-    private upgrade: UpgradeModule,
     private AnnotationService: AnnotationService,
-    private ConfigService: ConfigService,
-    private NotificationService: NotificationService,
+    private NodeService: NodeService,
+    private notebookService: NotebookService,
     private ProjectService: ProjectService,
+    private stompService: StompService,
     private StudentDataService: StudentDataService,
     private TagService: TagService
-  ) {
-    if (this.upgrade.$injector != null) {
-      this.initializeStomp();
-    }
+  ) {}
+
+  initialize(): void {
+    this.subscribeToClassroomTopic();
+    this.subscribeToWorkgroupTopic();
   }
 
-  initializeStomp() {
-    this.stomp = this.upgrade.$injector.get('$stomp');
-    this.stomp.setDebug(() => {});
-  }
-
-  getStomp() {
-    return this.stomp;
-  }
-
-  initialize() {
-    this.runId = this.ConfigService.getRunId();
-    this.periodId = this.ConfigService.getPeriodId();
-    this.workgroupId = this.ConfigService.getWorkgroupId();
-    this.upgrade.$injector.get('$stomp').setDebug((args) => {
-      this.upgrade.$injector.get('$log').debug(args);
-    });
-    try {
-      this.upgrade.$injector
-        .get('$stomp')
-        .connect(this.ConfigService.getWebSocketURL())
-        .then((frame) => {
-          this.subscribeToClassroomTopic();
-          this.subscribeToWorkgroupTopic();
-        });
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  subscribeToClassroomTopic() {
-    this.upgrade.$injector
-      .get('$stomp')
-      .subscribe(`/topic/classroom/${this.runId}/${this.periodId}`, (message, headers, res) => {
-        if (message.type === 'pause') {
-          this.StudentDataService.pauseScreen(true);
-        } else if (message.type === 'unpause') {
-          this.StudentDataService.pauseScreen(false);
-        } else if (message.type === 'studentWork') {
-          const studentWork = JSON.parse(message.content);
+  subscribeToClassroomTopic(): void {
+    this.stompService.periodMessage$
+      .subscribe((message: Message) => {
+        const body = JSON.parse(message.body);
+        if (body.type === 'studentWork') {
+          const studentWork = JSON.parse(body.content);
           this.StudentDataService.broadcastStudentWorkReceived(studentWork);
-        } else if (message.type === 'annotation') {
-          const annotation = JSON.parse(message.content);
+        } else if (body.type === 'annotation') {
+          const annotation = JSON.parse(body.content);
           this.AnnotationService.broadcastAnnotationReceived({ annotation: annotation });
-        } else if (message.type === 'goToNode') {
-          this.goToStep(message.content);
-        } else if (message.type === 'node') {
-          this.updateNode(message.content);
+        } else if (body.type === 'goToNode') {
+          this.goToStep(body.content);
+        } else if (body.type === 'node') {
+          this.updateNode(body.content);
         }
       });
   }
 
-  subscribeToWorkgroupTopic() {
-    this.upgrade.$injector
-      .get('$stomp')
-      .subscribe(`/topic/workgroup/${this.workgroupId}`, (message, headers, res) => {
-        if (message.type === 'notification') {
-          const notification = JSON.parse(message.content);
-          this.NotificationService.addNotification(notification);
-          if (this.isDismissImmediately(notification)) {
-            this.NotificationService.dismissNotification(notification);
-          }
-        } else if (message.type === 'annotation') {
-          const annotationData = JSON.parse(message.content);
+  subscribeToWorkgroupTopic(): void {
+    this.stompService.workgroupMessage$
+      .subscribe((message: Message) => {
+        const body = JSON.parse(message.body);
+        if (body.type === 'annotation') {
+          const annotationData = JSON.parse(body.content);
           this.AnnotationService.addOrUpdateAnnotation(annotationData);
-          this.StudentDataService.handleAnnotationReceived(annotationData);
-        } else if (message.type === 'tagsToWorkgroup') {
-          const tags = JSON.parse(message.content);
+          this.handleAnnotationReceived(annotationData);
+        } else if (body.type === 'tagsToWorkgroup') {
+          const tags = JSON.parse(body.content);
           this.TagService.setTags(tags);
-          this.upgrade.$injector.get('StudentDataService').updateNodeStatuses();
-          this.upgrade.$injector.get('NodeService').evaluateTransitionLogic();
-        } else if (message.type === 'goToNode') {
-          this.goToStep(message.content);
-        } else if (message.type === 'goToNextNode') {
+          this.StudentDataService.updateNodeStatuses();
+          this.NodeService.evaluateTransitionLogic();
+        } else if (body.type === 'goToNode') {
+          this.goToStep(body.content);
+        } else if (body.type === 'goToNextNode') {
           this.goToNextStep();
-        } else if (message.type === 'classmateStudentWork') {
-          this.StudentDataService.broadcastStudentWorkReceived(message.studentWork);
+        } else if (body.type === 'classmateStudentWork') {
+          this.StudentDataService.broadcastStudentWorkReceived(JSON.parse(body.content));
         }
       });
   }
 
-  isDismissImmediately(notification: Notification): boolean {
-    return (
-      notification.nodeId === this.StudentDataService.getCurrentNodeId() &&
-      notification.type === 'PeerChatMessage'
-    );
+  handleAnnotationReceived(annotation: any): void {
+    this.StudentDataService.studentData.annotations.push(annotation);
+    if (annotation.notebookItemId) {
+      this.notebookService.broadcastNotebookItemAnnotationReceived({ annotation: annotation });
+    } else {
+      this.AnnotationService.broadcastAnnotationReceived({ annotation: annotation });
+    }
   }
 
-  goToStep(nodeId) {
+  goToStep(nodeId: string): void {
     this.StudentDataService.endCurrentNodeAndSetCurrentNodeByNodeId(nodeId);
   }
 
-  goToNextStep() {
-    this.upgrade.$injector
-      .get('NodeService')
-      .getNextNodeId()
-      .then((nextNodeId) => {
-        this.StudentDataService.endCurrentNodeAndSetCurrentNodeByNodeId(nextNodeId);
-      });
+  goToNextStep(): void {
+    this.NodeService.getNextNodeId().then((nextNodeId) => {
+      this.StudentDataService.endCurrentNodeAndSetCurrentNodeByNodeId(nextNodeId);
+    });
   }
 
-  updateNode(nodeString: string) {
-    const node = angular.fromJson(nodeString);
+  updateNode(nodeString: string): void {
+    const node = JSON.parse(nodeString);
     this.ProjectService.replaceNode(node.id, node);
     this.ProjectService.parseProject();
     this.StudentDataService.updateNodeStatuses();
   }
 
-  sendMessageToClassmate(workgroupId: number, message: any): void {
-    this.getStomp().send(`/topic/workgroup/${workgroupId}`, message);
+  sendStudentWorkToClassmate(workgroupId: number, studentWork: any): void {
+    this.stompService.rxStomp.publish({
+      destination: `/app/api/workgroup/${workgroupId}/student-work`,
+      body: JSON.stringify(studentWork)
+    });
   }
 }
