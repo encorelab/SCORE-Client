@@ -98,7 +98,7 @@
       fxLayoutGap="16px"
     >
       <span *ngIf="run.lastRun" class="mat-caption secondary-text center" i18n
-        >Last student login: {{ run.lastRun | date : 'short' }}</span
+        >Last student login: {{ run.lastRun | date: 'short' }}</span
       >
       <button
         *ngIf="!isRunActive(run) && !isRunCompleted(run)"

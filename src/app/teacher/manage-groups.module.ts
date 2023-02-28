@@ -12,7 +12,7 @@ import { MoveGroupMembersButtonComponent } from '../../assets/wise5/classroomMon
 import { MoveGroupMembersDialogComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manage-groups/move-group-members-dialog/move-group-members-dialog.component';
 import { MoveGroupMembersComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manage-groups/move-group-members/move-group-members.component';
 import { MoveGroupToNodeComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manage-groups/move-group-to-node/move-group-to-node.component';
-import { AngularJSModule } from '../common-hybrid-angular.module';
+import { StudentTeacherCommonModule } from '../student-teacher-common.module';
 
 @NgModule({
   declarations: [
@@ -30,6 +30,6 @@ import { AngularJSModule } from '../common-hybrid-angular.module';
     MoveGroupMembersDialogComponent,
     MoveGroupToNodeComponent
   ],
-  imports: [AngularJSModule]
+  imports: [StudentTeacherCommonModule]
 })
 export class ManageGroupsModule {}

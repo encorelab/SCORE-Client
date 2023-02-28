@@ -1,6 +1,6 @@
 import '../lib/jquery/jquery-global';
 import * as angular from 'angular';
-import { downgradeComponent, downgradeInjectable } from '@angular/upgrade/static';
+import { downgradeInjectable } from '@angular/upgrade/static';
 import '../common-angular-js-module';
 import { CopyComponentService } from '../services/copyComponentService';
 import { CopyNodesService } from '../services/copyNodesService';

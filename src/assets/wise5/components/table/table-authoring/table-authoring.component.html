@@ -50,9 +50,9 @@
           <button
             mat-raised-button
             color="primary"
-            class="column-buttons"
-            (click)="insertColumn(columnIndex)"
-            matTooltip="Insert Column Before"
+            class="row-buttons"
+            (click)="insertRow(rowIndex)"
+            matTooltip="Insert Row Before"
             matTooltipPosition="above"
             i18n-matTooltip
             aria-label="Insert Column Before"
@@ -63,9 +63,9 @@
           <button
             mat-raised-button
             color="primary"
-            class="column-buttons"
-            (click)="deleteColumn(columnIndex)"
-            matTooltip="Delete Column"
+            class="row-buttons"
+            (click)="deleteRow(rowIndex)"
+            matTooltip="Delete Row"
             matTooltipPosition="above"
             i18n-matTooltip
             aria-label="Delete"
@@ -76,10 +76,10 @@
           <button
             mat-raised-button
             color="primary"
-            class="column-buttons"
+            class="row-buttons"
             *ngIf="isLast"
-            (click)="insertColumn(columnIndex + 1)"
-            matTooltip="Insert Column After"
+            (click)="insertRow(rowIndex + 1)"
+            matTooltip="Insert Row After"
             matTooltipPosition="above"
             i18n-matTooltip
             aria-label="Insert Column After"

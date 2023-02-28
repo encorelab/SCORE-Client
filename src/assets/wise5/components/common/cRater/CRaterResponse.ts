@@ -19,6 +19,10 @@ export class CRaterResponse {
     return this.getDetectedIdeaNames().length;
   }
 
+  getDetectedIdeaCount(): number {
+    return this.getDetectedIdeaNames().length;
+  }
+
   getDetectedIdeaNames(): string[] {
     const detectedIdeaNames = [];
     this.ideas.forEach((idea: CRaterIdea) => {

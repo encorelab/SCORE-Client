@@ -127,7 +127,7 @@ if [[ $pipeline_json =~ $s3_object_key_value_regex ]]; then
   # It will look something like this
   # "S3ObjectKey": "4dfa518f-07a0-4237-830d-a3c17ffa87a4/wise-client.zip"
   previous_s3_object_key_value=${BASH_REMATCH[0]}
-  
+
   # Escape the forward slash otherwise the sed command below will not work
   previous_s3_object_key_value=$(echo $previous_s3_object_key_value | sed 's/\//\\\//g')
 
