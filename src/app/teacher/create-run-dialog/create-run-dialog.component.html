@@ -1,30 +1,30 @@
-<h2 class="mat-dialog-title" i18n>Use with Class</h2>
-<form *ngIf="!isCreated" [formGroup]="form" (ngSubmit)="create()">
-  <mat-dialog-content class="dialog-content-scroll">
-    <p class="mat-subheading-2 accent-1">
-      {{ project.metadata.title }} <span class="mat-caption" i18n>(Unit ID: {{ project.id }})</span>
-    </p>
-    <h3 i18n>1. Choose Periods</h3>
-    <p formArrayName="selectedPeriods">
-      <span *ngFor="let control of selectedPeriodsControl.controls" [formGroup]="control">
-        <mat-checkbox formControlName="checkbox" class="period-select">
-          {{ control.controls.name.value }}
+<ng-container *ngIf="!isCreated">
+  <h2 class="mat-dialog-title" i18n>Use with Class</h2>
+  <form *ngIf="!isCreated" [formGroup]="form" (ngSubmit)="create()">
+    <mat-dialog-content class="dialog-content-scroll">
+      <p class="mat-subheading-2 accent-1">
+        {{ project.metadata.title }} <span class="mat-caption" i18n>(Unit ID: {{ project.id }})</span>
+      </p>
+      <h3 i18n>1. Choose Periods</h3>
+      <p formArrayName="selectedPeriods">
+        <span *ngFor="let control of selectedPeriodsControl.controls" [formGroup]="control">
+          <mat-checkbox formControlName="checkbox" class="period-select">
+            {{ control.controls.name.value }}
+          </mat-checkbox>
+        </span>
+      </p>
+      <mat-form-field appearance="fill" class="period-input form-field-long-hint">
+        <mat-label i18n>Add your own periods</mat-label>
+        <input matInput id="customPeriods" name="customPeriods" formControlName="customPeriods" />
+        <mat-hint i18n>For "Period 9", just enter the number 9. Separate periods with commas (e.g. "Section 1, Section
+          2"). Manually named periods should be no more than 16 characters long.
+        </mat-hint>
+      </mat-form-field>
+      <p></p>
+      <p>
+        <mat-checkbox formControlName="isRandomPeriodAssignment" i18n>
+          Randomly assign students to periods
         </mat-checkbox>
-      </span>
-    </p>
-    <mat-form-field appearance="fill" class="period-input form-field-long-hint">
-      <mat-label i18n>Add your own periods</mat-label>
-      <input matInput id="customPeriods" name="customPeriods" formControlName="customPeriods" />
-      <mat-hint i18n
-        >For "Period 9", just enter the number 9. Separate periods with commas (e.g. "Section 1,
-        Section 2"). Manually named periods should be no more than 16 characters long.
-      </mat-hint>
-    </mat-form-field>
-    <p></p>
-    <p>
-      <mat-checkbox formControlName="isRandomPeriodAssignment" i18n>
-        Randomly assign students to periods
-      </mat-checkbox>
     </p>
     <mat-divider></mat-divider>
     <h3 i18n>2. Choose Students Per Team</h3>
@@ -36,40 +36,20 @@
     <h3 i18n>3. Set Schedule</h3>
     <div fxLayout="row wrap" fxLayout.xs="column" fxLayoutGap.gt-xs="16px">
       <div>
-        <mat-form-field
-          appearance="fill"
-          fxFlexAlign="start"
-          fxFlex="0 0 auto"
-          fxFlex.xs="0 0 100%"
-        >
+        <mat-form-field appearance="fill" fxFlexAlign="start" fxFlex="0 0 auto" fxFlex.xs="0 0 100%">
           <mat-label i18n>Start date</mat-label>
-          <input
-            matInput
-            [matDatepicker]="startDatePicker"
-            formControlName="startDate"
-            (dateChange)="setDateRange()"
-            [max]="maxStartDate"
-          />
+          <input matInput [matDatepicker]="startDatePicker" formControlName="startDate" (dateChange)="setDateRange()"
+            [max]="maxStartDate" />
           <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
           <mat-datepicker #startDatePicker></mat-datepicker>
           <mat-error i18n>Start date is required</mat-error>
         </mat-form-field>
       </div>
       <div>
-        <mat-form-field
-          appearance="fill"
-          fxFlexAlign="start"
-          fxFlex="0 0 auto"
-          fxFlex.xs="0 0 100%"
-        >
+        <mat-form-field appearance="fill" fxFlexAlign="start" fxFlex="0 0 auto" fxFlex.xs="0 0 100%">
           <mat-label i18n>End date</mat-label>
-          <input
-            matInput
-            [matDatepicker]="endDatePicker"
-            formControlName="endDate"
-            (dateChange)="setDateRange()"
-            [min]="minEndDate"
-          />
+          <input matInput [matDatepicker]="endDatePicker" formControlName="endDate" (dateChange)="setDateRange()"
+            [min]="minEndDate" />
           <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
           <mat-datepicker #endDatePicker></mat-datepicker>
         </mat-form-field>
@@ -101,6 +81,7 @@
   </mat-dialog-actions>
 </form>
 <ng-container *ngIf="isCreated">
+  <h2 class="mat-dialog-title" i18n>Run Created.</h2>
   <mat-dialog-content>
     <div class="info-block">
       <p class="mat-body-2" i18n>Success! This unit has been added to your Class Schedule.</p>
@@ -115,16 +96,38 @@
       <p i18n>
         You can always find the Access Code for each classroom unit in your Class Schedule.
       </p>
+      <br />
+      <mat-expansion-panel (opened)="openLinkRunToCkProjectPanel()" #linkRunPanel>
+        <mat-expansion-panel-header>
+          <mat-panel-title i18n>
+            <ng-container *ngIf="!linkedCkProjectControl.disabled">Link to a CK Board Project</ng-container>
+            <ng-container *ngIf="linkedCkProjectControl.disabled">Connected to CK Board Project</ng-container>
+          </mat-panel-title>
+          <mat-panel-description>
+            <ng-container *ngIf="!linkedCkProjectControl.disabled" i18n>Click to connect to a CK Board Project</ng-container>
+            <ng-container *ngIf="linkedCkProjectControl.disabled" i18n>Code: {{linkedCkProjectControl.value}}</ng-container>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div>
+          <mat-form-field appearance="fill" fxFlexAlign="start">
+            <mat-label i18n>SCORE-CK Connect Code</mat-label>
+            <input matInput [formControl]="linkedCkProjectControl" #CkCodeInput>
+            <button color="primary" *ngIf="!linkedCkProjectControl.disabled" type="button" mat-icon-button matSuffix (click)="linkRunToCkProject()">
+              <mat-icon>add_circle</mat-icon>
+            </button>
+            <button color="accent" *ngIf="linkedCkProjectControl.disabled" type="button" mat-icon-button matSuffix (click)="unlinkRunFromCkProject()">
+              <mat-icon>close</mat-icon>
+            </button>
+            <mat-progress-bar mode="indeterminate" *ngIf="showProcessingLink"></mat-progress-bar>
+          </mat-form-field>
+          <p>Note: You can always manage CK Board Project linkining in Run Settings.</p>
+        </div>
+      </mat-expansion-panel>
     </div>
   </mat-dialog-content>
   <mat-dialog-actions fxLayoutAlign="end">
-    <button
-      mat-button
-      color="primary"
-      (click)="checkClassroomAuthorization()"
-      *ngIf="isGoogleUser() && isGoogleClassroomEnabled()"
-      i18n
-    >
+    <button mat-button color="primary" (click)="checkClassroomAuthorization()"
+      *ngIf="isGoogleUser() && isGoogleClassroomEnabled()" i18n>
       Share to Google Classroom
     </button>
     <button mat-button (click)="closeAll()" i18n>Done</button>

@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Project } from '../domain/project';
-import { Teacher } from '../domain/teacher';
-import { Run } from '../domain/run';
+import { Observable, Subject } from 'rxjs';
 import { Course } from '../domain/course';
+import { Period } from '../domain/period';
+import { Project } from '../domain/project';
+import { Run } from '../domain/run';
+import { Teacher } from '../domain/teacher';
 import { CopyProjectDialogComponent } from '../modules/library/copy-project-dialog/copy-project-dialog.component';
 import { TeacherRun } from './teacher-run';
-import { Period } from '../domain/period';
 
 @Injectable()
 export class TeacherService {
@@ -343,5 +343,15 @@ export class TeacherService {
     params = params.set('newStudentPassword', newStudentPassword);
     params = params.set('teacherPassword', teacherPassword);
     return this.http.post(`/api/teacher/run/${runId}/student/${studentId}/change-password`, params);
+  }
+
+  linkRunToCkProject(id: number, code: string): Observable<any> {
+    const params = new HttpParams().set('runId', id).set('code', code);
+    return this.http.post<any>('/api/teacher/run/score/link', params);
+  }
+
+  unlinkRunFromCkProject(id: number, code: string): Observable<any> {
+    const params = new HttpParams().set('runId', id).set('code', code);
+    return this.http.post<any>('/api/teacher/run/score/unlink', params);
   }
 }
