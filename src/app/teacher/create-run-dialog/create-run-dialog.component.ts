@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
@@ -8,6 +8,8 @@ import { UserService } from '../../services/user.service';
 import { ConfigService } from '../../services/config.service';
 import { ListClassroomCoursesDialogComponent } from '../list-classroom-courses-dialog/list-classroom-courses-dialog.component';
 import { TeacherRun } from '../teacher-run';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatExpansionPanel } from '@angular/material/expansion';
 
 @Component({
   selector: 'create-run-dialog',
@@ -27,6 +29,10 @@ export class CreateRunDialogComponent {
   isCreating: boolean = false;
   isCreated: boolean = false;
   run: TeacherRun = null;
+  linkedCkProjectControl: FormControl;
+  @ViewChild('CkCodeInput') ckInput: ElementRef;
+  @ViewChild('linkRunPanel') linkPanel: MatExpansionPanel;
+  showProcessingLink: boolean = false;
 
   constructor(
     public dialog: MatDialog,
@@ -35,7 +41,8 @@ export class CreateRunDialogComponent {
     private teacherService: TeacherService,
     private userService: UserService,
     private configService: ConfigService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private snackBar: MatSnackBar
   ) {
     this.project = data.project;
     this.maxStudentsPerTeam = 3;
@@ -64,6 +71,7 @@ export class CreateRunDialogComponent {
     this.endDateControl.valueChanges.subscribe((v) => {
       this.updateLockedAfterEndDateCheckbox();
     });
+    this.linkedCkProjectControl = new FormControl('');
     this.form = this.fb.group({
       selectedPeriods: this.periodsGroup,
       customPeriods: this.customPeriods,
@@ -100,6 +108,51 @@ export class CreateRunDialogComponent {
     return selectedPeriods.length ? selectedPeriods : [];
   }
 
+  openLinkRunToCkProjectPanel() {
+    if (!this.linkedCkProjectControl.disabled) {
+      setTimeout(() => this.ckInput.nativeElement.focus(), 200);
+    }
+  }
+
+  linkRunToCkProject() {
+    this.showProcessingLink = true;
+    this.linkedCkProjectControl.disable();
+    this.teacherService
+      .linkRunToCkProject(this.run.id, this.linkedCkProjectControl.value)
+      .pipe(
+        finalize(() => {
+          this.showProcessingLink = false;
+        })
+      )
+      .subscribe(({ code, message }) => {
+        if (!!code) {
+          setTimeout(() => this.linkPanel.close(), 200);
+        } else {
+          this.linkedCkProjectControl.enable();
+          this.ckInput.nativeElement.focus();
+        }
+        this.snackBar.open($localize`${message}`);
+      });
+  }
+
+  unlinkRunFromCkProject() {
+    this.showProcessingLink = true;
+    this.teacherService
+      .unlinkRunFromCkProject(this.run.id, this.linkedCkProjectControl.value)
+      .pipe(
+        finalize(() => {
+          this.showProcessingLink = false;
+        })
+      )
+      .subscribe(({ code, message }) => {
+        if (!!code) {
+          this.linkedCkProjectControl.enable();
+          this.ckInput.nativeElement.focus();
+        }
+        this.snackBar.open($localize`${message}`);
+      });
+  }
+
   create() {
     this.isCreating = true;
     const combinedPeriods = this.getPeriodsString();
@@ -121,7 +174,7 @@ export class CreateRunDialogComponent {
         maxStudentsPerTeam,
         startDate,
         endDate,
-        isLockedAfterEndDate
+        isLockedAfterEndDate,
       )
       .pipe(
         finalize(() => {

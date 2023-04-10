@@ -378,4 +378,14 @@ export class TeacherService {
     params = params.set('teacherPassword', teacherPassword);
     return this.http.post(`/api/teacher/run/${runId}/student/${studentId}/change-password`, params);
   }
+
+  linkRunToCkProject(id: number, code: string): Observable<any> {
+    const params = new HttpParams().set('runId', id).set('code', code);
+    return this.http.post<any>(`/api/teacher/run/score/link`, params);
+  }
+
+  unlinkRunFromCkProject(id: number, code: string): Observable<any> {
+    const params = new HttpParams().set('runId', id).set('code', code);
+    return this.http.post<any>(`/api/teacher/run/score/unlink`, params);
+  }
 }

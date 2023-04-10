@@ -33,7 +33,6 @@ export class TeacherRunListItemComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log('RUN', this.run);
     this.run.project.thumbStyle = this.getThumbStyle();
     this.manageStudentsLink = `${this.configService.getContextPath()}/teacher/manage/unit/${
       this.run.id

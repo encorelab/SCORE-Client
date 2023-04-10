@@ -5,6 +5,8 @@ import { LibraryProjectDetailsComponent } from '../../modules/library/library-pr
 import { TeacherService } from '../teacher.service';
 import { formatDate } from '@angular/common';
 import { TeacherRun } from '../teacher-run';
+import { FormControl } from '@angular/forms';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-run-settings-dialog',
@@ -32,6 +34,8 @@ export class RunSettingsDialogComponent implements OnInit {
   minEndDate: Date;
   targetEndDate: Date;
   messageCodeToMessage: any;
+  linkedCkProjectControl: FormControl;
+  showProcessingLink: boolean = false;
 
   constructor(
     public dialog: MatDialog,
@@ -71,7 +75,13 @@ export class RunSettingsDialogComponent implements OnInit {
     };
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.linkedCkProjectControl = new FormControl('');
+    if (!!this.run.connectCode) {
+      this.linkedCkProjectControl.setValue(this.run.connectCode);
+      this.linkedCkProjectControl.disable();
+    }
+  }
 
   newPeriodNameKeyUp(event) {
     if (this.isEnterKeyWithNewPeriodName(event)) {
@@ -236,7 +246,8 @@ export class RunSettingsDialogComponent implements OnInit {
 
   updateRandomPeriodAssignment(isRandomPeriodAssignment: boolean) {
     this.clearErrorMessages();
-    this.teacherService.updateRandomPeriodAssignment(this.run.id, isRandomPeriodAssignment)
+    this.teacherService
+      .updateRandomPeriodAssignment(this.run.id, isRandomPeriodAssignment)
       .subscribe((response: any) => {
         if (response.status === 'success') {
           this.run = response.run;
@@ -283,6 +294,53 @@ export class RunSettingsDialogComponent implements OnInit {
           this.isLockedAfterEndDateMessage = this.translateMessageCode(response.messageCode);
         }
       });
+  }
+
+  linkRunToCkProject() {
+    this.showProcessingLink = true;
+    this.linkedCkProjectControl.disable();
+    this.teacherService
+      .linkRunToCkProject(this.run.id, this.linkedCkProjectControl.value)
+      .pipe(
+        finalize(() => {
+          this.showProcessingLink = false;
+        })
+      )
+      .subscribe(({ code, message }) => {
+        if (!!code) {
+          this.run.connectCode = code;
+          this.teacherService.broadcastRunChanges(new TeacherRun(this.run));
+        } else {
+          this.linkedCkProjectControl.enable();
+        }
+        this.snackBar.open($localize`${message}`);
+      });
+  }
+
+  unlinkRunFromCkProject() {
+    if (
+      confirm(
+        `Are you sure you want to unlink CK Board project: ${this.linkedCkProjectControl.value}`
+      )
+    ) {
+      this.showProcessingLink = true;
+      this.teacherService
+        .unlinkRunFromCkProject(this.run.id, this.linkedCkProjectControl.value)
+        .pipe(
+          finalize(() => {
+            this.showProcessingLink = false;
+          })
+        )
+        .subscribe(({ code, message }) => {
+          if (!!code) {
+            this.linkedCkProjectControl.setValue('');
+            this.linkedCkProjectControl.enable();
+            this.run.connectCode = '';
+            this.teacherService.broadcastRunChanges(new TeacherRun(this.run));
+          }
+          this.snackBar.open($localize`${message}`);
+        });
+    }
   }
 
   rollbackMaxStudentsPerTeam() {
