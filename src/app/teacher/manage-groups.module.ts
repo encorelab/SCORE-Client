@@ -30,6 +30,7 @@ import { StudentTeacherCommonModule } from '../student-teacher-common.module';
     MoveGroupMembersDialogComponent,
     MoveGroupToNodeComponent
   ],
-  imports: [StudentTeacherCommonModule]
+  imports: [StudentTeacherCommonModule],
+  exports: [ManageGroupsComponent]
 })
 export class ManageGroupsModule {}

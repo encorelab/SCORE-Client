@@ -22,6 +22,7 @@ export class TeacherService {
   private lastRunUrl = '/api/teacher/projectlastrun';
   private addPeriodToRunUrl = '/api/teacher/run/add/period';
   private deletePeriodFromRunUrl = '/api/teacher/run/delete/period';
+  private updateRandomPeriodAssignmentUrl = '/api/teacher/run/update/random-period-assignment';
   private updateRunStudentsPerTeamUrl = '/api/teacher/run/update/studentsperteam';
   private updateRunStartTimeUrl = '/api/teacher/run/update/starttime';
   private updateRunEndTimeUrl = '/api/teacher/run/update/endtime';
@@ -92,12 +93,14 @@ export class TeacherService {
     maxStudentsPerTeam: number,
     startDate: number,
     endDate: number,
-    isLockedAfterEndDate: boolean
+    isLockedAfterEndDate: boolean,
+    isRandomPeriodAssignment: boolean
   ): Observable<Run> {
     const headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
     let body = new HttpParams();
     body = body.set('projectId', projectId + '');
     body = body.set('periods', periods);
+    body = body.set('isRandomPeriodAssignment', isRandomPeriodAssignment + '');
     body = body.set('maxStudentsPerTeam', maxStudentsPerTeam + '');
     body = body.set('startDate', startDate + '');
     if (endDate) {
@@ -210,6 +213,16 @@ export class TeacherService {
     body = body.set('runId', runId + '');
     body = body.set('periodName', periodName);
     return this.http.post<Object>(url, body, { headers: headers });
+  }
+
+  updateRandomPeriodAssignment(runId: number, isRandomPeriodAssignment: boolean) {
+    const headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
+    let body = new HttpParams();
+    body = body.set('runId', runId + '');
+    body = body.set('isRandomPeriodAssignment', isRandomPeriodAssignment + '');
+    return this.http.post<Object>(`${this.updateRandomPeriodAssignmentUrl}`, body, {
+      headers: headers
+    });
   }
 
   updateRunStudentsPerTeam(runId: number, maxStudentsPerTeam: number) {

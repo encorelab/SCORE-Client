@@ -75,7 +75,7 @@ export class MockUserService {
 export class MockConfigService {
   getConfig(): Observable<Config> {
     return Observable.create((observer) => {
-      const config: Config = {
+      const config: Partial<Config> = {
         contextPath: '/wise',
         logOutURL: '/logout',
         currentTime: new Date('2018-10-17T00:00:00.0').getTime()
@@ -106,19 +106,21 @@ describe('TeacherHomeComponent', () => {
   let component: TeacherHomeComponent;
   let fixture: ComponentFixture<TeacherHomeComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [TeacherHomeComponent],
-      imports: [RouterTestingModule],
-      providers: [
-        { provide: TeacherService, useClass: MockTeacherService },
-        { provide: UserService, useClass: MockUserService },
-        { provide: ConfigService, useClass: MockConfigService },
-        { provide: LibraryService, useClass: MockLibraryService }
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [TeacherHomeComponent],
+        imports: [RouterTestingModule],
+        providers: [
+          { provide: TeacherService, useClass: MockTeacherService },
+          { provide: UserService, useClass: MockUserService },
+          { provide: ConfigService, useClass: MockConfigService },
+          { provide: LibraryService, useClass: MockLibraryService }
+        ],
+        schemas: [NO_ERRORS_SCHEMA]
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(TeacherHomeComponent);

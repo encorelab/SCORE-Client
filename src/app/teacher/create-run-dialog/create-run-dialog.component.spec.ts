@@ -195,6 +195,7 @@ describe('CreateRunDialogComponent', () => {
       '3',
       jasmine.any(Number),
       jasmine.any(Number),
+      false,
       false
     );
   });
@@ -215,7 +216,8 @@ describe('CreateRunDialogComponent', () => {
       '3',
       jasmine.any(Number),
       jasmine.any(Number),
-      true
+      true,
+      false
     );
   });
 

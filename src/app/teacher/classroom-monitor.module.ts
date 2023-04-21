@@ -3,7 +3,6 @@ import { AddTeamButtonComponent } from '../../assets/wise5/classroomMonitor/clas
 import { AddTeamDialogComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manageStudents/add-team-dialog/add-team-dialog.component';
 import { ChangeStudentPasswordDialogComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manageStudents/change-student-password-dialog/change-student-password-dialog.component';
 import { ManagePeriodComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manageStudents/manage-period/manage-period.component';
-import { ManageGroupsComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manage-groups/manage-groups/manage-groups.component';
 import { ManageStudentsComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manageStudents/manage-students/manage-students.component';
 import { ManageTeamComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manageStudents/manage-team/manage-team.component';
 import { ManageTeamsComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/manageStudents/manage-teams/manage-teams.component';
@@ -55,7 +54,7 @@ import { MainMenuComponent } from '../../assets/wise5/common/main-menu/main-menu
 import { ShowNodeInfoDialogComponent } from '../classroom-monitor/show-node-info-dialog/show-node-info-dialog.component';
 import { MilestoneModule } from './milestone/milestone.module';
 import { GradingCommonModule } from './grading-common.module';
-import { GoToNodeSelectComponent } from '../../main/webapp/score/teachingassistant/src/app/core/components/go-to-node-select/go-to-node-select.component';
+import { GoToNodeSelectComponent } from '../../assets/wise5/classroomMonitor/classroomMonitorComponents/go-to-node-select/go-to-node-select.component';
 import { ManageGroupsModule } from './manage-groups.module';
 
 @NgModule({
@@ -72,7 +71,6 @@ import { ManageGroupsModule } from './manage-groups.module';
     ExportStepVisitsComponent,
     GoToNodeSelectComponent,
     MainMenuComponent,
-    ManageGroupsComponent,
     ManagePeriodComponent,
     ManageShowStudentInfoComponent,
     ManageStudentsComponent,

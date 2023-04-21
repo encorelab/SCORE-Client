@@ -5,6 +5,7 @@ import { User } from '../../domain/user';
 import { UserService } from '../../services/user.service';
 import { StudentHomeComponent } from './student-home.component';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { ConfigService } from '../../services/config.service';
 
 export class MockUserService {
   getUser(): Observable<User[]> {
@@ -21,21 +22,28 @@ export class MockUserService {
   }
 }
 
+export class MockConfigService {
+  getCkBoardUrl() {}
+}
+
 describe('StudentHomeComponent', () => {
   let component: StudentHomeComponent;
   let fixture: ComponentFixture<StudentHomeComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [StudentHomeComponent],
-      providers: [
-        { provide: UserService, useClass: MockUserService },
-        { provide: MatDialog, useValue: {} }
-      ],
-      imports: [],
-      schemas: [NO_ERRORS_SCHEMA]
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [StudentHomeComponent],
+        providers: [
+          { provide: ConfigService, useClass: MockConfigService },
+          { provide: UserService, useClass: MockUserService },
+          { provide: MatDialog, useValue: {} }
+        ],
+        imports: [],
+        schemas: [NO_ERRORS_SCHEMA]
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(StudentHomeComponent);

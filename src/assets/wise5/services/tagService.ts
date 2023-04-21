@@ -1,7 +1,7 @@
 'use strict';
 
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ConfigService } from './configService';
 import { map } from 'rxjs/operators';
 import { ProjectService } from './projectService';

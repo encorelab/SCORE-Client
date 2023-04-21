@@ -9,7 +9,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 export class MoveGroupMembersComponent implements OnInit {
   @Input() group: any;
   @Output() dropped = new EventEmitter();
-  @Output() removed = new EventEmitter();
+  @Output() removed = new EventEmitter<void>();
 
   constructor() {}
 

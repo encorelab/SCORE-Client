@@ -34,6 +34,9 @@
             period
           }}</mat-option>
         </mat-select>
+        <mat-hint *ngIf="isRandomlyAssignedPeriod" i18n
+          >You have been randomly assigned to a period.</mat-hint
+        >
       </mat-form-field>
     </p>
   </mat-dialog-content>

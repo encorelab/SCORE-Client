@@ -27,6 +27,7 @@ export class RunSettingsDialogComponent implements OnInit {
   startDateMessage: string = '';
   endDateMessage: string = '';
   isLockedAfterEndDateMessage: string = '';
+  isRandomPeriodAssignment: boolean;
   maxStartDate: Date;
   minEndDate: Date;
   targetEndDate: Date;
@@ -45,6 +46,7 @@ export class RunSettingsDialogComponent implements OnInit {
     this.startDate = new Date(this.run.startTime);
     this.endDate = this.run.endTime ? new Date(this.run.endTime) : null;
     this.isLockedAfterEndDate = this.run.isLockedAfterEndDate;
+    this.isRandomPeriodAssignment = this.run.isRandomPeriodAssignment;
     this.rememberPreviousStartDate();
     this.rememberPreviousEndDate();
     this.setDateRange();
@@ -268,6 +270,26 @@ export class RunSettingsDialogComponent implements OnInit {
       });
   }
 
+  updateRandomPeriodAssignment(isRandomPeriodAssignment: boolean) {
+    this.clearErrorMessages();
+    this.teacherService
+      .updateRandomPeriodAssignment(this.run.id, isRandomPeriodAssignment)
+      .subscribe((response: any) => {
+        if (response.status === 'success') {
+          this.run = response.run;
+          this.updateDataRun(this.run);
+          this.clearErrorMessages();
+          this.showConfirmMessage();
+        } else {
+          this.rollbackRandomPeriodAssignment();
+        }
+      });
+  }
+
+  private rollbackRandomPeriodAssignment() {
+    this.isRandomPeriodAssignment = this.run.isRandomPeriodAssignment;
+  }
+
   rollbackMaxStudentsPerTeam() {
     this.maxStudentsPerTeam = this.run.maxStudentsPerTeam + '';
   }
@@ -315,6 +337,7 @@ export class RunSettingsDialogComponent implements OnInit {
     this.data.run.startTime = run.startTime;
     this.data.run.endTime = run.endTime;
     this.data.run.isLockedAfterEndDate = run.isLockedAfterEndDate;
+    this.data.run.isRandomPeriodAssignment = run.isRandomPeriodAssignment;
     this.data.run.lastRun = run.lastRun;
   }
 }

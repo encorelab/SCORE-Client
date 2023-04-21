@@ -1,7 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Tag } from '../../../../../../app/domain/tag';
-import { GoToNodeSelectComponent } from '../../../../../score/teachingassistant/src/app/core/components/go-to-node-select/go-to-node-select.component';
+import { GoToNodeSelectComponent } from '../../go-to-node-select/go-to-node-select.component';
 import { ConfigService } from '../../../../services/configService';
 
 @Component({
