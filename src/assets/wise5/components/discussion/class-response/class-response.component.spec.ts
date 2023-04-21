@@ -3,18 +3,25 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ConfigService } from '../../../services/configService';
 import { UtilService } from '../../../services/utilService';
 import { ClassResponse } from './class-response.component';
+import { AnnotationService } from '../../../services/annotationService';
 
 let fixture: ComponentFixture<ClassResponse>;
 let component: ClassResponse;
 let reply1: any = createComponentState('Hello');
 let reply2: any = createComponentState('World');
 
+class MockAnnotationService {}
+
 describe('ClassResponseComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       declarations: [ClassResponse],
-      providers: [ConfigService, UtilService]
+      providers: [
+        { provide: AnnotationService, useClass: MockAnnotationService },
+        ConfigService,
+        UtilService
+      ]
     });
     fixture = TestBed.createComponent(ClassResponse);
     component = fixture.componentInstance;

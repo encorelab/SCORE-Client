@@ -1,5 +1,5 @@
 export class Config {
-  ckBoardUrl: string;
+  ckBoardUrl?: string;
   contextPath: string;
   googleAnalyticsId?: string;
   googleClientId?: string;

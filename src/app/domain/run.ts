@@ -9,6 +9,7 @@ export class Run {
   startTime: number;
   endTime: number;
   isLockedAfterEndDate: boolean;
+  isRandomPeriodAssignment: boolean;
   lastRun: string;
   numStudents: number;
   maxStudentsPerTeam: number;

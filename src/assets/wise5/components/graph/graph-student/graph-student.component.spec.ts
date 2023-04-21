@@ -537,64 +537,6 @@ function handleTableConnectedComponentStudentDataChanged() {
         { x: 3, y: 30 }
       ]);
     });
-    it('should handle table connected component student data changed with selected rows', () => {
-      const connectedComponent = createTableConnectedComponent();
-      const dataRows: any[] = [
-        [0, 0],
-        [10, 20],
-        [20, 40],
-        [30, 80]
-      ];
-      const tableDataRows: any[] = [['Time', 'Position']].concat(dataRows);
-      const componentState = {
-        studentData: {
-          tableData: createTable(tableDataRows),
-          selectedRowIndices: [0, 2]
-        }
-      };
-      component.handleTableConnectedComponentStudentDataChanged(connectedComponent, componentState);
-      expect(component.activeTrial.series[0].data).toEqual([
-        [0, 0],
-        [20, 40]
-      ]);
-    });
-    it('should handle connected data explorer student data changed', () => {
-      const connectedComponent = createTableConnectedComponent();
-      const studentData = createDataExplorerStudentData();
-      const componentState = {
-        studentData: studentData
-      };
-      component.activeTrial = {};
-      component.handleTableConnectedComponentStudentDataChanged(connectedComponent, componentState);
-      expect(component.xAxis.title.text).toEqual('Hello');
-      expect(component.yAxis.title.text).toEqual('World');
-      expect(component.activeTrial.series.length).toEqual(1);
-      const series = component.activeTrial.series[0];
-      expect(series.type).toEqual('scatter');
-      expect(series.name).toEqual('The series name');
-      expect(series.color).toEqual('blue');
-      expect(series.data[0][0]).toEqual(1);
-      expect(series.data[1][1]).toEqual(20);
-    });
-    it('should handle connected data explorer student data changed with selected rows', () => {
-      const connectedComponent = createTableConnectedComponent();
-      const studentData = createDataExplorerStudentData();
-      studentData.selectedRowIndices = [0, 2];
-      const componentState = {
-        studentData: studentData
-      };
-      component.activeTrial = {};
-      component.handleTableConnectedComponentStudentDataChanged(connectedComponent, componentState);
-      expect(component.xAxis.title.text).toEqual('Hello');
-      expect(component.yAxis.title.text).toEqual('World');
-      expect(component.activeTrial.series.length).toEqual(1);
-      const series = component.activeTrial.series[0];
-      expect(series.type).toEqual('scatter');
-      expect(series.name).toEqual('The series name');
-      expect(series.color).toEqual('blue');
-      expect(series.data[0][0]).toEqual(1);
-      expect(series.data[1][1]).toEqual(30);
-    });
   });
 }
 

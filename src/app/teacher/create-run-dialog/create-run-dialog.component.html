@@ -20,6 +20,12 @@
         Section 2"). Manually named periods should be no more than 16 characters long.
       </mat-hint>
     </mat-form-field>
+    <p></p>
+    <p>
+      <mat-checkbox formControlName="isRandomPeriodAssignment" i18n>
+        Randomly assign students to periods
+      </mat-checkbox>
+    </p>
     <mat-divider></mat-divider>
     <h3 i18n>2. Choose Students Per Team</h3>
     <mat-radio-group #rGroup formControlName="maxStudentsPerTeam" fxLayoutGap="16px">

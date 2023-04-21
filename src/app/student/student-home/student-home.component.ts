@@ -3,7 +3,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { UserService } from '../../services/user.service';
 import { User } from '../../domain/user';
 import { AddProjectDialogComponent } from '../add-project-dialog/add-project-dialog.component';
-import { ActivatedRoute } from '@angular/router';
 import { ConfigService } from '../../services/config.service';
 
 @Component({

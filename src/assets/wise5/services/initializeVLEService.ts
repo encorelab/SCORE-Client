@@ -13,6 +13,7 @@ import { StudentDataService } from './studentDataService';
 import { StudentNotificationService } from './studentNotificationService';
 import { StudentStatusService } from './studentStatusService';
 import { StudentWebSocketService } from './studentWebSocketService';
+import { TagService } from './tagService';
 
 @Injectable()
 export class InitializeVLEService {
@@ -32,7 +33,8 @@ export class InitializeVLEService {
     private studentAssetService: StudentAssetService,
     private studentDataService: StudentDataService,
     private studentStatusService: StudentStatusService,
-    private studentWebSocketService: StudentWebSocketService
+    private studentWebSocketService: StudentWebSocketService,
+    private tagService: TagService
   ) {}
 
   async initializeStudent(unitId: string) {
@@ -42,6 +44,7 @@ export class InitializeVLEService {
     await this.projectService.retrieveProject();
     await this.stompService.initialize();
     this.studentWebSocketService.initialize();
+    await this.tagService.retrieveStudentTags().subscribe();
     await this.studentDataService.retrieveStudentData();
     await this.notificationService.retrieveNotifications();
     await this.achievementService.retrieveStudentAchievements();

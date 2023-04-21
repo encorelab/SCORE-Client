@@ -37,6 +37,7 @@
           [workgroupId]="workgroupId"
         ></student-grading>
         <manage-students *ngIf="$state.$current.name == 'root.cm.manageStudents'"></manage-students>
+        <manage-groups *ngIf="$state.$current.name == 'root.cm.manageGroups'"></manage-groups>
         <data-export *ngIf="$state.$current.name == 'root.cm.export'"></data-export>
         <export-step-visits
           *ngIf="$state.$current.name == 'root.cm.exportVisits'"

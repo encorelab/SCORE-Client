@@ -36,7 +36,7 @@ export class ConstraintService {
     branchPathTaken: new BranchPathTakenConstraintStrategy(),
     choiceChosen: new ChoiceChosenConstraintStrategy(),
     fillXNumberOfRows: new FillXNumberOfRowsConstraintStrategy(),
-    hasTag: new HasTagConstraintStrategy(),
+    tag: new HasTagConstraintStrategy(),
     isCompleted: new IsCompletedConstraintStrategy(),
     isCorrect: new IsCorrectConstraintStrategy(),
     isRevisedAfter: new IsRevisedAfterConstraintStrategy(),

@@ -1,11 +1,11 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { TeacherWebSocketService } from '../../../../../../../../assets/wise5/services/teacherWebSocketService';
-import { Run } from '../../../../../../../../app/domain/run';
-import { Workgroup } from '../../../../../../../../app/domain/workgroup';
-import { Tag } from '../../../../../../../../app/domain/tag';
-import { ProjectService } from '../../../../../../../wise5/services/projectService';
-import { Project } from '../../../../../../../../app/domain/project';
+import { Tag } from '../../../../../app/domain/tag';
+import { Project } from '../../../../../app/domain/project';
+import { Run } from '../../../../../app/domain/run';
+import { Workgroup } from '../../../../../app/domain/workgroup';
+import { ProjectService } from '../../../services/projectService';
+import { TeacherWebSocketService } from '../../../services/teacherWebSocketService';
 
 @Component({
   selector: 'app-go-to-node-select',
@@ -40,10 +40,7 @@ export class GoToNodeSelectComponent {
 
   sendToNode(node: any) {
     if (this.workgroup != null) {
-      this.websocketService._send(
-        `/app/api/teacher/run/${this.run.id}/workgroup-to-node/${this.workgroup.id}`,
-        node.id
-      );
+      this.websocketService.sendWorkgroupToNode(this.workgroup.id, node.id);
     } else if (this.period != null) {
       this.websocketService.sendPeriodToNode(this.period.id, node.id);
     } else {
