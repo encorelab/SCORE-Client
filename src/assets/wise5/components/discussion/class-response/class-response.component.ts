@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { ConfigService } from '../../../services/configService';
 import { AnnotationService } from '../../../services/annotationService';
+import { getAvatarColorForWorkgroupId } from '../../../common/workgroup/workgroup';
 
 @Component({
   selector: 'class-response',
@@ -63,7 +64,7 @@ export class ClassResponse {
   isUpvoteClicked = false;
   isDownvoteClicked = false;
 
-  constructor(private annotationService: AnnotationService, private ConfigService: ConfigService) {}
+  constructor(private annotationService: AnnotationService, private configService: ConfigService) {}
 
   ngOnInit(): void {
     this.injectLinksIntoResponse();
@@ -130,7 +131,7 @@ export class ClassResponse {
       const componentannotation = this.componentannotations[i];
       if (
         componentannotation.studentWorkId === this.response.id &&
-        componentannotation.fromWorkgroupId === this.ConfigService.getWorkgroupId()
+        componentannotation.fromWorkgroupId === this.configService.getWorkgroupId()
       ) {
         if (componentannotation.data.value === -1) {
           this.isDownvoteClicked = true;
@@ -148,11 +149,11 @@ export class ClassResponse {
   }
 
   getAvatarColorForWorkgroupId(workgroupId: number): string {
-    return this.ConfigService.getAvatarColorForWorkgroupId(workgroupId);
+    return getAvatarColorForWorkgroupId(workgroupId);
   }
 
   adjustClientSaveTime(time: any): number {
-    return this.ConfigService.convertToClientTimestamp(time);
+    return this.configService.convertToClientTimestamp(time);
   }
 
   replyEntered($event: any): void {

@@ -28,16 +28,14 @@
   <div fxLayout="row">
     <div class="discussion-posts" ngClass.gt-sm="half-width" ngClass.lt-md="full-width">
       <mat-card
+        appearance="outlined"
         class="discussion-new discussion-post"
         *ngIf="!isDisabled"
         [ngClass]="{
           'discussion-new--focused md-whiteframe-z3': focus || newResponse || attachments.length
         }"
       >
-        <mat-form-field
-          class="input--placeholder-only discussion-new__input-container"
-          appearance="none"
-        >
+        <mat-form-field class="input--placeholder-only discussion-new__input-container">
           <div
             *ngIf="isDisabled"
             class="discussion-new__input--textarea input--textarea--disabled"
@@ -126,8 +124,8 @@
           (createdownvoteannotation)="createdownvoteannotation(componentState)"
           (createunvoteannotation)="createunvoteannotation(componentState)"
           [isDisabled]="isDisabled"
-          [isCommentingAllowed]="isCommentingAllowed"
-          [isVotingAllowed]="isVotingAllowed"
+          [isCommentingAllowed]="componentContent.isCommentingAllowed"
+          [isVotingAllowed]="componentContent.isVotingAllowed"
           class="post"
         >
         </class-response>
@@ -146,8 +144,8 @@
           (createdownvoteannotation)="createdownvoteannotation(componentState)"
           (createunvoteannotation)="createunvoteannotation(componentState)"
           [isDisabled]="isDisabled"
-          [isCommentingAllowed]="isCommentingAllowed"
-          [isVotingAllowed]="isVotingAllowed"
+          [isCommentingAllowed]="componentContent.isCommentingAllowed"
+          [isVotingAllowed]="componentContent.isVotingAllowed"
           class="post"
         >
         </class-response>
@@ -167,8 +165,8 @@
         (createdownvoteannotation)="createdownvoteannotation(componentState)"
         (createunvoteannotation)="createunvoteannotation(componentState)"
         [isDisabled]="isDisabled"
-        [isCommentingAllowed]="isCommentingAllowed"
-        [isVotingAllowed]="isVotingAllowed"
+        [isCommentingAllowed]="componentContent.isCommentingAllowed"
+        [isVotingAllowed]="componentContent.isVotingAllowed"
         class="post"
         style="display: block"
       >
