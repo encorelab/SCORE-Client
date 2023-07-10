@@ -339,7 +339,7 @@ export class DiscussionStudent extends ComponentStudent {
             this.classResponses,
             this.componentId,
             this.workgroupId,
-            this.sortPostsFunction
+            () => this.sortPostsFunction
           );
         }
       })
@@ -583,7 +583,7 @@ export class DiscussionStudent extends ComponentStudent {
         this.classResponses,
         this.componentId,
         this.workgroupId,
-        this.sortPostsFunction
+        () => this.sortPostsFunction
       );
     }
   }
