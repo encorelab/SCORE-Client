@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MoveGroupMembersComponent } from './move-group-members.component';
+import { MatIconModule } from '@angular/material/icon';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 describe('MoveGroupMembersComponent', () => {
   let component: MoveGroupMembersComponent;
@@ -7,7 +9,8 @@ describe('MoveGroupMembersComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MoveGroupMembersComponent]
+      declarations: [MoveGroupMembersComponent],
+      imports: [DragDropModule, MatIconModule]
     }).compileComponents();
   });
 

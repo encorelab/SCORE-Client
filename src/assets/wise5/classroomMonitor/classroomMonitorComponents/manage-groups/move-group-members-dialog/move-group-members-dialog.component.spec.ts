@@ -5,6 +5,8 @@ import { ConfigService } from '../../../../services/configService';
 import { TagService } from '../../../../services/tagService';
 import { TeacherDataService } from '../../../../services/teacherDataService';
 import { MoveGroupMembersDialogComponent } from './move-group-members-dialog.component';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
 
 class TagServiceMock {
   retrieveRunTags() {
@@ -18,7 +20,7 @@ describe('MoveGroupMembersDialogComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [MoveGroupMembersDialogComponent],
-      imports: [MatDialogModule],
+      imports: [MatDialogModule, MatDividerModule, MatIconModule],
       providers: [
         { provide: TagService, useClass: TagServiceMock },
         { provide: ConfigService, useValue: {} },

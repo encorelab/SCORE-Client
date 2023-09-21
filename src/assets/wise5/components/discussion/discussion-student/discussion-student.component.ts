@@ -311,16 +311,8 @@ export class DiscussionStudent extends ComponentStudent {
     }
   }
 
-  subscribeToAttachStudentAsset() {
-    this.subscriptions.add(
-      this.StudentAssetService.attachStudentAsset$.subscribe(
-        (studentAssetRequest: StudentAssetRequest) => {
-          if (this.isForThisComponent(studentAssetRequest)) {
-            this.attachStudentAsset(studentAssetRequest.asset);
-          }
-        }
-      )
-    );
+  protected doAttachStudentAsset(studentAssetRequest: StudentAssetRequest): void {
+    this.attachStudentAsset(studentAssetRequest.asset);
   }
 
   registerStudentWorkReceivedListener() {
@@ -347,7 +339,7 @@ export class DiscussionStudent extends ComponentStudent {
             this.classResponses,
             this.componentId,
             this.workgroupId,
-            this.sortPostsFunction
+            () => this.sortPostsFunction
           );
         }
       })
@@ -591,7 +583,7 @@ export class DiscussionStudent extends ComponentStudent {
         this.classResponses,
         this.componentId,
         this.workgroupId,
-        this.sortPostsFunction
+        () => this.sortPostsFunction
       );
     }
   }

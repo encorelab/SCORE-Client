@@ -1,14 +1,16 @@
-<mat-card class="class-response">
+<mat-card appearance="outlined" class="class-response">
   <div class="contents">
     <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
-      <mat-icon
-        class="md-48"
-        style="color: {{ getAvatarColorForWorkgroupId(response.workgroupId) }};"
-      >
-        account_circle
-      </mat-icon>
       <div>
-        <div class="mat-body-2">{{ response.usernames }}</div>
+        <mat-icon
+          class="md-48"
+          style="color: {{ getAvatarColorForWorkgroupId(response.workgroupId) }};"
+        >
+          account_circle
+        </mat-icon>
+      </div>
+      <div>
+        <div class="mat-subtitle-2">{{ response.usernames }}</div>
         <div class="mat-caption secondary-text">
           <save-time-message
             [saveTime]="adjustClientSaveTime(response.serverSaveTime)"
@@ -34,8 +36,8 @@
           response.latestInappropriateFlagAnnotation.data == null ||
           response.latestInappropriateFlagAnnotation.data.action != 'Delete'
         "
-        mat-raised-button
-        class="warn"
+        mat-stroked-button
+        color="warn"
         (click)="delete(response)"
         matTooltip="Delete this post so students will not see it"
         matTooltipPosition="above"
@@ -49,8 +51,8 @@
           response.latestInappropriateFlagAnnotation != null &&
           response.latestInappropriateFlagAnnotation.data.action === 'Delete'
         "
-        mat-raised-button
-        class="warn"
+        mat-stroked-button
+        color="warn"
         (click)="undoDelete(response)"
         matTooltip="Make this post viewable to students"
         matTooltipPosition="above"
@@ -61,9 +63,12 @@
       </button>
     </div>
   </div>
-  <mat-divider *ngIf="mode === 'student' || response.replies.length > 0"></mat-divider>
   <div *ngIf="isCommentingAllowed">
     <div class="notice-bg-bg" *ngIf="response.replies.length > 0">
+      <mat-divider
+        *ngIf="mode === 'student' || response.replies.length > 0"
+        class="comment-divider"
+      ></mat-divider>
       <div class="comments-header" matSubheader>
         <span *ngIf="response.replies.length === 1" i18n>
           Comments ({{ response.replies.length }})
@@ -78,25 +83,32 @@
           <mat-icon>{{ expanded ? 'expand_less' : 'expand_more' }}</mat-icon>
         </a>
       </div>
-      <mat-list class="comments">
-        <mat-list-item [ngClass]="{ 'animate-show': !isLast }" *ngFor="let reply of repliesToShow">
-          <mat-icon
-            matListAvatar
-            class="mat-40"
-            style="color: {{ getAvatarColorForWorkgroupId(reply.workgroupId) }}"
-          >
-            account_circle
-          </mat-icon>
-          <h3 matLine>
-            <span class="mat-body-2">{{ reply.usernames }}</span
-            >&nbsp;
-            <save-time-message
-              [saveTime]="adjustClientSaveTime(reply.serverSaveTime)"
-              [timeOnly]="true"
-              tooltipPosition="after"
-            ></save-time-message>
-          </h3>
-          <p matLine [innerHTML]="reply.studentData.responseHTML"></p>
+      <div class="comments">
+        <div
+          class="comment"
+          [ngClass]="{ 'animate-show': !isLast }"
+          *ngFor="let reply of repliesToShow"
+        >
+          <div fxLayout="row" fxLayoutAlign="start start" fxLayoutGap="12px">
+            <div>
+              <mat-icon
+                matListAvatar
+                class="mat-40"
+                style="color: {{ getAvatarColorForWorkgroupId(reply.workgroupId) }}"
+              >
+                account_circle
+              </mat-icon>
+            </div>
+            <div fxLayoutGap="12px">
+              <span class="mat-subtitle-2">{{ reply.usernames }}</span>
+              <save-time-message
+                [saveTime]="adjustClientSaveTime(reply.serverSaveTime)"
+                [timeOnly]="true"
+                tooltipPosition="after"
+              ></save-time-message>
+            </div>
+          </div>
+          <div [innerHTML]="reply.studentData.responseHTML"></div>
           <div fxLayout="row" fxLayout-align="end center" *ngIf="isVotingAllowed">
             <button
               [ngClass]="isUpvoteClicked ? 'md-accent' : ''"
@@ -114,8 +126,7 @@
             </button>
             {{ 'Likes: ' + numVotes }}
           </div>
-          <div fxFlex></div>
-          <div *ngIf="mode === 'grading' || mode === 'gradingRevision'">
+          <div *ngIf="mode === 'grading' || mode === 'gradingRevision'" fxLayoutAlign="end center">
             <button
               *ngIf="
                 (response.latestInappropriateFlagAnnotation == null ||
@@ -123,7 +134,7 @@
                 (reply.latestInappropriateFlagAnnotation == null ||
                   reply.latestInappropriateFlagAnnotation.data.action != 'Delete')
               "
-              mat-raised-button
+              mat-stroked-button
               class="warn"
               (click)="delete(reply)"
               i18n-matTooltip
@@ -151,7 +162,7 @@
                 reply.latestInappropriateFlagAnnotation != null &&
                 reply.latestInappropriateFlagAnnotation.data.action === 'Delete'
               "
-              mat-raised-button
+              mat-stroked-button
               class="warn"
               (click)="undoDelete(reply)"
               i18n-matTooltip
@@ -162,9 +173,12 @@
               Undo Delete
             </button>
           </div>
-        </mat-list-item>
-      </mat-list>
-      <mat-divider></mat-divider>
+        </div>
+      </div>
+      <mat-divider
+        *ngIf="mode === 'student' || response.replies.length > 0"
+        class="comment-divider"
+      ></mat-divider>
     </div>
     <div class="new-reply" fxLayout="row" *ngIf="mode === 'student' && !isDisabled">
       <textarea

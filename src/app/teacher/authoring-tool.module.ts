@@ -5,11 +5,6 @@ import { ChooseNewNodeLocation } from '../../assets/wise5/authoringTool/addNode/
 import { ChooseNewNodeTemplate } from '../../assets/wise5/authoringTool/addNode/choose-new-node-template/choose-new-node-template.component';
 import { AdvancedProjectAuthoringComponent } from '../../assets/wise5/authoringTool/advanced/advanced-project-authoring.component';
 import { CardSelectorComponent } from '../../assets/wise5/authoringTool/components/card-selector/card-selector.component';
-import { NodeAdvancedBranchAuthoringComponent } from '../../assets/wise5/authoringTool/node/advanced/branch/node-advanced-branch-authoring.component';
-import { NodeAdvancedConstraintAuthoringComponent } from '../../assets/wise5/authoringTool/node/advanced/constraint/node-advanced-constraint-authoring.component';
-import { NodeAdvancedGeneralAuthoringComponent } from '../../assets/wise5/authoringTool/node/advanced/general/node-advanced-general-authoring.component';
-import { NodeAdvancedJsonAuthoringComponent } from '../../assets/wise5/authoringTool/node/advanced/json/node-advanced-json-authoring.component';
-import { NodeAdvancedPathAuthoringComponent } from '../../assets/wise5/authoringTool/node/advanced/path/node-advanced-path-authoring.component';
 import { RequiredErrorLabelComponent } from '../../assets/wise5/authoringTool/node/advanced/required-error-label/required-error-label.component';
 import { RubricAuthoringComponent } from '../../assets/wise5/authoringTool/rubric/rubric-authoring.component';
 import { NodeIconChooserDialog } from '../../assets/wise5/common/node-icon-chooser-dialog/node-icon-chooser-dialog.component';
@@ -24,8 +19,13 @@ import { StudentTeacherCommonModule } from '../student-teacher-common.module';
 import { RecoveryAuthoringComponent } from '../../assets/wise5/authoringTool/recovery-authoring/recovery-authoring.component';
 import { AddLessonConfigureComponent } from '../../assets/wise5/authoringTool/addLesson/add-lesson-configure/add-lesson-configure.component';
 import { AddLessonChooseLocationComponent } from '../../assets/wise5/authoringTool/addLesson/add-lesson-choose-location/add-lesson-choose-location.component';
-import { NodeConstraintAuthoringComponent } from '../../assets/wise5/authoringTool/constraint/node-constraint-authoring/node-constraint-authoring.component';
 import { ConcurrentAuthorsMessageComponent } from '../../assets/wise5/authoringTool/concurrent-authors-message/concurrent-authors-message.component';
+import { ImportComponentModule } from '../../assets/wise5/authoringTool/importComponent/import-component-module';
+import { NodeAdvancedAuthoringModule } from '../../assets/wise5/authoringTool/node/advanced/node-advanced-authoring.module';
+import { NodeAuthoringComponent } from '../../assets/wise5/authoringTool/node/node-authoring/node-authoring.component';
+import { TeacherNodeIconComponent } from '../../assets/wise5/authoringTool/teacher-node-icon/teacher-node-icon.component';
+import { MatChipsModule } from '@angular/material/chips';
+import { WiseTinymceEditorModule } from '../../assets/wise5/directives/wise-tinymce-editor/wise-tinymce-editor.module';
 
 @NgModule({
   declarations: [
@@ -41,23 +41,23 @@ import { ConcurrentAuthorsMessageComponent } from '../../assets/wise5/authoringT
     ChooseNewNodeLocation,
     ChooseNewNodeTemplate,
     ConcurrentAuthorsMessageComponent,
-    NodeAdvancedBranchAuthoringComponent,
-    NodeAdvancedConstraintAuthoringComponent,
-    NodeAdvancedGeneralAuthoringComponent,
-    NodeAdvancedJsonAuthoringComponent,
-    NodeAdvancedPathAuthoringComponent,
-    NodeConstraintAuthoringComponent,
+    NodeAuthoringComponent,
     NodeIconChooserDialog,
     RecoveryAuthoringComponent,
     RequiredErrorLabelComponent,
-    RubricAuthoringComponent
+    RubricAuthoringComponent,
+    TeacherNodeIconComponent
   ],
   imports: [
     StudentTeacherCommonModule,
     ComponentAuthoringModule,
     ComponentStudentModule,
+    MatChipsModule,
+    ImportComponentModule,
+    NodeAdvancedAuthoringModule,
     PreviewComponentModule,
-    RouterModule
+    RouterModule,
+    WiseTinymceEditorModule
   ]
 })
 export class AuthoringToolModule {}

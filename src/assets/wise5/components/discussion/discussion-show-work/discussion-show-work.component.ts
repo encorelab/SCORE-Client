@@ -81,19 +81,20 @@ export class DiscussionShowWorkComponent extends ComponentShowWorkDirective {
   }
 
   setClassResponses(componentStates: any[], annotations: any[] = []): void {
-    const isStudentMode = false;
     this.classResponses = this.TeacherDiscussionService.getClassResponses(
       componentStates,
       annotations,
-      isStudentMode
+      false
     );
     this.responsesMap = this.TeacherDiscussionService.getResponsesMap(this.classResponses);
-    const isGradingMode = true;
     this.topLevelResponses = this.TeacherDiscussionService.getLevel1Responses(
       this.classResponses,
       this.componentId,
       this.workgroupId,
-      isGradingMode
+      () => {
+        return 0;
+      },
+      true
     );
     this.retrievedClassmateResponses = true;
   }
