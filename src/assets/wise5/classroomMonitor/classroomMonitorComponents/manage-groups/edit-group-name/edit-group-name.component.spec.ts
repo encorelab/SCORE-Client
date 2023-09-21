@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EditGroupNameComponent } from './edit-group-name.component';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('EditGroupNameComponent', () => {
   let component: EditGroupNameComponent;
@@ -9,9 +8,9 @@ describe('EditGroupNameComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [EditGroupNameComponent],
-      schemas: [NO_ERRORS_SCHEMA]
-    }).compileComponents();
+      declarations: [ EditGroupNameComponent ]
+    })
+    .compileComponents();
   });
 
   beforeEach(() => {

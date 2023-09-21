@@ -5,9 +5,8 @@
 </div>
 <div style="margin-left: 45px">
   <button
-    mat-raised-button
-    color="primary"
-    class="moveComponentButton"
+    mat-button
+    class="moveComponentButton mat-raised-button mat-primary"
     (click)="insertComponentAfter()"
     matTooltip="Insert As First Component"
     i18n-matTooltip
@@ -31,9 +30,8 @@
   </div>
   <div style="height: 30px; margin-top: 10px; margin-left: 30px">
     <button
-      mat-raised-button
-      color="primary"
-      class="moveComponentButton"
+      mat-button
+      class="moveComponentButton mat-raised-button mat-primary"
       style="margin-top: 0"
       matTooltip="Insert After"
       i18n-matTooltip
@@ -46,17 +44,9 @@
 </div>
 <hr />
 <div fxLayout="row">
-  <button
-    mat-raised-button
-    color="primary"
-    (click)="goToChooseNewComponent()"
-    aria-label="Back"
-    i18n
-  >
+  <button mat-button class="mat-primary" (click)="goToChooseNewComponent()" aria-label="Back" i18n>
     Back
   </button>
   <span fxFlex></span>
-  <button mat-raised-button color="primary" (click)="cancel()" aria-label="Cancel" i18n>
-    Cancel
-  </button>
+  <button mat-button class="mat-primary" (click)="cancel()" aria-label="Cancel" i18n>Cancel</button>
 </div>

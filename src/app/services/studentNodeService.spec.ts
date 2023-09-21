@@ -2,12 +2,11 @@ import { TestBed } from '@angular/core/testing';
 import { StudentNodeService } from '../../assets/wise5/services/studentNodeService';
 import { StudentTeacherCommonServicesModule } from '../student-teacher-common-services.module';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { NodeStatusService } from '../../assets/wise5/services/nodeStatusService';
 import { DataService } from './data.service';
 
 let dataService: DataService;
-let dialog: MatDialog;
 let nodeStatusService: NodeStatusService;
 let service: StudentNodeService;
 describe('StudentNodeService', () => {
@@ -16,7 +15,6 @@ describe('StudentNodeService', () => {
       imports: [HttpClientTestingModule, MatDialogModule, StudentTeacherCommonServicesModule]
     });
     dataService = TestBed.inject(DataService);
-    dialog = TestBed.inject(MatDialog);
     service = TestBed.inject(StudentNodeService);
     nodeStatusService = TestBed.inject(NodeStatusService);
   });
@@ -31,29 +29,27 @@ function setCurrentNode() {
 }
 
 function setCurrentNode_isVisitable_setCurrentNode() {
-  describe('node is visitable', () => {
+  describe('is visible', () => {
     it('should call StudentDataService to set current node', () => {
-      spyOnIsVisitable(true);
-      const spy = spyOn(dataService, 'setCurrentNodeByNodeId');
-      service.setCurrentNode('node1');
-      expect(spy).toHaveBeenCalledWith('node1');
+      expectFunctionCall(true, 'setCurrentNodeByNodeId');
     });
   });
 }
 
 function setCurrentNode_isNotVisitable_nodeClickLocked() {
-  describe('node is not visitable', () => {
-    it('should show node locked dialog', () => {
-      spyOnIsVisitable(false);
-      const spy = spyOn(dialog, 'open');
-      service.setCurrentNode('node1');
-      expect(spy).toHaveBeenCalled();
+  describe('is not visible', () => {
+    it('should call StudentDataService to lock node', () => {
+      expectFunctionCall(false, 'nodeClickLocked');
     });
   });
 }
 
-function spyOnIsVisitable(isVisitable: boolean) {
-  spyOn(nodeStatusService, 'getNodeStatusByNodeId').and.returnValue({
-    isVisitable: isVisitable
-  });
+function expectFunctionCall(
+  isVisitable: boolean,
+  expectedFunction: 'setCurrentNodeByNodeId' | 'nodeClickLocked'
+) {
+  spyOn(nodeStatusService, 'getNodeStatusByNodeId').and.returnValue({ isVisitable: isVisitable });
+  const spy = spyOn(dataService, expectedFunction);
+  service.setCurrentNode('node1');
+  expect(spy).toHaveBeenCalledWith('node1');
 }

@@ -8,8 +8,6 @@ import { Student } from '../../domain/student';
 import { ConfigService } from '../../services/config.service';
 import { StudentService } from '../../student/student.service';
 import { LibraryService } from '../../services/library.service';
-import { ReCaptchaV3Service } from 'ng-recaptcha';
-import { Subscription, lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-contact-form',
@@ -28,13 +26,14 @@ export class ContactFormComponent implements OnInit {
   runId: number;
   projectId: number;
   projectName: string;
-  isError: boolean = false;
   isStudent: boolean = false;
   isSignedIn: boolean = false;
   isSendingRequest: boolean = false;
   isRecaptchaEnabled: boolean = false;
-  isRecaptchaError: boolean = false;
+  recaptchaPublicKey: string = '';
+  recaptchaResponse: string = '';
   teachers: any[] = [];
+  failure: boolean = false;
   complete: boolean = false;
 
   constructor(
@@ -43,7 +42,6 @@ export class ContactFormComponent implements OnInit {
     private configService: ConfigService,
     private studentService: StudentService,
     private libraryService: LibraryService,
-    private recaptchaV3Service: ReCaptchaV3Service,
     private route: ActivatedRoute,
     private router: Router
   ) {}
@@ -54,7 +52,7 @@ export class ContactFormComponent implements OnInit {
     this.obtainRunIdOrProjectIdIfNecessary();
     this.obtainTeacherListIfNecessary();
     this.showEmailIfNecessary();
-    this.isRecaptchaEnabled = this.configService.isRecaptchaEnabled();
+    this.showRecaptchaIfNecessary();
     this.populateFieldsIfSignedIn();
     this.populateIssueTypes();
     this.setIssueTypeIfNecessary();
@@ -104,6 +102,23 @@ export class ContactFormComponent implements OnInit {
     }
   }
 
+  showRecaptchaIfNecessary() {
+    if (!this.isSignedIn) {
+      this.configService.getConfig().subscribe((config) => {
+        if (config != null) {
+          this.recaptchaPublicKey = this.configService.getRecaptchaPublicKey();
+          if (this.recaptchaPublicKey != null && this.recaptchaPublicKey != '') {
+            this.contactFormGroup.addControl(
+              'recaptcha',
+              new FormControl('', [Validators.required])
+            );
+            this.isRecaptchaEnabled = true;
+          }
+        }
+      });
+    }
+  }
+
   populateFieldsIfSignedIn() {
     if (this.isSignedIn) {
       if (this.isStudent) {
@@ -148,8 +163,8 @@ export class ContactFormComponent implements OnInit {
     }
   }
 
-  async submit(): Promise<Subscription> {
-    this.isError = false;
+  submit() {
+    this.failure = false;
     const name = this.getName();
     const email = this.getEmail();
     const teacherUsername = this.getTeacherUsername();
@@ -159,9 +174,9 @@ export class ContactFormComponent implements OnInit {
     const runId = this.getRunId();
     const projectId = this.getProjectId();
     const userAgent = this.getUserAgent();
-    const recaptchaResponse = await this.getRecaptchaResponse();
+    const recaptchaResponse = this.getRecaptchaResponse();
     this.setIsSendingRequest(true);
-    return this.userService
+    this.userService
       .sendContactMessage(
         name,
         email,
@@ -188,9 +203,9 @@ export class ContactFormComponent implements OnInit {
     if (response.status === 'success') {
       this.complete = true;
     } else if (response.status === 'error') {
-      this.isError = true;
+      this.failure = true;
       if (this.isRecaptchaEnabled) {
-        this.isRecaptchaError = true;
+        this.resetRecaptcha();
       }
     }
     this.setIsSendingRequest(false);
@@ -256,10 +271,16 @@ export class ContactFormComponent implements OnInit {
     this.router.navigate(['contact/complete', {}]);
   }
 
-  private async getRecaptchaResponse(): Promise<string> {
-    return this.configService.isRecaptchaEnabled()
-      ? await lastValueFrom(this.recaptchaV3Service.execute('importantAction'))
-      : '';
+  recaptchaResolved(recaptchaResponse) {
+    this.recaptchaResponse = recaptchaResponse;
+  }
+
+  getRecaptchaResponse() {
+    return this.recaptchaResponse;
+  }
+
+  resetRecaptcha() {
+    this.contactFormGroup.get('recaptcha').reset();
   }
 
   setIsSendingRequest(value: boolean) {

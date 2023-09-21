@@ -25,7 +25,6 @@ import { FeedbackRuleComponent } from '../../feedbackRule/FeedbackRuleComponent'
 import { ComponentStudent } from '../../component-student.component';
 import { DialogGuidanceComponent } from '../DialogGuidanceComponent';
 import { copy } from '../../../common/object/object';
-import { RawCRaterResponse } from '../../common/cRater/RawCRaterResponse';
 
 @Component({
   selector: 'dialog-guidance-student',
@@ -36,7 +35,7 @@ export class DialogGuidanceStudentComponent extends ComponentStudent {
   component: DialogGuidanceComponent;
   computerAvatar: ComputerAvatar;
   cRaterTimeout: number = 40000;
-  feedbackRuleEvaluator: FeedbackRuleEvaluator<CRaterResponse[]>;
+  feedbackRuleEvaluator: FeedbackRuleEvaluator;
   isShowComputerAvatarSelector: boolean = false;
   isSubmitEnabled: boolean = false;
   isWaitingForComputerResponse: boolean = false;
@@ -56,7 +55,7 @@ export class DialogGuidanceStudentComponent extends ComponentStudent {
     protected nodeService: NodeService,
     protected notebookService: NotebookService,
     protected studentAssetService: StudentAssetService,
-    protected dataService: StudentDataService,
+    protected studentDataService: StudentDataService,
     protected studentStatusService: StudentStatusService
   ) {
     super(
@@ -67,7 +66,7 @@ export class DialogGuidanceStudentComponent extends ComponentStudent {
       nodeService,
       notebookService,
       studentAssetService,
-      dataService
+      studentDataService
     );
   }
 
@@ -169,7 +168,7 @@ export class DialogGuidanceStudentComponent extends ComponentStudent {
     const computerAvatarInitialResponse = this.component.getComputerAvatarInitialResponse();
     if (computerAvatarInitialResponse != null && computerAvatarInitialResponse !== '') {
       this.addDialogResponse(
-        new ComputerDialogResponse(computerAvatarInitialResponse, [], new Date().getTime(), true)
+        new ComputerDialogResponse(computerAvatarInitialResponse, [], new Date().getTime())
       );
     }
   }
@@ -205,7 +204,7 @@ export class DialogGuidanceStudentComponent extends ComponentStudent {
       .pipe(timeout(this.cRaterTimeout))
       .subscribe(
         (response: any) => {
-          this.cRaterSuccessResponse(response.responses);
+          this.cRaterSuccessResponse(response);
         },
         () => {
           this.cRaterErrorResponse();
@@ -233,10 +232,10 @@ export class DialogGuidanceStudentComponent extends ComponentStudent {
     this.studentCanRespond = false;
   }
 
-  cRaterSuccessResponse(responses: RawCRaterResponse): void {
+  cRaterSuccessResponse(response: any): void {
     this.hideWaitingForComputerResponse();
     this.submitButtonClicked();
-    const cRaterResponse = this.cRaterService.getCRaterResponse(responses, this.submitCounter);
+    const cRaterResponse = this.cRaterService.getCRaterResponse(response, this.submitCounter);
     this.addDialogResponse(this.createComputerDialogResponse(cRaterResponse));
     if (this.hasMaxSubmitCountAndUsedAllSubmits()) {
       this.disableStudentResponse();
@@ -246,9 +245,11 @@ export class DialogGuidanceStudentComponent extends ComponentStudent {
   }
 
   createComputerDialogResponse(response: CRaterResponse): ComputerDialogResponse {
-    const allCRaterResponses = this.getCRaterResponses().concat(response);
-    const rule: FeedbackRule = this.feedbackRuleEvaluator.getFeedbackRule(allCRaterResponses);
-    const feedbackText = this.dialogGuidanceFeedbackService.getFeedbackText(this.component, rule);
+    const feedbackRule: FeedbackRule = this.feedbackRuleEvaluator.getFeedbackRule(response);
+    const feedbackText = this.dialogGuidanceFeedbackService.getFeedbackText(
+      this.component,
+      feedbackRule
+    );
     const computerResponse =
       response.scores != null
         ? new ComputerDialogResponseMultipleScores(
@@ -264,26 +265,9 @@ export class DialogGuidanceStudentComponent extends ComponentStudent {
             new Date().getTime()
           );
     if (this.component.isVersion2()) {
-      computerResponse.feedbackRuleId = rule.id;
+      computerResponse.feedbackRuleId = feedbackRule.id;
     }
     return computerResponse;
-  }
-
-  private getCRaterResponses(): CRaterResponse[] {
-    let submitCounter = 1;
-    return (
-      this.dataService
-        .getLatestComponentStateByNodeIdAndComponentId(this.nodeId, this.componentId)
-        ?.studentData.responses.filter(
-          (response: DialogResponse) =>
-            response.user === 'Computer' && !(response as ComputerDialogResponse).initialResponse
-        )
-        .map((response: DialogResponse) => {
-          const cRaterResponse = new CRaterResponse(response);
-          cRaterResponse.submitCounter = submitCounter++;
-          return cRaterResponse;
-        }) ?? []
-    );
   }
 
   cRaterErrorResponse() {

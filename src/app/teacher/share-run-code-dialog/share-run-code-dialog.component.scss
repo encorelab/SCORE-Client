@@ -3,13 +3,17 @@
   text-align: center;
 }
 
-.mat-mdc-button {
+.mat-raised-button, .mat-button {
   text-transform: none;
   white-space: normal;
 }
 
-.share-to-google {
+.mat-raised-button {
+  margin-top: 8px;
+
   img {
     width: 32px;
+    margin-right: 8px;
+    padding: 4px 8px 4px 0;
   }
 }

@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ForgotTeacherPasswordVerifyComponent } from './forgot-teacher-password-verify.component';
 import { TeacherService } from '../../../teacher/teacher.service';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
@@ -44,7 +44,8 @@ describe('ForgotTeacherPasswordVerifyComponent', () => {
   };
 
   const getErrorMessage = () => {
-    return fixture.debugElement.nativeElement.querySelector('.warn').textContent;
+    const errorMessageDiv = fixture.debugElement.nativeElement.querySelector('.error-message');
+    return errorMessageDiv.textContent;
   };
 
   beforeEach(() => {

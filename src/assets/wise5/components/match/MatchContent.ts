@@ -1,11 +1,9 @@
 import { ComponentContent } from '../../common/ComponentContent';
-import { Choice } from './choice';
 
 export interface MatchContent extends ComponentContent {
   buckets: any[];
   canCreateChoices: boolean;
-  choiceReuseEnabled: boolean;
-  choices: Choice[];
+  choices: any[];
   feedback: any[];
   ordered: boolean;
 }

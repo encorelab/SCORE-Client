@@ -1,7 +1,7 @@
 'use strict';
 
 import { Component } from '@angular/core';
-import { AbstractComponentAuthoring } from '../../../authoringTool/components/AbstractComponentAuthoring';
+import { ComponentAuthoring } from '../../../authoringTool/components/component-authoring.component';
 import { ConfigService } from '../../../services/configService';
 import { NodeService } from '../../../services/nodeService';
 import { TeacherProjectService } from '../../../services/teacherProjectService';
@@ -14,7 +14,7 @@ import { ProjectAssetService } from '../../../../../app/services/projectAssetSer
   templateUrl: 'label-authoring.component.html',
   styleUrls: ['label-authoring.component.scss']
 })
-export class LabelAuthoring extends AbstractComponentAuthoring {
+export class LabelAuthoring extends ComponentAuthoring {
   numberInputChange: Subject<number> = new Subject<number>();
   textInputChange: Subject<string> = new Subject<string>();
 

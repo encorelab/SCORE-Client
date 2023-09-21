@@ -7,7 +7,6 @@ import { ConfigService } from '../../../../services/configService';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { ShowNodeInfoDialogComponent } from '../../../../../../app/classroom-monitor/show-node-info-dialog/show-node-info-dialog.component';
-import { getAvatarColorForWorkgroupId } from '../../../../common/workgroup/workgroup';
 
 @Component({
   selector: 'milestone-details',
@@ -61,7 +60,7 @@ export class MilestoneDetailsComponent implements OnInit {
   }
 
   getAvatarColorForWorkgroupId(workgroupId: number): string {
-    return getAvatarColorForWorkgroupId(workgroupId);
+    return this.configService.getAvatarColorForWorkgroupId(workgroupId);
   }
 
   getDisplayNamesByWorkgroupId(workgroupId: number): string {

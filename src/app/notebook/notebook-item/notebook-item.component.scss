@@ -1,6 +1,8 @@
-@use '@angular/material' as mat;
-@import
-    'style/abstracts/variables';
+@import '@angular/material/theming',
+    'style/abstracts/variables',
+    'style/themes/default';
+
+$light-gray: map-get($mat-grey, 300);
 
 .notebook-item {
   transition: box-shadow 250ms;
@@ -9,7 +11,7 @@
   cursor: pointer;
 
   &:hover, &:focus {
-    @include mat.elevation(4);
+    @include mat-elevation(4);
     outline: none;
   }
 
@@ -21,7 +23,7 @@
 .content {
   height: 200px;
   padding: 0;
-  width: 100%;
+  background-color: $light-gray;
   border-top-left-radius: $card-border-radius;
   border-top-right-radius: $card-border-radius;
 }
@@ -50,8 +52,7 @@
   max-height: 120px;
   min-height: 56px;
   background-color: rgba(255,255,255,0.95);
-  white-space: normal;
-  // border-top: 1px solid $light-gray;
+  border-top: 1px solid $light-gray;
 
   &:after {
     content: "";
@@ -83,27 +84,22 @@
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: 'liga';
     font-size: 80px;
-    opacity: 0.4;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 24px;
-    text-align: center;
+    color: map-get($default-colors, disabled-text);
   }
 }
 
 .location {
   opacity: 0.9;
+  padding: 8px 0;
 }
 
-.mat-mdc-card-actions {
-  padding: 8px;
-  min-height: 0;
+mat-card-actions {
+  padding-top: 0;
+}
+
+.actions {
+  margin: 0;
+  padding: 0 8px;
   border-bottom-left-radius: $card-border-radius;
   border-bottom-right-radius: $card-border-radius;
-
-  &.has-action {
-    padding-top: 0;
-    padding-bottom: 0;
-  }
 }

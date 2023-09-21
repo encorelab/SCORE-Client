@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ConfigService } from '../../../services/configService';
 import { DataExportService } from '../../../services/dataExportService';
 import { TeacherProjectService } from '../../../services/teacherProjectService';
+import { UtilService } from '../../../services/utilService';
 import ExportController from '../exportController';
 import { UpgradeModule } from '@angular/upgrade/static';
 import { millisecondsToDateTime } from '../../../common/datetime/datetime';
@@ -35,7 +36,8 @@ export class ExportStepVisitsComponent extends ExportController {
     private configService: ConfigService,
     private dataExportService: DataExportService,
     private projectService: TeacherProjectService,
-    private upgrade: UpgradeModule
+    private upgrade: UpgradeModule,
+    private utilService: UtilService
   ) {
     super();
   }

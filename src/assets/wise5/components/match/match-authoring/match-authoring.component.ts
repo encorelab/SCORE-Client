@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ProjectAssetService } from '../../../../../app/services/projectAssetService';
-import { AbstractComponentAuthoring } from '../../../authoringTool/components/AbstractComponentAuthoring';
+import { ComponentAuthoring } from '../../../authoringTool/components/component-authoring.component';
 import { generateRandomKey } from '../../../common/string/string';
 import { ConfigService } from '../../../services/configService';
 import { NodeService } from '../../../services/nodeService';
@@ -14,18 +14,18 @@ import { MatchService } from '../matchService';
   templateUrl: 'match-authoring.component.html',
   styleUrls: ['match-authoring.component.scss']
 })
-export class MatchAuthoring extends AbstractComponentAuthoring {
+export class MatchAuthoring extends ComponentAuthoring {
   defaultSourceBucketId: string = '0';
   feedbackChange: Subject<string> = new Subject<string>();
 
   constructor(
-    protected configService: ConfigService,
-    private matchService: MatchService,
-    protected nodeService: NodeService,
-    protected projectAssetService: ProjectAssetService,
-    protected projectService: TeacherProjectService
+    protected ConfigService: ConfigService,
+    private MatchService: MatchService,
+    protected NodeService: NodeService,
+    protected ProjectAssetService: ProjectAssetService,
+    protected ProjectService: TeacherProjectService
   ) {
-    super(configService, nodeService, projectAssetService, projectService);
+    super(ConfigService, NodeService, ProjectAssetService, ProjectService);
     this.subscriptions.add(
       this.feedbackChange.pipe(debounceTime(1000), distinctUntilChanged()).subscribe(() => {
         this.turnOnSubmitButtonIfFeedbackExists();
@@ -43,7 +43,8 @@ export class MatchAuthoring extends AbstractComponentAuthoring {
   addChoice(): void {
     const newChoice = {
       id: generateRandomKey(),
-      value: ''
+      value: '',
+      type: 'choice'
     };
     this.componentContent.choices.push(newChoice);
     this.addChoiceToFeedback(newChoice.id);
@@ -290,7 +291,7 @@ export class MatchAuthoring extends AbstractComponentAuthoring {
   }
 
   getChoiceTextById(choiceId: string): string {
-    const choice = this.matchService.getChoiceById(choiceId, this.componentContent.choices);
+    const choice = this.MatchService.getChoiceById(choiceId, this.componentContent.choices);
     return choice ? choice.value : null;
   }
 
@@ -299,7 +300,7 @@ export class MatchAuthoring extends AbstractComponentAuthoring {
       const choicesLabel = this.componentContent.choicesLabel;
       return choicesLabel ? choicesLabel : $localize`Choices`;
     }
-    const bucket = this.matchService.getBucketById(bucketId, this.componentContent.buckets);
+    const bucket = this.MatchService.getBucketById(bucketId, this.componentContent.buckets);
     return bucket ? bucket.value : null;
   }
 }

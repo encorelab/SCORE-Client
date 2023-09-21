@@ -1,22 +1,29 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { ProjectService } from '../../../services/projectService';
 import { Component as WISEComponent } from '../../../common/Component';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ComponentFactory } from '../../../common/ComponentFactory';
 
 @Component({
   templateUrl: 'preview-component-dialog.component.html',
   styleUrls: ['preview-component-dialog.component.scss']
 })
 export class PreviewComponentDialogComponent implements OnInit {
-  protected canSaveStarterState: boolean;
-  protected componentTypesWithStarterStates = ['ConceptMap', 'Draw', 'Label'];
-  protected starterState: any;
+  canSaveStarterState: boolean;
+  component: WISEComponent;
+  @Input() componentId: string;
+  componentTypesWithStarterStates = ['ConceptMap', 'Draw', 'Label'];
+  @Input() nodeId: string;
+  starterState: any;
 
-  constructor(@Inject(MAT_DIALOG_DATA) protected component: WISEComponent) {}
+  constructor(private projectService: ProjectService) {}
 
   ngOnInit(): void {
-    this.canSaveStarterState = this.componentTypesWithStarterStates.includes(
-      this.component.content.type
+    const content = this.projectService.injectAssetPaths(
+      this.projectService.getComponent(this.nodeId, this.componentId)
     );
+    this.canSaveStarterState = this.componentTypesWithStarterStates.includes(content.type);
+    const factory = new ComponentFactory();
+    this.component = factory.getComponent(content, this.nodeId);
   }
 
   updateStarterState(starterState: any): void {

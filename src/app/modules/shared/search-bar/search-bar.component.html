@@ -3,8 +3,9 @@
   <mat-icon matPrefix>search</mat-icon>
   <input matInput type="search" [formControl]="searchField" />
   <button
-    mat-icon-button
+    mat-button
     matSuffix
+    mat-icon-button
     [disabled]="disable"
     [ngClass]="{ invisible: !value }"
     i18n-aria-label

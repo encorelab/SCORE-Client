@@ -6,7 +6,6 @@ import { ProjectAssetService } from '../../../../app/services/projectAssetServic
 import { StudentTeacherCommonServicesModule } from '../../../../app/student-teacher-common-services.module';
 import { TeacherProjectService } from '../../services/teacherProjectService';
 import { WiseAuthoringTinymceEditorComponent } from './wise-authoring-tinymce-editor.component';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 let component: WiseAuthoringTinymceEditorComponent;
 let fixture: ComponentFixture<WiseAuthoringTinymceEditorComponent>;
@@ -21,8 +20,7 @@ describe('WiseAuthoringTinymceEditorComponent', () => {
         UpgradeModule,
         StudentTeacherCommonServicesModule
       ],
-      providers: [ProjectAssetService, TeacherProjectService],
-      schemas: [NO_ERRORS_SCHEMA]
+      providers: [ProjectAssetService, TeacherProjectService]
     }).compileComponents();
     fixture = TestBed.createComponent(WiseAuthoringTinymceEditorComponent);
     component = fixture.componentInstance;

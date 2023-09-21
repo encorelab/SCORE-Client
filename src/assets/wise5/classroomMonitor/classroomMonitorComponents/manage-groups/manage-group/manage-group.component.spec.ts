@@ -7,7 +7,6 @@ import { TeacherDataService } from '../../../../services/teacherDataService';
 import { TeacherDataServiceMock } from '../edit-group-dialog/edit-group-dialog.component.spec';
 
 import { ManageGroupComponent } from './manage-group.component';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 export class TagServiceMock {
   private tagChangedSource = new Subject<Tag>();
@@ -28,8 +27,7 @@ describe('ManageGroupComponent', () => {
       providers: [
         { provide: TagService, useClass: TagServiceMock },
         { provide: TeacherDataService, useClass: TeacherDataServiceMock }
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
+      ]
     }).compileComponents();
   });
 

@@ -11,7 +11,6 @@ import { StudentTeacherCommonModule } from '../../../../../app/student-teacher-c
     PreviewComponentDialogComponent,
     SaveStarterStateComponent
   ],
-  exports: [PreviewComponentButtonComponent],
   imports: [StudentTeacherCommonModule, ComponentStudentModule]
 })
 export class PreviewComponentModule {}

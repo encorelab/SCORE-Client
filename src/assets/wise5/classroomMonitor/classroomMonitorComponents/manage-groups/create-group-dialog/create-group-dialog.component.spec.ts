@@ -10,7 +10,6 @@ import {
 } from '../edit-group-dialog/edit-group-dialog.component.spec';
 
 import { CreateGroupDialogComponent } from './create-group-dialog.component';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('CreateGroupDialogComponent', () => {
   let component: CreateGroupDialogComponent;
@@ -25,8 +24,7 @@ describe('CreateGroupDialogComponent', () => {
         { provide: ConfigService, useClass: ConfigServiceMock },
         { provide: TagService, useClass: TagServiceMock },
         { provide: TeacherDataService, useClass: TeacherDataServiceMock }
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
+      ]
     }).compileComponents();
   });
 

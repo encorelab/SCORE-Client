@@ -1,15 +1,15 @@
 import { TeacherDataService } from '../../../../services/teacherDataService';
 import { TeacherProjectService } from '../../../../services/teacherProjectService';
+import * as angular from 'angular';
 import { NotificationService } from '../../../../services/notificationService';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
-  selector: 'node-advanced-json-authoring',
-  templateUrl: './node-advanced-json-authoring.component.html'
+  templateUrl: 'node-advanced-json-authoring.component.html'
 })
-export class NodeAdvancedJsonAuthoringComponent implements OnInit {
+export class NodeAdvancedJsonAuthoringComponent {
   node: any;
   nodeContentJSONString: string;
   nodeContentChanged: Subject<string> = new Subject<string>();
@@ -25,7 +25,7 @@ export class NodeAdvancedJsonAuthoringComponent implements OnInit {
   ngOnInit() {
     this.nodeId = this.TeacherDataService.getCurrentNodeId();
     this.node = this.ProjectService.getNodeById(this.nodeId);
-    this.nodeContentJSONString = JSON.stringify(this.node, null, 4);
+    this.nodeContentJSONString = angular.toJson(this.node, 4);
     this.NotificationService.showJSONValidMessage();
     this.nodeContentChangedSubscription = this.nodeContentChanged
       .pipe(debounceTime(1000), distinctUntilChanged())
@@ -41,7 +41,7 @@ export class NodeAdvancedJsonAuthoringComponent implements OnInit {
 
   autoSaveJSON() {
     try {
-      const updatedNode = JSON.parse(this.nodeContentJSONString);
+      const updatedNode = angular.fromJson(this.nodeContentJSONString);
       this.node = updatedNode;
       this.ProjectService.setNode(this.nodeId, updatedNode);
       this.ProjectService.saveProject().then(() => {

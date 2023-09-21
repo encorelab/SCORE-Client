@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ConfigService } from '../../../../services/configService';
-import { getAvatarColorForWorkgroupId } from '../../../../common/workgroup/workgroup';
 
 @Component({
   selector: 'peer-group-workgroup',
@@ -24,6 +23,6 @@ export class PeerGroupWorkgroupComponent implements OnInit {
       this.isEmptyWorkgroup = true;
       this.workgroupUsernames = $localize`Empty Team`;
     }
-    this.avatarColor = getAvatarColorForWorkgroupId(this.workgroup.id);
+    this.avatarColor = this.configService.getAvatarColorForWorkgroupId(this.workgroup.id);
   }
 }

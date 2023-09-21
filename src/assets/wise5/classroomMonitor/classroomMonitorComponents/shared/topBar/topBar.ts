@@ -8,7 +8,6 @@ import { NotificationService } from '../../../../services/notificationService';
 import { Directive } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Notification } from '../../../../../../app/domain/notification';
-import { getAvatarColorForWorkgroupId } from '../../../../common/workgroup/workgroup';
 
 @Directive()
 class TopBarController {
@@ -43,26 +42,26 @@ class TopBarController {
     $filter: any,
     private $scope: any,
     private $state: any,
-    private configService: ConfigService,
-    private notificationService: NotificationService,
-    private projectService: TeacherProjectService,
-    private teacherDataService: TeacherDataService,
-    private sessionService: SessionService
+    private ConfigService: ConfigService,
+    private NotificationService: NotificationService,
+    private ProjectService: TeacherProjectService,
+    private TeacherDataService: TeacherDataService,
+    private SessionService: SessionService
   ) {
     this.translate = $filter('translate');
-    this.workgroupId = this.configService.getWorkgroupId();
+    this.workgroupId = this.ConfigService.getWorkgroupId();
     if (this.workgroupId == null) {
       this.workgroupId = 100 * Math.random();
     }
-    this.avatarColor = getAvatarColorForWorkgroupId(this.workgroupId);
-    this.userInfo = this.configService.getMyUserInfo();
-    this.notificationChangedSubscription = this.notificationService.notificationChanged$.subscribe(
+    this.avatarColor = this.ConfigService.getAvatarColorForWorkgroupId(this.workgroupId);
+    this.userInfo = this.ConfigService.getMyUserInfo();
+    this.notificationChangedSubscription = this.NotificationService.notificationChanged$.subscribe(
       () => {
         this.setNotifications();
       }
     );
-    this.themePath = this.projectService.getThemePath();
-    this.contextPath = this.configService.getContextPath();
+    this.themePath = this.ProjectService.getThemePath();
+    this.contextPath = this.ConfigService.getContextPath();
     this.$scope.$on('$destroy', () => {
       this.ngOnDestroy();
     });
@@ -73,7 +72,7 @@ class TopBarController {
   }
 
   $onInit() {
-    const permissions = this.configService.getPermissions();
+    const permissions = this.ConfigService.getPermissions();
     this.canAuthorProject = permissions.canAuthorProject;
     this.runInfo = this.getRunInfo();
   }
@@ -96,11 +95,11 @@ class TopBarController {
    */
   setNotifications() {
     // TODO: take into account shared teacher users!
-    this.newNotifications = this.notificationService.getLatestActiveNotificationsFromUniqueSource(
+    this.newNotifications = this.NotificationService.getLatestActiveNotificationsFromUniqueSource(
       this.notifications,
       this.workgroupId
     );
-    this.dismissedNotifications = this.notificationService.getDismissedNotificationsForWorkgroup(
+    this.dismissedNotifications = this.NotificationService.getDismissedNotificationsForWorkgroup(
       this.notifications,
       this.workgroupId
     );
@@ -111,7 +110,7 @@ class TopBarController {
    * @return Boolean whether any of the periods are paused
    */
   isAnyPeriodPaused() {
-    return this.teacherDataService.isAnyPeriodPaused();
+    return this.TeacherDataService.isAnyPeriodPaused();
   }
 
   switchToAuthoringView() {
@@ -140,19 +139,19 @@ class TopBarController {
 
   previewProject() {
     this.saveEvent('projectPreviewed').then(() => {
-      window.open(`${this.configService.getConfigParam('previewProjectURL')}`);
+      window.open(`${this.ConfigService.getConfigParam('previewProjectURL')}`);
     });
   }
 
   goHome() {
     this.saveEvent('goHomeButtonClicked').then(() => {
-      this.sessionService.goHome();
+      this.SessionService.goHome();
     });
   }
 
   logOut() {
     this.saveEvent('logOutButtonClicked').then(() => {
-      this.sessionService.logOut();
+      this.SessionService.logOut();
     });
   }
 
@@ -163,11 +162,17 @@ class TopBarController {
     const componentId = null;
     const componentType = null;
     const data = {};
-    return this.teacherDataService
-      .saveEvent(context, nodeId, componentId, componentType, category, eventName, data)
-      .then((result) => {
-        return result;
-      });
+    return this.TeacherDataService.saveEvent(
+      context,
+      nodeId,
+      componentId,
+      componentType,
+      category,
+      eventName,
+      data
+    ).then((result) => {
+      return result;
+    });
   }
 }
 

@@ -4,7 +4,6 @@ import { ConfigService } from '../../../services/configService';
 import { UtilService } from '../../../services/utilService';
 import { ClassResponse } from './class-response.component';
 import { AnnotationService } from '../../../services/annotationService';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 let fixture: ComponentFixture<ClassResponse>;
 let component: ClassResponse;
@@ -22,8 +21,7 @@ describe('ClassResponseComponent', () => {
         { provide: AnnotationService, useClass: MockAnnotationService },
         ConfigService,
         UtilService
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
+      ]
     });
     fixture = TestBed.createComponent(ClassResponse);
     component = fixture.componentInstance;

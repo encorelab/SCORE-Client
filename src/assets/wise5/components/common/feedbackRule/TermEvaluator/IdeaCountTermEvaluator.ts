@@ -1,12 +1,25 @@
 import { CRaterResponse } from '../../cRater/CRaterResponse';
-import { AbstractIdeaCountTermEvaluator } from './AbstractIdeaCountTermEvaluator';
+import { TermEvaluator } from './TermEvaluator';
 
-export class IdeaCountTermEvaluator extends AbstractIdeaCountTermEvaluator {
+export class IdeaCountTermEvaluator extends TermEvaluator {
+  comparer: string;
+  expectedIdeaCount: number;
+
   constructor(term: string) {
-    super(term, /ideaCount(.*)\((.*)\)/);
+    super(term);
+    const matches = term.match(/ideaCount(.*)\((.*)\)/);
+    this.comparer = matches[1];
+    this.expectedIdeaCount = parseInt(matches[2]);
   }
 
-  protected getDetectedIdeaCount(response: CRaterResponse): number {
-    return response.getDetectedIdeaCount();
+  evaluate(response: CRaterResponse): boolean {
+    switch (this.comparer) {
+      case 'MoreThan':
+        return response.getDetectedIdeaCount() > this.expectedIdeaCount;
+      case 'Equals':
+        return response.getDetectedIdeaCount() === this.expectedIdeaCount;
+      case 'LessThan':
+        return response.getDetectedIdeaCount() < this.expectedIdeaCount;
+    }
   }
 }

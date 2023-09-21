@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { concatMap, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { User } from '../domain/user';
 import { HttpParams } from '@angular/common/http';
 import { ConfigService } from './config.service';
@@ -21,6 +21,7 @@ export class UserService {
   private contactUrl = '/api/contact';
   private unlinkGoogleAccountUrl = '/api/google-user/unlink-account';
   isAuthenticated = false;
+  isRecaptchaRequired = false;
   redirectUrl: string; // redirect here after logging in
 
   constructor(private http: HttpClient, private configService: ConfigService) {}
@@ -65,6 +66,7 @@ export class UserService {
           if (user != null && user.id != null) {
             this.isAuthenticated = true;
           }
+          this.isRecaptchaRequired = user.isRecaptchaRequired;
           this.user$.next(user);
         })
       );
@@ -86,7 +88,7 @@ export class UserService {
       .set('username', credentials.username)
       .set('password', credentials.password);
     if (credentials.recaptchaResponse != null) {
-      httpParams = httpParams.set('recaptchaResponse', credentials.recaptchaResponse);
+      httpParams = httpParams.set('g-recaptcha-response', credentials.recaptchaResponse);
     }
     const logInURL = `${this.configService.getContextPath()}/api/j_acegi_security_check`;
     this.http

@@ -1,10 +1,8 @@
-@use '@angular/material' as mat;
 @import
-  'style/base/typography',
   'style/abstracts/variables',
   'style/abstracts/functions';
 
-.mat-mdc-card-avatar {
+.mat-card-avatar {
   background-size: cover;
   border-radius: 4px;
   margin-bottom: 4px;
@@ -15,10 +13,25 @@
   }
 }
 
-.mat-mdc-card-title {
-  margin-bottom: 0;
+.mat-card-title {
+  margin-bottom: 6px;
+
+  @media (max-width: breakpoint('xs.max')) {
+    @include mat-typography-level-to-styles($config, body-1);
+    font-weight: 500;
+    margin-bottom: 0;
+  }
 }
 
-.info-block {
-  margin-top: 8px;
+.mat-card-subtitle {
+  margin-bottom: 2px;
+}
+
+.mat-card-actions {
+  .mat-button {
+    &:first-of-type, &:last-of-type {
+      margin-right: 0;
+      margin-left: 0;
+    }
+  }
 }

@@ -12,6 +12,7 @@ import { TeacherDataService } from '../assets/wise5/services/teacherDataService'
 import { TeacherWebSocketService } from '../assets/wise5/services/teacherWebSocketService';
 import { DataService } from './services/data.service';
 import { MilestoneService } from '../assets/wise5/services/milestoneService';
+import { CopyComponentService } from '../assets/wise5/services/copyComponentService';
 import { CopyNodesService } from '../assets/wise5/services/copyNodesService';
 import { CopyProjectService } from '../assets/wise5/services/copyProjectService';
 import { DeleteNodeService } from '../assets/wise5/services/deleteNodeService';
@@ -30,6 +31,7 @@ import { RouterModule } from '@angular/router';
 import { setUpLocationSync } from '@angular/router/upgrade';
 import { TeacherPeerGroupService } from '../assets/wise5/services/teacherPeerGroupService';
 import { DataExportService } from '../assets/wise5/services/dataExportService';
+import { TeacherNodeIconComponent } from '../assets/wise5/authoringTool/teacher-node-icon/teacher-node-icon.component';
 import { PeerGroupService } from '../assets/wise5/services/peerGroupService';
 import { NodeService } from '../assets/wise5/services/nodeService';
 import { TeacherNodeService } from '../assets/wise5/services/teacherNodeService';
@@ -39,6 +41,7 @@ import { MilestoneReportService } from '../assets/wise5/services/milestoneReport
 export class EmptyComponent {}
 
 @NgModule({
+  declarations: [TeacherNodeIconComponent],
   imports: [
     StudentTeacherCommonModule,
     AuthoringToolModule,
@@ -47,6 +50,7 @@ export class EmptyComponent {}
   ],
   providers: [
     ClassroomStatusService,
+    CopyComponentService,
     CopyNodesService,
     CopyProjectService,
     DataExportService,

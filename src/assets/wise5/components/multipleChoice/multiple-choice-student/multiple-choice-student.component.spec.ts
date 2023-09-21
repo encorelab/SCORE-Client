@@ -13,7 +13,6 @@ import { ComponentHeader } from '../../../directives/component-header/component-
 import { ProjectService } from '../../../services/projectService';
 import { MultipleChoiceComponent } from '../MultipleChoiceComponent';
 import { MultipleChoiceStudent } from './multiple-choice-student.component';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 const choiceId1 = 'choice1';
 const choiceId2 = 'choice2';
@@ -119,8 +118,7 @@ describe('MultipleChoiceStudentComponent', () => {
         ReactiveFormsModule,
         StudentTeacherCommonServicesModule
       ],
-      declarations: [ComponentHeader, MultipleChoiceStudent, PossibleScoreComponent],
-      schemas: [NO_ERRORS_SCHEMA]
+      declarations: [ComponentHeader, MultipleChoiceStudent, PossibleScoreComponent]
     });
     fixture = TestBed.createComponent(MultipleChoiceStudent);
     spyOn(TestBed.inject(ProjectService), 'getThemeSettings').and.returnValue({});

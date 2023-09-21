@@ -2,20 +2,19 @@
 
 import { Component } from '@angular/core';
 import { ProjectAssetService } from '../../../../../app/services/projectAssetService';
-import { AbstractComponentAuthoring } from '../../../authoringTool/components/AbstractComponentAuthoring';
+import { ComponentAuthoring } from '../../../authoringTool/components/component-authoring.component';
 import { ConfigService } from '../../../services/configService';
 import { NodeService } from '../../../services/nodeService';
 import { TeacherProjectService } from '../../../services/teacherProjectService';
 import { UtilService } from '../../../services/utilService';
 import { GraphService } from '../graphService';
-import { isMultipleYAxes } from '../util';
 
 @Component({
   selector: 'graph-authoring',
   templateUrl: 'graph-authoring.component.html',
   styleUrls: ['graph-authoring.component.scss']
 })
-export class GraphAuthoring extends AbstractComponentAuthoring {
+export class GraphAuthoring extends ComponentAuthoring {
   availableGraphTypes = [
     {
       value: 'line',
@@ -141,11 +140,15 @@ export class GraphAuthoring extends AbstractComponentAuthoring {
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.enableMultipleYAxes = isMultipleYAxes(this.componentContent.yAxis);
+    this.enableMultipleYAxes = this.isMultipleYAxesEnabled();
     if (this.enableMultipleYAxes) {
       this.numYAxes = this.componentContent.yAxis.length;
     }
     this.addAnyMissingYAxisFieldsToAllYAxes(this.componentContent.yAxis);
+  }
+
+  isMultipleYAxesEnabled(): boolean {
+    return Array.isArray(this.componentContent.yAxis);
   }
 
   addSeriesClicked(): void {
@@ -481,7 +484,7 @@ export class GraphAuthoring extends AbstractComponentAuthoring {
   }
 
   addAnyMissingYAxisFieldsToAllYAxes(yAxis: any): void {
-    if (isMultipleYAxes(yAxis)) {
+    if (this.GraphService.isMultipleYAxes(yAxis)) {
       yAxis.forEach((yAxis) => this.addAnyMissingYAxisFields(yAxis));
     } else {
       this.addAnyMissingYAxisFields(yAxis);

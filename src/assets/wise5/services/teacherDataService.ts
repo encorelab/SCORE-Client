@@ -3,6 +3,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { AnnotationService } from './annotationService';
 import { ConfigService } from './configService';
+import { UtilService } from './utilService';
 import { TeacherProjectService } from './teacherProjectService';
 import { TeacherWebSocketService } from './teacherWebSocketService';
 import { Injectable } from '@angular/core';
@@ -12,7 +13,6 @@ import { Node } from '../common/Node';
 import { compressToEncodedURIComponent } from 'lz-string';
 import { isMatchingPeriods } from '../common/period/period';
 import { getIntersectOfArrays } from '../common/array/array';
-import { serverSaveTimeComparator } from '../common/object/object';
 
 @Injectable()
 export class TeacherDataService extends DataService {
@@ -36,7 +36,8 @@ export class TeacherDataService extends DataService {
     private AnnotationService: AnnotationService,
     private ConfigService: ConfigService,
     protected ProjectService: TeacherProjectService,
-    private TeacherWebSocketService: TeacherWebSocketService
+    private TeacherWebSocketService: TeacherWebSocketService,
+    private UtilService: UtilService
   ) {
     super(ProjectService);
     this.studentData = {
@@ -289,7 +290,7 @@ export class TeacherDataService extends DataService {
   }
 
   processEvents(events) {
-    events.sort(serverSaveTimeComparator);
+    events.sort(this.UtilService.sortByServerSaveTime);
     this.studentData.allEvents = events;
     this.initializeEventsDataStructures();
     for (const event of events) {

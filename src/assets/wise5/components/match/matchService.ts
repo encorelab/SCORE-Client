@@ -14,7 +14,6 @@ export class MatchService extends ComponentService {
     const component: any = super.createComponent();
     component.type = 'Match';
     component.choices = [];
-    component.choiceReuseEnabled = false;
     component.buckets = [];
     component.feedback = [{ bucketId: '0', choices: [] }];
     component.ordered = false;

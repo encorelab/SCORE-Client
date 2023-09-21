@@ -3,7 +3,6 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { ConfigService } from '../../../../services/configService';
 
 import { MoveGroupToNodeComponent } from './move-group-to-node.component';
-import { MatIconModule } from '@angular/material/icon';
 
 describe('MoveGroupToNodeComponent', () => {
   let component: MoveGroupToNodeComponent;
@@ -12,7 +11,7 @@ describe('MoveGroupToNodeComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [MoveGroupToNodeComponent],
-      imports: [MatDialogModule, MatIconModule],
+      imports: [MatDialogModule],
       providers: [{ provide: ConfigService, useValue: {} }]
     }).compileComponents();
   });

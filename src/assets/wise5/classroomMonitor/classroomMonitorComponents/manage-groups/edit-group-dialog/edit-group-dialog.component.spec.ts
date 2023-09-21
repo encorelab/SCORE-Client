@@ -5,7 +5,6 @@ import { TagService } from '../../../../services/tagService';
 import { TeacherDataService } from '../../../../services/teacherDataService';
 
 import { EditGroupDialogComponent } from './edit-group-dialog.component';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 export class ConfigServiceMock {
   getClassmateUserInfos() {
@@ -34,8 +33,7 @@ describe('EditGroupDialogComponent', () => {
         { provide: ConfigService, useClass: ConfigServiceMock },
         { provide: TagService, useClass: TagServiceMock },
         { provide: TeacherDataService, useClass: TeacherDataServiceMock }
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
+      ]
     }).compileComponents();
   });
 

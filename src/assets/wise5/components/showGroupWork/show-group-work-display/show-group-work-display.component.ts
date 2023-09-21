@@ -3,7 +3,6 @@ import { ConfigService } from '../../../services/configService';
 import { PeerGroupService } from '../../../services/peerGroupService';
 import { ProjectService } from '../../../services/projectService';
 import { PeerGroup } from '../../peerChat/PeerGroup';
-import { getAvatarColorForWorkgroupId } from '../../../common/workgroup/workgroup';
 
 @Component({
   selector: 'show-group-work-display',
@@ -94,7 +93,7 @@ export class ShowGroupWorkDisplayComponent implements OnInit {
 
   private setWorkgroupInfo(workgroupId: number): void {
     this.workgroupInfos[workgroupId] = {
-      avatarColor: getAvatarColorForWorkgroupId(workgroupId),
+      avatarColor: this.configService.getAvatarColorForWorkgroupId(workgroupId),
       displayNames: this.configService.getUsernamesStringByWorkgroupId(workgroupId)
     };
   }

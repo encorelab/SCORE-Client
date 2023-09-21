@@ -1,4 +1,3 @@
-@use '@angular/material' as mat;
 @import
   'style/abstracts/functions',
   'style/abstracts/mixins',
@@ -11,7 +10,7 @@
 
 @mixin about-styles-img($radius: $feature-border-radius, $elevation: 6) {
   border-radius: $radius;
-  @include mat.elevation($elevation);
+  @include mat-elevation($elevation);
 }
 
 .section {

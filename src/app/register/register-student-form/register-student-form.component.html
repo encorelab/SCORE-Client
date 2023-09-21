@@ -154,7 +154,6 @@
         color="primary"
         type="submit"
         [disabled]="!createStudentAccountFormGroup.valid || processing"
-        class="button--progress"
       >
         <mat-progress-bar *ngIf="processing" mode="indeterminate"></mat-progress-bar>
         <span i18n>Create Account</span>

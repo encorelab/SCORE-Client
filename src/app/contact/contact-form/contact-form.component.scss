@@ -22,6 +22,15 @@
   }
 }
 
+.mat-select-panel {
+  overflow:visible !important;
+}
+
 .contact__form {
   width: 800px;
+}
+
+.recaptcha-container {
+  display: flex;
+  justify-content: center;
 }

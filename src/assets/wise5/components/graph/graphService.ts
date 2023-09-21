@@ -319,6 +319,10 @@ export class GraphService extends ComponentService {
     return document.querySelector(`#chart_${componentId} .highcharts-container`);
   }
 
+  isMultipleYAxes(yAxis: any): boolean {
+    return Array.isArray(yAxis);
+  }
+
   getSeriesColor(index: number): string {
     return this.seriesColors[index];
   }

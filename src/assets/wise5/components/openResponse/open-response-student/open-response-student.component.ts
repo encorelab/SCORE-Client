@@ -20,7 +20,6 @@ import { FeedbackRule } from '../../common/feedbackRule/FeedbackRule';
 import { FeedbackRuleComponent } from '../../feedbackRule/FeedbackRuleComponent';
 import { OpenResponseService } from '../openResponseService';
 import { copy } from '../../../common/object/object';
-import { RawCRaterResponse } from '../../common/cRater/RawCRaterResponse';
 
 @Component({
   selector: 'open-response-student',
@@ -306,7 +305,7 @@ export class OpenResponseStudent extends ComponentStudent {
       .pipe(timeout(this.cRaterTimeout))
       .subscribe(
         (response: any) => {
-          this.cRaterSuccessResponse(response.responses, componentState, deferred, dialogRef);
+          this.cRaterSuccessResponse(response, componentState, deferred, dialogRef);
         },
         () => {
           this.cRaterErrorResponse(componentState, deferred, dialogRef);
@@ -326,12 +325,12 @@ export class OpenResponseStudent extends ComponentStudent {
   }
 
   private cRaterSuccessResponse(
-    responses: RawCRaterResponse,
+    response: any,
     componentState: any,
     deferred: any,
     dialogRef: any
   ): void {
-    const cRaterResponse = this.CRaterService.getCRaterResponse(responses, this.submitCounter);
+    const cRaterResponse = this.CRaterService.getCRaterResponse(response, this.submitCounter);
     let score = cRaterResponse.score;
     if (cRaterResponse.scores != null) {
       const maxSoFarFunc = (accumulator, currentValue) => {
@@ -347,7 +346,7 @@ export class OpenResponseStudent extends ComponentStudent {
   }
 
   private processCRaterSuccessResponse(
-    score: number,
+    score: any,
     response: CRaterResponse,
     componentState: any
   ): void {
@@ -402,9 +401,9 @@ export class OpenResponseStudent extends ComponentStudent {
             this.isMultipleFeedbackTextsForSameRuleAllowed()
           )
         );
-        const rule: FeedbackRule = feedbackRuleEvaluator.getFeedbackRule([response]);
-        autoComment = this.getFeedbackText(rule);
-        feedbackRuleId = rule.id;
+        const feedbackRule: FeedbackRule = feedbackRuleEvaluator.getFeedbackRule(response);
+        autoComment = this.getFeedbackText(feedbackRule);
+        feedbackRuleId = feedbackRule.id;
       } else {
         autoComment = this.CRaterService.getCRaterFeedbackTextByScore(this.componentContent, score);
       }
