@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 
 import { CreateGroupComponent } from './create-group.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('CreateGroupComponent', () => {
   let component: CreateGroupComponent;
@@ -10,7 +11,8 @@ describe('CreateGroupComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [CreateGroupComponent],
-      imports: [MatDialogModule]
+      imports: [MatDialogModule],
+      schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
   });
 

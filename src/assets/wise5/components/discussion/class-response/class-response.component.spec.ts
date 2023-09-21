@@ -17,7 +17,8 @@ describe('ClassResponseComponent', () => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       declarations: [ClassResponse],
-      providers: [{ provide: AnnotationService, useClass: MockAnnotationService }, ConfigService]
+      providers: [{ provide: AnnotationService, useClass: MockAnnotationService }, ConfigService],
+      schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(ClassResponse);
     component = fixture.componentInstance;

@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 
 import { MoveGroupMembersButtonComponent } from './move-group-members-button.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('MoveGroupMembersButtonComponent', () => {
   let component: MoveGroupMembersButtonComponent;
@@ -10,7 +11,8 @@ describe('MoveGroupMembersButtonComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [MoveGroupMembersButtonComponent],
-      imports: [MatDialogModule]
+      imports: [MatDialogModule],
+      schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
   });
 

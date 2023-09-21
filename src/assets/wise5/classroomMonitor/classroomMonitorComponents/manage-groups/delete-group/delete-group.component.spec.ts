@@ -3,6 +3,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { TagService } from '../../../../services/tagService';
 
 import { DeleteGroupComponent } from './delete-group.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('DeleteGroupComponent', () => {
   let component: DeleteGroupComponent;
@@ -12,7 +13,8 @@ describe('DeleteGroupComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [DeleteGroupComponent],
       imports: [MatDialogModule],
-      providers: [{ provide: TagService, useValue: {} }]
+      providers: [{ provide: TagService, useValue: {} }],
+      schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
   });
 

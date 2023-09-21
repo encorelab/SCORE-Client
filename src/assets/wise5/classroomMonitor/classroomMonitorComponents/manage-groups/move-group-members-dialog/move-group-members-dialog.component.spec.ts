@@ -5,6 +5,7 @@ import { ConfigService } from '../../../../services/configService';
 import { TagService } from '../../../../services/tagService';
 import { TeacherDataService } from '../../../../services/teacherDataService';
 import { MoveGroupMembersDialogComponent } from './move-group-members-dialog.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 class TagServiceMock {
   retrieveRunTags() {
@@ -23,7 +24,8 @@ describe('MoveGroupMembersDialogComponent', () => {
         { provide: TagService, useClass: TagServiceMock },
         { provide: ConfigService, useValue: {} },
         { provide: TeacherDataService, useValue: {} }
-      ]
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
   });
 
