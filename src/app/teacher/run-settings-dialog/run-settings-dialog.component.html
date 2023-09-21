@@ -121,6 +121,23 @@
       >
     </div>
   </div>
+  <mat-divider></mat-divider>
+  <h3>
+    <ng-container i18n>CK Board Project Linking</ng-container>
+  </h3>
+  <div>
+    <mat-form-field appearance="fill" fxFlexAlign="start">
+      <mat-label i18n>SCORE-CK Connect Code</mat-label>
+      <input matInput [formControl]="linkedCkProjectControl" #CkCodeInput>
+      <button color="primary" *ngIf="!linkedCkProjectControl.disabled" type="button" mat-icon-button matSuffix (click)="linkRunToCkProject()">
+        <mat-icon>add_circle</mat-icon>
+      </button>
+      <button color="accent" *ngIf="linkedCkProjectControl.disabled" type="button" mat-icon-button matSuffix (click)="unlinkRunFromCkProject()">
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-progress-bar mode="indeterminate" *ngIf="showProcessingLink"></mat-progress-bar>
+    </mat-form-field>
+  </div>
 </mat-dialog-content>
 <mat-dialog-actions fxLayoutAlign="end">
   <button mat-flat-button color="primary" mat-dialog-close i18n>Done</button>
