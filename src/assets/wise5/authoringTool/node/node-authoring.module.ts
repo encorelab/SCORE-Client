@@ -1,20 +1,16 @@
 import * as angular from 'angular';
 import { downgradeComponent } from '@angular/upgrade/static';
+import { NodeAdvancedAuthoringComponent } from './advanced/node-advanced-authoring.component';
 import { NodeAdvancedBranchAuthoringComponent } from './advanced/branch/node-advanced-branch-authoring.component';
 import { NodeAdvancedConstraintAuthoringComponent } from './advanced/constraint/node-advanced-constraint-authoring.component';
 import { NodeAdvancedGeneralAuthoringComponent } from './advanced/general/node-advanced-general-authoring.component';
 import { NodeAdvancedJsonAuthoringComponent } from './advanced/json/node-advanced-json-authoring.component';
 import { NodeAdvancedPathAuthoringComponent } from './advanced/path/node-advanced-path-authoring.component';
-import { NodeAdvancedAuthoringComponent } from './advanced/node-advanced-authoring/node-advanced-authoring.component';
-import { NodeAuthoringComponent } from './node-authoring/node-authoring.component';
-import { EditNodeRubricComponent } from './editRubric/edit-node-rubric.component';
+import { NodeAuthoringComponent } from './nodeAuthoringComponent';
 
 export default angular
   .module('nodeAuthoringModule', [])
-  .directive(
-    'nodeAdvancedAuthoringComponent',
-    downgradeComponent({ component: NodeAdvancedAuthoringComponent })
-  )
+  .component('nodeAdvancedAuthoringComponent', NodeAdvancedAuthoringComponent)
   .directive(
     'nodeAdvancedBranchAuthoringComponent',
     downgradeComponent({
@@ -45,14 +41,7 @@ export default angular
       component: NodeAdvancedJsonAuthoringComponent
     }) as angular.IDirectiveFactory
   )
-  .directive(
-    'editNodeRubricComponent',
-    downgradeComponent({ component: EditNodeRubricComponent }) as angular.IDirectiveFactory
-  )
-  .directive(
-    'nodeAuthoringComponent',
-    downgradeComponent({ component: NodeAuthoringComponent }) as angular.IDirectiveFactory
-  )
+  .component('nodeAuthoringComponent', NodeAuthoringComponent)
   .config([
     '$stateProvider',
     ($stateProvider) => {
@@ -96,10 +85,6 @@ export default angular
         .state('root.at.project.node.advanced.path', {
           url: '/path',
           component: 'nodeAdvancedPathAuthoringComponent'
-        })
-        .state('root.at.project.node.advanced.rubric', {
-          url: '/rubric',
-          component: 'editNodeRubricComponent'
         });
     }
   ]);

@@ -17,7 +17,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { NodeGradingViewComponentTestHelper } from '../../nodeGrading/node-grading-view/node-grading-view.component.test.helper';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 let component: NodeGradingViewComponent;
 let fixture: ComponentFixture<NodeGradingViewComponent>;
@@ -43,8 +42,7 @@ describe('NodeGradingViewComponent', () => {
         MatIconModule,
         MatInputModule,
         ReactiveFormsModule
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
+      ]
     }).compileComponents();
   });
 

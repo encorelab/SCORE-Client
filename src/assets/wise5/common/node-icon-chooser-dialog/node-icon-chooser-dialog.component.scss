@@ -12,7 +12,7 @@
   color: #ffffff;
 }
 
-.mat-mdc-chip {
+.mat-chip {
   cursor: pointer;
 }
 
@@ -22,7 +22,6 @@
 }
 
 .icon-choice, .ki-choice {
-  /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version. */
   &.mat-chip-selected {
     @include selected;
   }
@@ -30,7 +29,7 @@
 
 .color-choice {
   width: 32px;
-  /* TODO(mdc-migration): The following rule targets internal classes of chips that may no longer apply for the MDC version. */
+
   &.mat-chip-selected {
     border: 4px solid #000000;
   }

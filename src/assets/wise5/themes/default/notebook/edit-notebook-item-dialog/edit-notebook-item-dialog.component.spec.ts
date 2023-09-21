@@ -72,14 +72,16 @@ describe('EditNotebookItemDialogComponent', () => {
     expect(component.saveEnabled).toBeTruthy(true);
   });
 
-  it('should close dialog after save', (done) => {
-    const dialogRefCloseSpy = spyOn(TestBed.inject(MatDialogRef), 'close');
-    component.data.saveNotebookItem = () => {
-      return Promise.resolve({});
-    };
-    component.save().then(() => {
-      expect(dialogRefCloseSpy).toHaveBeenCalled();
-      done();
-    });
-  });
+  it(
+    'should close dialog after save',
+    waitForAsync(() => {
+      const dialogRefCloseSpy = spyOn(TestBed.inject(MatDialogRef), 'close');
+      component.data.saveNotebookItem = () => {
+        return Promise.resolve({});
+      };
+      component.save().then(() => {
+        expect(dialogRefCloseSpy).toHaveBeenCalled();
+      });
+    })
+  );
 });

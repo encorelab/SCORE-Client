@@ -2,7 +2,7 @@
 
 import { Component } from '@angular/core';
 import { ProjectAssetService } from '../../../../../app/services/projectAssetService';
-import { AbstractComponentAuthoring } from '../../../authoringTool/components/AbstractComponentAuthoring';
+import { ComponentAuthoring } from '../../../authoringTool/components/component-authoring.component';
 import { ConfigService } from '../../../services/configService';
 import { NodeService } from '../../../services/nodeService';
 import { TeacherProjectService } from '../../../services/teacherProjectService';
@@ -12,7 +12,7 @@ import { TeacherProjectService } from '../../../services/teacherProjectService';
   templateUrl: 'discussion-authoring.component.html',
   styleUrls: ['discussion-authoring.component.scss']
 })
-export class DiscussionAuthoring extends AbstractComponentAuthoring {
+export class DiscussionAuthoring extends ComponentAuthoring {
   constructor(
     protected ConfigService: ConfigService,
     protected NodeService: NodeService,

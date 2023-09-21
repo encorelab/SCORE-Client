@@ -11,28 +11,12 @@ import { StudentTeacherCommonServicesModule } from '../../../../../app/student-t
 import { TeacherProjectService } from '../../../services/teacherProjectService';
 import { RequiredErrorLabelComponent } from '../../node/advanced/required-error-label/required-error-label.component';
 import { EditConstraintRemovalCriteriaComponent } from './edit-constraint-removal-criteria.component';
-import { ComponentContent } from '../../../common/ComponentContent';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
 
 let component: EditConstraintRemovalCriteriaComponent;
-const componentId1: string = 'component1';
-const componentId2: string = 'component2';
-const componentId3: string = 'component3';
-const componentId4: string = 'component4';
-const componentId5: string = 'component5';
-const componentId6: string = 'component6';
-const componentTypeMultipleChoice: string = 'MultipleChoice';
-const componentTypeOpenResponse: string = 'OpenResponse';
-const componentTypeTable: string = 'Table';
 let fixture: ComponentFixture<EditConstraintRemovalCriteriaComponent>;
-const nodeId1: string = 'node1';
-const nodeId2: string = 'node2';
-const nodeId3: string = 'node3';
 let removalCriteria: any;
 
-// TODO- use component harness
-xdescribe('EditConstraintRemovalCriteriaComponent', () => {
+describe('EditConstraintRemovalCriteriaComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [EditConstraintRemovalCriteriaComponent, RequiredErrorLabelComponent],
@@ -50,37 +34,26 @@ xdescribe('EditConstraintRemovalCriteriaComponent', () => {
     }).compileComponents();
 
     spyOn(TestBed.inject(TeacherProjectService), 'getFlattenedProjectAsNodeIds').and.returnValue([
-      nodeId1,
-      nodeId2,
-      nodeId3
+      'node1'
     ]);
-    TestBed.inject(TeacherProjectService).idToNode = {
-      node1: createNode(nodeId1, [
-        createComponent(componentId1, componentTypeMultipleChoice),
-        createComponent(componentId2, componentTypeOpenResponse),
-        createComponent(componentId3, componentTypeTable)
-      ]),
-      node2: createNode(nodeId2, [
-        createComponent(componentId4, componentTypeMultipleChoice),
-        createComponent(componentId5, componentTypeMultipleChoice)
-      ]),
-      node3: createNode(nodeId3, [createComponent(componentId6, componentTypeOpenResponse)])
-    };
+
     fixture = TestBed.createComponent(EditConstraintRemovalCriteriaComponent);
     component = fixture.componentInstance;
   });
 
   beforeEach(() => {
-    removalCriteria = {
-      name: '',
-      params: {}
-    };
+    removalCriteria = [
+      {
+        name: '',
+        params: {}
+      }
+    ];
     component.criteria = removalCriteria;
     component.constraint = new Constraint({
       id: 'node1Constraint1',
       action: '',
       removalConditional: 'any',
-      removalCriteria: [removalCriteria]
+      removalCriteria: removalCriteria
     });
     component.node = { id: 'node1' };
     fixture.detectChanges();
@@ -89,14 +62,6 @@ xdescribe('EditConstraintRemovalCriteriaComponent', () => {
   deleteRemovalCriteria();
   nameChanged();
 });
-
-function createNode(id: string, components: any[]): any {
-  return { id, components };
-}
-
-function createComponent(id: string, type: string): ComponentContent {
-  return { id, type };
-}
 
 function deleteRemovalCriteria() {
   describe('deleteRemovalCriteria()', () => {
@@ -150,52 +115,10 @@ function nameChanged_BranchPathTaken() {
 }
 
 function nameChanged_ChoiceChosen() {
-  choiceChosen_StepsWithAndWithoutMultipleChoice_ShouldOnlyShowStepsWithMultipleChoice();
-  choiceChosen_StepWithAndWithoutMultipleChoice_ShouldOnlyShowMultipleChoiceComponents();
-  choiceChosen_WithOneMultipleChoiceComponent_ShouldAutomaticallySelect();
-  choiceChosen_WithTwoMultipleChoiceComponents_ShouldNotAutomaticallySelect();
-}
-
-function choiceChosen_StepsWithAndWithoutMultipleChoice_ShouldOnlyShowStepsWithMultipleChoice() {
-  describe('there are steps with and without Multiple Choice components', () => {
-    it('should only show the steps with Multiple Choice components', () => {
-      chooseSelectOptionByLabel('Removal Criteria Name', 'Choice Chosen');
-      clickSelectElement('Step');
-      expectOptions(['', nodeId1, nodeId2]);
-    });
-  });
-}
-
-function choiceChosen_StepWithAndWithoutMultipleChoice_ShouldOnlyShowMultipleChoiceComponents() {
-  describe('choose a step with and without Multiple Choice components', () => {
-    it('should only show the Multiple Choice components', () => {
-      chooseSelectOptionByLabel('Removal Criteria Name', 'Choice Chosen');
-      chooseSelectOptionByValue('Step', nodeId1);
-      clickSelectElement('Component');
-      expectOptions(['', componentId1]);
-    });
-  });
-}
-
-function choiceChosen_WithOneMultipleChoiceComponent_ShouldAutomaticallySelect() {
-  describe('choose step with one Multiple Choice component', () => {
-    it('should automatically select the one Multiple Choice component', () => {
-      chooseSelectOptionByLabel('Removal Criteria Name', 'Choice Chosen');
-      chooseSelectOptionByValue('Step', nodeId1);
-      expectComponentIdToEqual(componentId1);
-      expectEmptyRemovalCriterialParamValue('choiceIds');
-    });
-  });
-}
-
-function choiceChosen_WithTwoMultipleChoiceComponents_ShouldNotAutomaticallySelect() {
-  describe('choose step with two Multiple Choice components', () => {
-    it('should not automatically select a Multiple Choice compoennt', () => {
-      chooseSelectOptionByLabel('Removal Criteria Name', 'Choice Chosen');
-      chooseSelectOptionByValue('Step', nodeId2);
-      expectComponentIdToEqual('');
-      expectEmptyRemovalCriterialParamValue('choiceIds');
-    });
+  it('should handle removal criteria name changed to choiceChosen', () => {
+    setRemovalCriteriaName('choiceChosen');
+    expectRemovalCriteriaNodeIdValueToEqualNode1();
+    expectEmptyRemovalCriterialParamValue('componentId', 'choiceIds');
   });
 }
 
@@ -240,8 +163,7 @@ function nameChanged_WroteXNumberWords() {
   it('should handle removal criteria name changed to wroteXNumberOfWords', () => {
     setRemovalCriteriaName('wroteXNumberOfWords');
     expectRemovalCriteriaNodeIdValueToEqualNode1();
-    expectComponentIdToEqual(componentId2);
-    expectEmptyRemovalCriterialParamValue('requiredNumberOfWords');
+    expectEmptyRemovalCriterialParamValue('componentId', 'requiredNumberOfWords');
   });
 }
 
@@ -257,7 +179,7 @@ function nameChanged_FillXNumberRows() {
   it('should handle removal criteria name changed to fillXNumberOfRows', () => {
     setRemovalCriteriaName('fillXNumberOfRows');
     expectRemovalCriteriaNodeIdValueToEqualNode1();
-    expectComponentIdToEqual(componentId3);
+    expectEmptyRemovalCriterialParamValue('componentId');
     expect(removalCriteria.params['requiredNumberOfFilledRows']).toEqual('');
     expect(removalCriteria.params['tableHasHeaderRow']).toEqual(true);
     expect(removalCriteria.params['requireAllCellsInARowToBeFilled']).toEqual(true);
@@ -285,47 +207,4 @@ function expectEmptyRemovalCriterialParamValue(...paramNames: string[]): void {
 
 function expectRemovalCriteriaNodeIdValueToEqualNode1(): void {
   expect(removalCriteria.params['nodeId']).toEqual('node1');
-}
-
-function expectComponentIdToEqual(componentId: string): void {
-  expect(removalCriteria.params['componentId']).toEqual(componentId);
-}
-
-function expectOptions(expectedOptionValues: string[]): void {
-  const options = fixture.debugElement.queryAll(By.css('.mat-option'));
-  options.forEach((option, index) => {
-    expect(option.attributes['ng-reflect-value']).toEqual(expectedOptionValues[index]);
-  });
-}
-
-function chooseSelectOptionByLabel(selectLabel: string, optionLabel: string): void {
-  clickSelectElement(selectLabel);
-  fixture.debugElement
-    .queryAll(By.css('.mat-option'))
-    .find((element) => element.nativeElement.textContent === optionLabel)
-    .nativeElement.click();
-  fixture.detectChanges();
-}
-
-function chooseSelectOptionByValue(selectLabel: string, optionValue: string): void {
-  clickSelectElement(selectLabel);
-  fixture.debugElement
-    .query(By.css(`.mat-option[ng-reflect-value='${optionValue}']`))
-    .nativeElement.click();
-  fixture.detectChanges();
-}
-
-function clickSelectElement(label: string): void {
-  getSelectElement(label).query(By.css('.mat-select-trigger')).nativeElement.click();
-  fixture.detectChanges();
-}
-
-function getSelectElement(label: string): DebugElement {
-  return fixture.debugElement
-    .queryAll(By.css('.mat-form-field'))
-    .find((element) =>
-      element
-        .queryAll(By.css('mat-label'))
-        .find((matLabel) => matLabel.nativeElement.textContent === label)
-    );
 }

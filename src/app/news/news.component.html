@@ -20,11 +20,11 @@
                 <strong>{{ newsItem.date | date: 'mediumDate' }}</strong>
               </app-timeline-item-label>
               <app-timeline-item-content>
-                <mat-card appearance="outlined">
+                <mat-card>
                   <mat-card-content>
                     <h2 class="accent-1">{{ newsItem.title }}</h2>
                     <div
-                      class="mat-body-2"
+                      class="mat-body-1"
                       [innerHTML]="sanitizer.bypassSecurityTrustHtml(newsItem.news)"
                     ></div>
                   </mat-card-content>

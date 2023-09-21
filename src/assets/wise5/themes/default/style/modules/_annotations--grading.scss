@@ -7,8 +7,17 @@
         display: none;
     }
 
-    .mat-mdc-form-field-subscript-wrapper {
-        display: none;
+    input, textarea {
+        //border-width: 0;
+        //background-color: color('text-light-secondary');
+
+        &:focus {
+            background-color: #ffffff;
+        }
+
+        &:disabled {
+            color: color('text');
+        }
     }
 }
 
@@ -36,10 +45,6 @@
         font-size: rem(1.8);
         width: 52px;
         text-align: center;
-    }
-
-    .mat-mdc-form-field-infix {
-        width: auto;
     }
 }
 

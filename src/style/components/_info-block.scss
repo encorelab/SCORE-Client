@@ -1,10 +1,7 @@
-@use '@angular/material' as mat;
-@use '../base/typography';
-
 .info-block {
   border-radius: $card-border-radius;
   padding: 12px;
-  font-size: mat.font-size($wise-typography, 'caption');
+  font-size: mat-font-size($config, body-1);
 
   p {
     &:last-of-type {

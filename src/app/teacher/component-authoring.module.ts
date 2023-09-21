@@ -18,6 +18,7 @@ import { EditOutsideUrlAdvancedComponent } from '../../assets/wise5/components/o
 import { OutsideUrlAuthoring } from '../../assets/wise5/components/outsideURL/outside-url-authoring/outside-url-authoring.component';
 import { SummaryAuthoring } from '../../assets/wise5/components/summary/summary-authoring/summary-authoring.component';
 import { TableAuthoring } from '../../assets/wise5/components/table/table-authoring/table-authoring.component';
+import { WiseAuthoringTinymceEditorComponent } from '../../assets/wise5/directives/wise-tinymce-editor/wise-authoring-tinymce-editor.component';
 import { AuthorUrlParametersComponent } from '../authoring-tool/author-url-parameters/author-url-parameters.component';
 import { EditComponentDefaultFeedback } from '../authoring-tool/edit-advanced-component/edit-component-default-feedback/edit-component-default-feedback.component';
 import { EditComponentExcludeFromTotalScoreComponent } from '../authoring-tool/edit-component-exclude-from-total-score/edit-component-exclude-from-total-score.component';
@@ -78,17 +79,13 @@ import { EditQuestionBankRulesComponent } from '../authoring-tool/edit-question-
 import { SelectStepAndComponentComponent } from '../authoring-tool/select-step-and-component/select-step-and-component.component';
 import { EditComponentConstraintsComponent } from '../authoring-tool/edit-component-constraints/edit-component-constraints.component';
 import { ComponentConstraintAuthoringComponent } from '../../assets/wise5/authoringTool/constraint/component-constraint-authoring/component-constraint-authoring.component';
-import { ConstraintAuthoringModule } from '../../assets/wise5/authoringTool/constraint/constraint-authoring.module';
-import { EditComponentAdvancedComponent } from '../authoring-tool/edit-component-advanced/edit-component-advanced.component';
-import { ComponentAuthoringComponent } from '../../assets/wise5/authoringTool/components/component-authoring.component';
-import { WiseTinymceEditorModule } from '../../assets/wise5/directives/wise-tinymce-editor/wise-tinymce-editor.module';
+import { EditConstraintRemovalCriteriaComponent } from '../../assets/wise5/authoringTool/constraint/edit-constraint-removal-criteria/edit-constraint-removal-criteria.component';
 
 @NgModule({
   declarations: [
     AnimationAuthoring,
     AudioOscillatorAuthoring,
     AuthorUrlParametersComponent,
-    ComponentAuthoringComponent,
     ComponentConstraintAuthoringComponent,
     ConceptMapAuthoring,
     CreateNewPeerGroupingDialogComponent,
@@ -98,7 +95,6 @@ import { WiseTinymceEditorModule } from '../../assets/wise5/directives/wise-tiny
     EditAnimationAdvancedComponent,
     EditAudioOscillatorAdvancedComponent,
     EditCommonAdvancedComponent,
-    EditComponentAdvancedComponent,
     EditComponentAddToNotebookButtonComponent,
     EditComponentConstraintsComponent,
     EditComponentDefaultFeedback,
@@ -121,6 +117,7 @@ import { WiseTinymceEditorModule } from '../../assets/wise5/directives/wise-tiny
     EditConnectedComponentsWithBackgroundComponent,
     EditConnectedComponentDeleteButtonComponent,
     EditConnectedComponentTypeSelectComponent,
+    EditConstraintRemovalCriteriaComponent,
     EditDialogGuidanceAdvancedComponent,
     EditDialogGuidanceComputerAvatarComponent,
     EditDiscussionAdvancedComponent,
@@ -163,22 +160,16 @@ import { WiseTinymceEditorModule } from '../../assets/wise5/directives/wise-tiny
     ShowMyWorkAuthoringComponent,
     SelectStepAndComponentComponent,
     SummaryAuthoring,
-    TableAuthoring
+    TableAuthoring,
+    WiseAuthoringTinymceEditorComponent
   ],
-  imports: [
-    ConstraintAuthoringModule,
-    StudentTeacherCommonModule,
-    PeerGroupingAuthoringModule,
-    WiseTinymceEditorModule
-  ],
+  imports: [StudentTeacherCommonModule, PeerGroupingAuthoringModule],
   exports: [
     AnimationAuthoring,
     AudioOscillatorAuthoring,
-    ComponentAuthoringComponent,
     ConceptMapAuthoring,
-    DialogGuidanceAuthoringComponent,
-    DiscussionAuthoring,
     DrawAuthoring,
+    DiscussionAuthoring,
     EditAnimationAdvancedComponent,
     EditAudioOscillatorAdvancedComponent,
     EditCommonAdvancedComponent,
@@ -204,6 +195,7 @@ import { WiseTinymceEditorModule } from '../../assets/wise5/directives/wise-tiny
     EditConnectedComponentsWithBackgroundComponent,
     EditConnectedComponentDeleteButtonComponent,
     EditConnectedComponentTypeSelectComponent,
+    EditConstraintRemovalCriteriaComponent,
     EditDialogGuidanceAdvancedComponent,
     EditDiscussionAdvancedComponent,
     EditDiscussionConnectedComponentsComponent,
@@ -238,7 +230,8 @@ import { WiseTinymceEditorModule } from '../../assets/wise5/directives/wise-tiny
     ShowMyWorkAuthoringComponent,
     SelectStepAndComponentComponent,
     SummaryAuthoring,
-    TableAuthoring
+    TableAuthoring,
+    WiseAuthoringTinymceEditorComponent
   ]
 })
 export class ComponentAuthoringModule {}

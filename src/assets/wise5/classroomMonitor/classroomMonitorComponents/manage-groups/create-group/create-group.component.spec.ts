@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 
 import { CreateGroupComponent } from './create-group.component';
-import { MatIconModule } from '@angular/material/icon';
 
 describe('CreateGroupComponent', () => {
   let component: CreateGroupComponent;
@@ -11,7 +10,7 @@ describe('CreateGroupComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [CreateGroupComponent],
-      imports: [MatDialogModule, MatIconModule]
+      imports: [MatDialogModule]
     }).compileComponents();
   });
 

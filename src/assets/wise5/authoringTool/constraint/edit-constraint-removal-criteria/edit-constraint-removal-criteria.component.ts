@@ -4,7 +4,6 @@ import { RemovalCriteria } from '../../../../../app/domain/removalCriteria';
 import { RemovalCriteriaParam } from '../../../../../app/domain/removalCriteriaParam';
 import { ComponentContent } from '../../../common/ComponentContent';
 import { MultipleChoiceContent } from '../../../components/multipleChoice/MultipleChoiceContent';
-import { EditConstraintRemovalCriteriaHelper } from './edit-constraint-removal-criteria-helper';
 
 @Component({
   selector: 'edit-constraint-removal-criteria',
@@ -12,17 +11,15 @@ import { EditConstraintRemovalCriteriaHelper } from './edit-constraint-removal-c
   templateUrl: './edit-constraint-removal-criteria.component.html'
 })
 export class EditConstraintRemovalCriteriaComponent implements OnInit {
-  private allNodeIds: string[];
-  private componentIdToIsSelectable: { [componentId: string]: boolean } = {};
-  private componentParam: RemovalCriteriaParam = new RemovalCriteriaParam(
-    'componentId',
-    $localize`Component`
-  );
   @Input() constraint: any;
   @Input() criteria: any;
   @Input() node: any;
   nodeIds: string[];
-  private removalCriteriaHelper: EditConstraintRemovalCriteriaHelper;
+
+  private componentParam: RemovalCriteriaParam = new RemovalCriteriaParam(
+    'componentId',
+    $localize`Component`
+  );
   private stepParam: RemovalCriteriaParam = new RemovalCriteriaParam('nodeId', $localize`Step`);
 
   protected removalCriteria = [
@@ -84,30 +81,7 @@ export class EditConstraintRemovalCriteriaComponent implements OnInit {
   constructor(private projectService: TeacherProjectService) {}
 
   ngOnInit(): void {
-    this.allNodeIds = this.projectService.getFlattenedProjectAsNodeIds(true);
-    this.removalCriteriaHelper = new EditConstraintRemovalCriteriaHelper(
-      this.projectService,
-      this.componentIdToIsSelectable
-    );
-    this.setNodeIds();
-    this.removalCriteriaHelper.calculateSelectableComponents(this.criteria);
-  }
-
-  private setNodeIds(): void {
-    this.nodeIds = this.removalCriteriaHelper.hasCriteriaNameToComponentType(this.criteria.name)
-      ? this.getStepsWithComponentType(
-          this.allNodeIds,
-          this.removalCriteriaHelper.getCriteriaNameToComponentType(this.criteria.name)
-        )
-      : this.allNodeIds;
-  }
-
-  private getStepsWithComponentType(allNodeIds: string[], componentType: string): any[] {
-    return allNodeIds.filter((nodeId) =>
-      this.projectService
-        .getNode(nodeId)
-        .components.some((component) => component.type === componentType)
-    );
+    this.nodeIds = this.projectService.getFlattenedProjectAsNodeIds(true);
   }
 
   deleteRemovalCriteria(): void {
@@ -124,16 +98,10 @@ export class EditConstraintRemovalCriteriaComponent implements OnInit {
     for (const paramObject of params) {
       const value = paramObject.value;
       criteria.params[value] = paramObject.defaultValue;
-      if (
-        value === 'nodeId' &&
-        this.removalCriteriaHelper.stepContainsAcceptableComponent(this.node.id, criteria)
-      ) {
+      if (value === 'nodeId') {
         criteria.params[value] = this.node.id;
       }
     }
-    this.setNodeIds();
-    this.removalCriteriaHelper.calculateSelectableComponents(criteria);
-    this.removalCriteriaHelper.automaticallySelectComponentIfPossible(criteria);
     this.saveProject();
   }
 
@@ -148,8 +116,6 @@ export class EditConstraintRemovalCriteriaComponent implements OnInit {
 
   protected nodeIdChanged(criteria: any): void {
     criteria.params.componentId = '';
-    this.removalCriteriaHelper.calculateSelectableComponents(criteria);
-    this.removalCriteriaHelper.automaticallySelectComponentIfPossible(criteria);
     this.saveProject();
   }
 

@@ -1,6 +1,5 @@
-@use '@angular/material' as mat;
 @import
-  'style/base/typography',
+  '@angular/material/theming',
   'style/abstracts/variables',
   'style/abstracts/mixins',
   'style/abstracts/functions';
@@ -28,7 +27,7 @@
   .info-block {
     background-color: transparent;
     padding: 0 0 16px;
-    font-size: mat.font-size($wise-typography, 'subtitle-2');
+    font-size: mat-font-size($config, subheading-2);
   }
 }
 
@@ -38,11 +37,11 @@
     min-height: 100px;
   }
 
-  .mat-mdc-paginator {
+  .mat-paginator {
     background: transparent;
   }
 
-  .mat-mdc-paginator-range-label {
+  .mat-paginator-range-label {
     margin: 0 8px;
   }
 }

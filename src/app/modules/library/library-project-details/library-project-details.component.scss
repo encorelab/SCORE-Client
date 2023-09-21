@@ -1,7 +1,5 @@
-@use '@angular/material' as mat;
-
 @import
-  'style/base/typography',
+  '@angular/material/theming',
   'style/abstracts/functions',
   'style/abstracts/variables';
 
@@ -9,11 +7,12 @@
 }
 
 .info-block {
+  margin: 16px 0 0;
   padding: 12px;
   overflow: hidden;
 }
 
-.mat-mdc-card-avatar {
+.mat-card-avatar {
   background-size: cover;
   border-radius: 4px;
   margin-right: 12px;
@@ -24,15 +23,21 @@
   }
 }
 
-.mat-mdc-card-title {
+.mat-card-title {
+  margin-bottom: 4px;
+
+  @media (max-width: breakpoint('xs.max')) {
+    @include mat-typography-level-to-styles($config, body-1);
+    font-weight: 500;
+  }
+}
+
+.mat-card-subtitle {
   margin-bottom: 2px;
 }
 
-.mat-mdc-card-subtitle {
-}
-
-.mat-mdc-dialog-actions {
-  .mat-mdc-button, .mat-mdc-button-base {
+.mat-dialog-actions {
+  .mat-button, .mat-button-base {
     margin-left: 0;
   }
 }

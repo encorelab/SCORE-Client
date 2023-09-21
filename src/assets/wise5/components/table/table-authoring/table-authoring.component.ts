@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ProjectAssetService } from '../../../../../app/services/projectAssetService';
-import { AbstractComponentAuthoring } from '../../../authoringTool/components/AbstractComponentAuthoring';
+import { ComponentAuthoring } from '../../../authoringTool/components/component-authoring.component';
 import { ConfigService } from '../../../services/configService';
 import { NodeService } from '../../../services/nodeService';
 import { TeacherProjectService } from '../../../services/teacherProjectService';
@@ -14,7 +14,7 @@ import { TeacherProjectService } from '../../../services/teacherProjectService';
   templateUrl: 'table-authoring.component.html',
   styleUrls: ['table-authoring.component.scss']
 })
-export class TableAuthoring extends AbstractComponentAuthoring {
+export class TableAuthoring extends ComponentAuthoring {
   columnCellSizes: any;
   frozenColumns: any;
   frozenColumnsLimitReached: boolean = false;

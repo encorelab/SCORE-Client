@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AbstractComponentAuthoring } from '../../../authoringTool/components/AbstractComponentAuthoring';
+import { ComponentAuthoring } from '../../../authoringTool/components/component-authoring.component';
 import { ConfigService } from '../../../services/configService';
 import { NodeService } from '../../../services/nodeService';
 import { ProjectAssetService } from '../../../../../app/services/projectAssetService';
@@ -11,7 +11,7 @@ import { DialogGuidanceService } from '../dialogGuidanceService';
   templateUrl: './dialog-guidance-authoring.component.html',
   styleUrls: ['./dialog-guidance-authoring.component.scss']
 })
-export class DialogGuidanceAuthoringComponent extends AbstractComponentAuthoring {
+export class DialogGuidanceAuthoringComponent extends ComponentAuthoring {
   constructor(
     protected configService: ConfigService,
     private dialogGuidanceService: DialogGuidanceService,

@@ -10,9 +10,10 @@ export class TeacherDiscussionService extends DiscussionService {
   constructor(
     protected http: HttpClient,
     protected configService: ConfigService,
-    protected teacherDataService: TeacherDataService
+    protected teacherDataService: TeacherDataService,
+    protected utilService: UtilService
   ) {
-    super(http, configService);
+    super(http, configService, utilService);
   }
 
   getPostsAssociatedWithComponentIdsAndWorkgroupId(componentIds: string[], workgroupId: number) {

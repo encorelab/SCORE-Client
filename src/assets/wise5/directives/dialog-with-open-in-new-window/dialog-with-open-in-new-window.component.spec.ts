@@ -38,7 +38,7 @@ describe('DialogWithOpenInNewWindowComponent', () => {
 
   it('should set the title', () => {
     expect(component).toBeTruthy();
-    const h1 = fixture.nativeElement.querySelector('h2');
+    const h1 = fixture.nativeElement.querySelector('h1');
     expect(h1.textContent).toEqual(title);
   });
 

@@ -11,8 +11,6 @@ import { TeacherDataService } from '../../../services/teacherDataService';
 import { TeacherProjectService } from '../../../services/teacherProjectService';
 import { TeacherWebSocketService } from '../../../services/teacherWebSocketService';
 import { NodeConstraintAuthoringComponent } from './node-constraint-authoring.component';
-import { MatIconModule } from '@angular/material/icon';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 let component: NodeConstraintAuthoringComponent;
 let fixture: ComponentFixture<NodeConstraintAuthoringComponent>;
@@ -26,7 +24,6 @@ describe('NodeConstraintAuthoringComponent', () => {
         FormsModule,
         HttpClientTestingModule,
         MatDialogModule,
-        MatIconModule,
         MatSelectModule,
         StudentTeacherCommonServicesModule
       ],
@@ -35,8 +32,7 @@ describe('NodeConstraintAuthoringComponent', () => {
         TeacherDataService,
         TeacherProjectService,
         TeacherWebSocketService
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(NodeConstraintAuthoringComponent);

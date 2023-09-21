@@ -1,6 +1,6 @@
 'use strict';
 
-import { Component, Input, ViewEncapsulation } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ProjectService } from '../../services/projectService';
 import { StudentDataService } from '../../services/studentDataService';
@@ -9,8 +9,7 @@ import { NodeService } from '../../services/nodeService';
 @Component({
   selector: 'nav-item',
   styleUrls: ['nav-item.component.scss'],
-  templateUrl: 'nav-item.component.html',
-  encapsulation: ViewEncapsulation.None
+  templateUrl: 'nav-item.component.html'
 })
 export class NavItemComponent {
   currentNode: any;

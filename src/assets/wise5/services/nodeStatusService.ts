@@ -20,9 +20,6 @@ export class NodeStatusService {
     private notebookService: NotebookService,
     private projectService: ProjectService
   ) {
-    this.constraintService.constraintsUpdated$.subscribe(() => {
-      this.updateNodeStatuses();
-    });
     this.dataService.dataRetrieved$.subscribe((studentData) => {
       this.populateNodeIdToIsVisited(studentData.events);
       this.updateNodeStatuses();

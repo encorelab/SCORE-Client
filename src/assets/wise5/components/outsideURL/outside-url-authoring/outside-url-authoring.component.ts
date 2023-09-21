@@ -2,7 +2,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ProjectAssetService } from '../../../../../app/services/projectAssetService';
-import { AbstractComponentAuthoring } from '../../../authoringTool/components/AbstractComponentAuthoring';
+import { ComponentAuthoring } from '../../../authoringTool/components/component-authoring.component';
 import { ConfigService } from '../../../services/configService';
 import { NodeService } from '../../../services/nodeService';
 import { TeacherProjectService } from '../../../services/teacherProjectService';
@@ -14,7 +14,7 @@ import { OutsideURLService } from '../outsideURLService';
   styleUrls: ['outside-url-authoring.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class OutsideUrlAuthoring extends AbstractComponentAuthoring {
+export class OutsideUrlAuthoring extends ComponentAuthoring {
   isShowOERs: boolean;
   allOpenEducationalResources: any[];
   filteredOpenEducationalResources: any[];

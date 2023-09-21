@@ -8,12 +8,15 @@ import { ConfigService } from '../../../../services/configService';
   styleUrls: ['./remove-user-confirm-dialog.component.scss']
 })
 export class RemoveUserConfirmDialogComponent implements OnInit {
-  constructor(private configService: ConfigService, @Inject(MAT_DIALOG_DATA) public user: any) {}
-
+  constructor(
+    private ConfigService: ConfigService,
+    @Inject(MAT_DIALOG_DATA) public user: any
+  ) {}
+  
   studentDisplayName: string;
 
   ngOnInit(): void {
-    this.studentDisplayName = this.configService.getPermissions().canViewStudentNames
+    this.studentDisplayName = this.ConfigService.getPermissions().canViewStudentNames
       ? `${this.user.name} (${this.user.username})`
       : `Student ${this.user.id}`;
   }

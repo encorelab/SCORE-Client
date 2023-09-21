@@ -240,6 +240,22 @@ export class TeacherProjectService extends ProjectService {
   }
 
   /**
+   * Replace a component
+   * @param nodeId the node id
+   * @param componentId the component id
+   * @param component the new component
+   */
+  replaceComponent(nodeId, componentId, component) {
+    const components = this.getComponents(nodeId);
+    for (let c = 0; c < components.length; c++) {
+      if (components[c].id === componentId) {
+        components[c] = component;
+        break;
+      }
+    }
+  }
+
+  /**
    * Create a new group
    * @param title the title of the group
    * @returns the group object
@@ -569,6 +585,22 @@ export class TeacherProjectService extends ProjectService {
     return numRubrics;
   }
 
+  /**
+   * Delete a component from a node
+   * @param nodeId the node id containing the node
+   * @param componentId the component id
+   */
+  deleteComponent(nodeId, componentId) {
+    const node = this.getNodeById(nodeId);
+    const components = node.components;
+    for (let c = 0; c < components.length; c++) {
+      if (components[c].id === componentId) {
+        components.splice(c, 1);
+        break;
+      }
+    }
+  }
+
   deleteTransition(node, transition) {
     const nodeTransitions = node.transitionLogic.transitions;
     const index = nodeTransitions.indexOf(transition);
@@ -617,6 +649,24 @@ export class TeacherProjectService extends ProjectService {
 
   getIdToNode() {
     return this.idToNode;
+  }
+
+  turnOnSaveButtonForAllComponents(node) {
+    for (const component of node.components) {
+      const service = this.componentServiceLookupService.getService(component.type);
+      if (service.componentUsesSaveButton()) {
+        component.showSaveButton = true;
+      }
+    }
+  }
+
+  turnOffSaveButtonForAllComponents(node) {
+    for (const component of node.components) {
+      const service = this.componentServiceLookupService.getService(component.type);
+      if (service.componentUsesSaveButton()) {
+        component.showSaveButton = false;
+      }
+    }
   }
 
   checkPotentialStartNodeIdChangeThenSaveProject() {

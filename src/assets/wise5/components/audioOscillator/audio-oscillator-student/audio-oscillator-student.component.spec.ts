@@ -16,7 +16,6 @@ import { AudioOscillatorStudent } from './audio-oscillator-student.component';
 import { AudioOscillatorStudentData } from '../AudioOscillatorStudentData';
 import { StudentTeacherCommonServicesModule } from '../../../../../app/student-teacher-common-services.module';
 import { Component } from '../../../common/Component';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 let component: AudioOscillatorStudent;
 let fixture: ComponentFixture<AudioOscillatorStudent>;
@@ -44,8 +43,7 @@ describe('AudioOscillatorStudent', () => {
         ReactiveFormsModule,
         StudentTeacherCommonServicesModule
       ],
-      declarations: [AudioOscillatorStudent, ComponentHeader, PossibleScoreComponent],
-      schemas: [NO_ERRORS_SCHEMA]
+      declarations: [AudioOscillatorStudent, ComponentHeader, PossibleScoreComponent]
     });
     fixture = TestBed.createComponent(AudioOscillatorStudent);
     spyOn(TestBed.inject(ProjectService), 'getThemeSettings').and.returnValue({});

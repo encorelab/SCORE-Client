@@ -2,7 +2,7 @@
 
 import * as angular from 'angular';
 import { Component } from '@angular/core';
-import { AbstractComponentAuthoring } from '../../../authoringTool/components/AbstractComponentAuthoring';
+import { ComponentAuthoring } from '../../../authoringTool/components/component-authoring.component';
 import { ConfigService } from '../../../services/configService';
 import { NodeService } from '../../../services/nodeService';
 import { ProjectAssetService } from '../../../../../app/services/projectAssetService';
@@ -15,7 +15,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
   templateUrl: 'draw-authoring.component.html',
   styleUrls: ['draw-authoring.component.scss']
 })
-export class DrawAuthoring extends AbstractComponentAuthoring {
+export class DrawAuthoring extends ComponentAuthoring {
   allToolNames: string[] = [
     'select',
     'line',

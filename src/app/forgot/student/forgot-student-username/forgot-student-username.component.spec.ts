@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ForgotStudentUsernameComponent } from './forgot-student-username.component';
 import { StudentService } from '../../../student/student.service';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
@@ -85,21 +85,23 @@ describe('ForgotStudentUsernameComponent', () => {
   });
 
   it('should navigate to the login page', () => {
-    const router = TestBed.inject(Router);
+    const router = TestBed.get(Router);
     const navigateSpy = spyOn(router, 'navigate');
     const username = 'SpongebobS0101';
     component.loginWithUsername(username);
-    expect(navigateSpy).toHaveBeenCalledWith(['/login', { username: username }]);
+    const params = { username: username };
+    expect(navigateSpy).toHaveBeenCalledWith(['/login', params]);
   });
 
   it('should navigate to the login page when a username is clicked', () => {
-    const router = TestBed.inject(Router);
+    const router = TestBed.get(Router);
     const navigateSpy = spyOn(router, 'navigate');
     component.foundUsernames = ['SpongebobS0101'];
     component.showSearchResults = true;
     fixture.detectChanges();
-    const usernameLink = fixture.debugElement.nativeElement.querySelector('.username-btn');
+    const usernameLink = fixture.debugElement.nativeElement.querySelector('a');
     usernameLink.click();
-    expect(navigateSpy).toHaveBeenCalledWith(['/login', { username: 'SpongebobS0101' }]);
+    const params = { username: 'SpongebobS0101' };
+    expect(navigateSpy).toHaveBeenCalledWith(['/login', params]);
   });
 });

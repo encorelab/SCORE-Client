@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { NodeService } from '../../../../services/nodeService';
 import { NodeStatusService } from '../../../../services/nodeStatusService';
@@ -8,8 +8,7 @@ import { StudentDataService } from '../../../../services/studentDataService';
 @Component({
   selector: 'step-tools',
   templateUrl: './step-tools.component.html',
-  styleUrls: ['./step-tools.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./step-tools.component.scss']
 })
 export class StepToolsComponent implements OnInit {
   icons: any;

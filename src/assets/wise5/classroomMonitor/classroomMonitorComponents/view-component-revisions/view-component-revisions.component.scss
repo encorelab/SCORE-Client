@@ -1,11 +1,9 @@
-h3.component-header {
-  padding: 8px 12px;
-  margin: 0;
-  font-weight: 500;
+.h3.component-header {
+  margin-bottom: 0;
 }
 
-.mat-mdc-list-base {
-  .mat-mdc-list-item {
+.mat-list-base {
+  .mat-list-item {
     width: auto;
     height: fit-content;
   }
@@ -20,7 +18,7 @@ h3.component-header {
 }
 
 .revision-content {
-  padding: 16px;
+  margin-bottom: 16px;
 }
 
 .show-more {

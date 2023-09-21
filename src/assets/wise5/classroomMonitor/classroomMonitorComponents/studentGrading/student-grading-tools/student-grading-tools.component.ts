@@ -4,7 +4,6 @@ import { Subscription } from 'rxjs/internal/Subscription';
 import { copy } from '../../../../common/object/object';
 import { ConfigService } from '../../../../services/configService';
 import { TeacherDataService } from '../../../../services/teacherDataService';
-import { getAvatarColorForWorkgroupId } from '../../../../common/workgroup/workgroup';
 
 class Workgroup {
   periodId: number;
@@ -52,7 +51,7 @@ export class StudentGradingToolsComponent implements OnInit {
   }
 
   private updateModel(): void {
-    this.avatarColor = getAvatarColorForWorkgroupId(this.workgroupId);
+    this.avatarColor = this.configService.getAvatarColorForWorkgroupId(this.workgroupId);
     this.periodId = this.dataService.getCurrentPeriod().periodId;
     this.filterWorkgroupsForPeriod();
     this.workgroups = this.workgroups.sort(this.sortByWorkgroupId);

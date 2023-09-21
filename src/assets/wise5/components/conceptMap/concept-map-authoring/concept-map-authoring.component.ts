@@ -2,7 +2,7 @@
 
 import { Component } from '@angular/core';
 import { ProjectAssetService } from '../../../../../app/services/projectAssetService';
-import { AbstractComponentAuthoring } from '../../../authoringTool/components/AbstractComponentAuthoring';
+import { ComponentAuthoring } from '../../../authoringTool/components/component-authoring.component';
 import { ConfigService } from '../../../services/configService';
 import { NodeService } from '../../../services/nodeService';
 import { TeacherProjectService } from '../../../services/teacherProjectService';
@@ -14,7 +14,7 @@ import { ConceptMapService } from '../conceptMapService';
   templateUrl: 'concept-map-authoring.component.html',
   styleUrls: ['concept-map-authoring.component.scss']
 })
-export class ConceptMapAuthoring extends AbstractComponentAuthoring {
+export class ConceptMapAuthoring extends ComponentAuthoring {
   availableNodes: any[];
   availableLinks: any[];
 

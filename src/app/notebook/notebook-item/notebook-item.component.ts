@@ -12,8 +12,6 @@ import { ProjectService } from '../../../assets/wise5/services/projectService';
   templateUrl: 'notebook-item.component.html'
 })
 export class NotebookItemComponent {
-  canDelete: boolean;
-  canRevive: boolean;
   color: string;
   @Input() config: any;
   @Input() group: string;
@@ -42,8 +40,6 @@ export class NotebookItemComponent {
     } else {
       this.color = this.label.color;
     }
-    this.canDelete = this.canDeleteNotebookItem();
-    this.canRevive = this.canReviveNotebookItem();
 
     this.notebookUpdatedSubscription = this.notebookService.notebookUpdated$.subscribe(
       ({ notebook }) => {

@@ -15,21 +15,23 @@
       (click)="toggleExpand()"
       [disabled]="disabled"
     >
-      <div fxFlex fxLayout="row" fxLayoutAlign="start center">
-        <step-info
-          [hasAlert]="hasAlert"
-          [hasNewAlert]="hasNewAlert"
-          [hasNewWork]="hasNewWork"
-          [nodeId]="nodeId"
-        >
-        </step-info>
-      </div>
-      <div fxFlex="{{ showScore ? 30 : 20 }}" fxLayout="row" fxLayoutAlign="center center">
-        <workgroup-node-status [statusText]="statusText" [statusClass]="statusClass">
-        </workgroup-node-status>
-      </div>
-      <div *ngIf="showScore" fxFlex="20" fxLayout="row" fxLayoutAlign="center center">
-        <workgroup-node-score [score]="score" [maxScore]="maxScore"></workgroup-node-score>
+      <div fxLayout="row">
+        <div fxFlex fxLayout="row" fxLayoutAlign="start center">
+          <step-info
+            [hasAlert]="hasAlert"
+            [hasNewAlert]="hasNewAlert"
+            [hasNewWork]="hasNewWork"
+            [nodeId]="nodeId"
+          >
+          </step-info>
+        </div>
+        <div fxFlex="{{ showScore ? 30 : 20 }}" fxLayout="row" fxLayoutAlign="center center">
+          <workgroup-node-status [statusText]="statusText" [statusClass]="statusClass">
+          </workgroup-node-status>
+        </div>
+        <div *ngIf="showScore" fxFlex="20" fxLayout="row" fxLayoutAlign="center center">
+          <workgroup-node-score [score]="score" [maxScore]="maxScore"></workgroup-node-score>
+        </div>
       </div>
     </button>
   </div>
@@ -41,7 +43,7 @@
           id="component_{{ component.id }}_{{ workgroupId }}"
           class="component component--grading"
         >
-          <h3 class="accent-1 strong gray-lightest-bg component__header">
+          <h3 class="accent-1 mat-body-2 gray-lightest-bg component__header">
             {{ index + 1 + '. ' + getComponentTypeLabel(component.type) }}&nbsp;
             <component-new-work-badge
               [componentId]="component.id"
@@ -51,7 +53,6 @@
             </component-new-work-badge>
           </h3>
           <workgroup-component-grading
-            class="component--grading__response__content"
             [componentId]="component.id"
             [workgroupId]="workgroupId"
             [nodeId]="nodeId"

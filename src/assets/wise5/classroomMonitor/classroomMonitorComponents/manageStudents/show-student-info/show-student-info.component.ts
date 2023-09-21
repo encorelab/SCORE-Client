@@ -10,9 +10,9 @@ export class ShowStudentInfoComponent implements OnInit {
   @Input() user: any;
   canViewStudentNames: boolean;
 
-  constructor(private configService: ConfigService) {}
+  constructor(private ConfigService: ConfigService) {}
 
   ngOnInit(): void {
-    this.canViewStudentNames = this.configService.getPermissions().canViewStudentNames;
+    this.canViewStudentNames = this.ConfigService.getPermissions().canViewStudentNames;
   }
 }
