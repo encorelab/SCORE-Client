@@ -15,7 +15,6 @@ import { NotificationDataExportStrategy } from '../strategies/NotificationDataEx
 import { StudentAssetDataExportStrategy } from '../strategies/StudentAssetDataExportStrategy';
 import { OneWorkgroupPerRowDataExportStrategy } from '../strategies/OneWorkgroupPerRowDataExportStrategy';
 import { RawDataExportStrategy } from '../strategies/RawDataExportStrategy';
-import { UpgradeModule } from '@angular/upgrade/static';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogWithSpinnerComponent } from '../../../directives/dialog-with-spinner/dialog-with-spinner.component';
 import { DiscussionComponentDataExportStrategy } from '../strategies/DiscussionComponentDataExportStrategy';
@@ -23,6 +22,9 @@ import { LabelComponentDataExportStrategy } from '../strategies/LabelComponentDa
 import { Component as WISEComponent } from '../../../common/Component';
 import { removeHTMLTags } from '../../../common/string/string';
 import { millisecondsToDateTime } from '../../../common/datetime/datetime';
+import { Choice } from '../../../components/match/choice';
+import { Bucket } from '../../../components/match/bucket';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'data-export',
@@ -121,8 +123,9 @@ export class DataExportComponent implements OnInit {
     private dialog: MatDialog,
     private matchService: MatchService,
     public projectService: TeacherProjectService,
-    public teacherDataService: TeacherDataService,
-    private upgrade: UpgradeModule
+    private route: ActivatedRoute,
+    private router: Router,
+    public dataService: TeacherDataService
   ) {}
 
   ngOnInit(): void {
@@ -139,22 +142,6 @@ export class DataExportComponent implements OnInit {
     this.flattenedProjectAsNodeIds = this.projectService.getFlattenedProjectAsNodeIds();
     this.nodes = Object.values(this.projectIdToOrder);
     this.nodes.sort(this.sortNodesByOrder);
-    const context = 'ClassroomMonitor',
-      nodeId = null,
-      componentId = null,
-      componentType = null,
-      category = 'Navigation',
-      event = 'dataExportViewDisplayed',
-      data = {};
-    this.teacherDataService.saveEvent(
-      context,
-      nodeId,
-      componentId,
-      componentType,
-      category,
-      event,
-      data
-    );
   }
 
   sortNodesByOrder(nodeA: any, nodeB: any): number {
@@ -188,7 +175,7 @@ export class DataExportComponent implements OnInit {
    * latestWork, allWork, and events will call this function with a null exportType.
    */
   export(exportType = this.exportType): void {
-    this.teacherDataService.saveEvent(
+    this.dataService.saveEvent(
       'ClassroomMonitor',
       null,
       null,
@@ -1066,11 +1053,9 @@ export class DataExportComponent implements OnInit {
    */
   exportMatchComponent(nodeId: string, component: any): void {
     const components = this.getComponentsParam(nodeId, component.id);
-    this.dataExportService
-      .retrieveStudentData(components, true, false, true)
-      .then((result: any) => {
-        this.generateMatchComponentExport(nodeId, component);
-      });
+    this.dataExportService.retrieveStudentData(components, true, false, true).subscribe(() => {
+      this.generateMatchComponentExport(nodeId, component);
+    });
   }
 
   generateMatchComponentExport(nodeId: string, component: any): void {
@@ -1171,11 +1156,7 @@ export class DataExportComponent implements OnInit {
     componentRevisionCounter: any,
     matchComponentState: any
   ): string[] {
-    /*
-     * Populate the cells in the row that contain the information about the
-     * student, project, run, step, and component.
-     */
-    let row = this.createStudentWorkExportRow(
+    const row = this.createStudentWorkExportRow(
       columnNames,
       columnNameToNumber,
       rowCounter,
@@ -1190,8 +1171,22 @@ export class DataExportComponent implements OnInit {
       componentRevisionCounter,
       matchComponentState
     );
-    for (const bucket of matchComponentState.studentData.buckets) {
-      for (const item of bucket.items) {
+    if (component.choiceReuseEnabled) {
+      this.insertMatchChoiceReuseValues(row, columnNameToNumber, component, matchComponentState);
+    } else {
+      this.insertMatchDefaultValues(row, columnNameToNumber, component, matchComponentState);
+    }
+    return row;
+  }
+
+  private insertMatchDefaultValues(
+    row: string[],
+    columnNameToNumber: any,
+    component: any,
+    matchComponentState: any
+  ): void {
+    matchComponentState.studentData.buckets.forEach((bucket: Bucket) => {
+      bucket.items.forEach((item: Choice) => {
         row[columnNameToNumber[item.id]] = this.getBucketValueById(component, bucket.id);
         if (
           this.includeCorrectnessColumns &&
@@ -1199,9 +1194,109 @@ export class DataExportComponent implements OnInit {
         ) {
           this.setCorrectnessValue(row, columnNameToNumber, item);
         }
+      });
+    });
+  }
+
+  private insertMatchChoiceReuseValues(
+    row: string[],
+    columnNameToNumber: any,
+    component: any,
+    matchComponentState: any
+  ): void {
+    matchComponentState.studentData.buckets
+      .filter((bucket: Bucket) => bucket.id !== '0')
+      .forEach((bucket: Bucket) => {
+        bucket.items.forEach((item: Choice) => {
+          this.setBucketValue(row, columnNameToNumber, component, bucket, item);
+          if (
+            this.includeCorrectnessColumns &&
+            this.matchService.componentHasCorrectAnswer(component)
+          ) {
+            this.setCorrectnessValueForChoiceReuse(row, columnNameToNumber, item);
+          }
+        });
+      });
+  }
+
+  private setBucketValue(
+    row: string[],
+    columnNameToNumber: any,
+    component: any,
+    bucket: Bucket,
+    item: Choice
+  ): void {
+    const previousValue = row[columnNameToNumber[item.id]];
+    const bucketValue = this.getBucketValueById(component, bucket.id);
+    row[columnNameToNumber[item.id]] =
+      previousValue === '' ? bucketValue : `${previousValue}, ${bucketValue}`;
+  }
+
+  private setCorrectnessValueForChoiceReuse(
+    row: any[],
+    columnNameToNumber: any,
+    item: Choice
+  ): void {
+    const columnName = item.id + '-boolean';
+    if (item.isCorrect == null) {
+      // The item does not have an isCorrect field so we will not show anything in the cell.
+    } else if (item.isCorrect) {
+      this.mergeCorrectnessValue(row, columnNameToNumber, columnName, 1);
+    } else {
+      if (item.isIncorrectPosition) {
+        this.mergeCorrectnessValue(row, columnNameToNumber, columnName, 2);
+      } else {
+        this.mergeCorrectnessValue(row, columnNameToNumber, columnName, 0);
       }
     }
-    return row;
+  }
+
+  /**
+   * Matrix to determine the merged correctness value.
+   * Legend
+   * e = empty
+   * 0 = incorrect
+   * 1 = correct
+   * 2 = correct bucket but incorrect position
+   *        previous
+   *        e 0 1 2
+   *       --------
+   * n  0 | 0 0 0 0
+   * e  1 | 1 0 1 2
+   * w  2 | 2 0 2 2
+   * @param row: any[]
+   * @param columnNameToNumber: any
+   * @param columnName: string
+   * @param newValue: number
+   */
+  private mergeCorrectnessValue(
+    row: any,
+    columnNameToNumber: any,
+    columnName: string,
+    newValue: number
+  ): void {
+    const previousValue = row[columnNameToNumber[columnName]];
+    if (previousValue === '') {
+      row[columnNameToNumber[columnName]] = newValue;
+    } else if (this.bothValuesAreCorrect(previousValue, newValue)) {
+      row[columnNameToNumber[columnName]] = 1;
+    } else if (this.eitherValuesAreIncorrect(previousValue, newValue)) {
+      row[columnNameToNumber[columnName]] = 0;
+    } else if (this.eitherValuesAreIncorrectPosition(previousValue, newValue)) {
+      row[columnNameToNumber[columnName]] = 2;
+    }
+  }
+
+  private bothValuesAreCorrect(value1: number, value2: number): boolean {
+    return value1 === 1 && value2 === 1;
+  }
+
+  private eitherValuesAreIncorrect(value1: number, value2: number): boolean {
+    return value1 === 0 || value2 === 0;
+  }
+
+  private eitherValuesAreIncorrectPosition(value1: number, value2: number): boolean {
+    return value1 === 2 || value2 === 2;
   }
 
   getBucketValueById(component: any, id: string): string {
@@ -1252,11 +1347,9 @@ export class DataExportComponent implements OnInit {
 
   exportDialogGuidanceComponent(nodeId: string, component: any): void {
     const components = this.getComponentsParam(nodeId, component.id);
-    this.dataExportService
-      .retrieveStudentData(components, true, false, true)
-      .then((result: any) => {
-        this.generateDialogGuidanceComponentExport(nodeId, component);
-      });
+    this.dataExportService.retrieveStudentData(components, true, false, true).subscribe(() => {
+      this.generateDialogGuidanceComponentExport(nodeId, component);
+    });
   }
 
   generateDialogGuidanceComponentExport(nodeId: string, component: any): void {
@@ -1268,7 +1361,7 @@ export class DataExportComponent implements OnInit {
 
   exportOpenResponseComponent(nodeId: string, component: any): void {
     const components = this.getComponentsParam(nodeId, component.id);
-    this.dataExportService.retrieveStudentData(components, true, false, true).then(() => {
+    this.dataExportService.retrieveStudentData(components, true, false, true).subscribe(() => {
       this.generateOpenResponseComponentExport(nodeId, component);
     });
   }
@@ -1324,7 +1417,7 @@ export class DataExportComponent implements OnInit {
       this.studentResponseLabel
     );
     if (this.isCRaterEnabled(component)) {
-      const annotations = this.teacherDataService.getAnnotationsByNodeIdAndComponentId(
+      const annotations = this.dataService.getAnnotationsByNodeIdAndComponentId(
         nodeId,
         component.id
       );
@@ -1461,7 +1554,7 @@ export class DataExportComponent implements OnInit {
       this.addColumnNameToColumnDataStructures(columnNameToNumber, columnNames, defaultColumnName);
     }
     this.addColumnNameToColumnDataStructures(columnNameToNumber, columnNames, this.itemIdLabel);
-    const componentStates = this.teacherDataService.getComponentStatesByComponentId(component.id);
+    const componentStates = this.dataService.getComponentStatesByComponentId(component.id);
     const ideaNames = this.getDialogGuidanceIdeaNames(componentStates);
     const scoreNames = this.getDialogGuidanceScoreNames(componentStates);
     for (let r = 0; r < this.getMaxNumberOfStudentResponses(componentStates); r++) {
@@ -1638,7 +1731,7 @@ export class DataExportComponent implements OnInit {
     // A mapping from component to component revision counter. The key will be
     // {{nodeId}}_{{componentId}} and the value will be a number.
     const componentRevisionCounter = {};
-    const componentStates = this.teacherDataService.getComponentStatesByWorkgroupIdAndComponentId(
+    const componentStates = this.dataService.getComponentStatesByWorkgroupIdAndComponentId(
       workgroupId,
       componentId
     );
@@ -1953,11 +2046,9 @@ export class DataExportComponent implements OnInit {
 
   exportEmbeddedComponent(nodeId: string, component: any): void {
     const components = this.getComponentsParam(nodeId, component.id);
-    this.dataExportService
-      .retrieveStudentData(components, true, false, true)
-      .then((result: any) => {
-        this.generateEmbeddedComponentExport(nodeId, component);
-      });
+    this.dataExportService.retrieveStudentData(components, true, false, true).subscribe(() => {
+      this.generateEmbeddedComponentExport(nodeId, component);
+    });
   }
 
   generateEmbeddedComponentExport(nodeId: string, component: any): void {
@@ -1999,7 +2090,7 @@ export class DataExportComponent implements OnInit {
         defaultMatchColumnName
       );
     }
-    const componentStates = this.teacherDataService.getComponentStatesByComponentId(component.id);
+    const componentStates = this.dataService.getComponentStatesByComponentId(component.id);
     const items = this.getEmbeddedTableRowItems(component, componentStates);
     const columnKeys = this.getEmbeddedTableColumnKeys(component);
     if (this.isEmbeddedTableComponentAndCanExport(component)) {
@@ -2129,8 +2220,8 @@ export class DataExportComponent implements OnInit {
     this.dialog.closeAll();
   }
 
-  exportVisitsClicked(): void {
-    this.upgrade.$injector.get('$state').go('root.cm.exportVisits');
+  protected exportVisitsClicked(): void {
+    this.router.navigate(['visits'], { relativeTo: this.route });
   }
 
   getComponentsParam(nodeId: string, componentId: string): any[] {

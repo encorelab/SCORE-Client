@@ -34,13 +34,14 @@ import { TimelineModule } from '../modules/timeline/timeline.module';
 import { EditComponent } from './account/edit/edit.component';
 import { EditProfileComponent } from './account/edit-profile/edit-profile.component';
 import { RunSettingsDialogComponent } from './run-settings-dialog/run-settings-dialog.component';
-import { UseWithClassWarningDialogComponent } from './use-with-class-warning-dialog/use-with-class-warning-dialog.component';
 import { EditRunWarningDialogComponent } from './edit-run-warning-dialog/edit-run-warning-dialog.component';
 import { ListClassroomCoursesDialogComponent } from './list-classroom-courses-dialog/list-classroom-courses-dialog.component';
 import { DiscourseRecentActivityComponent } from './discourse-recent-activity/discourse-recent-activity.component';
 import { ShareRunCodeDialogComponent } from './share-run-code-dialog/share-run-code-dialog.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { SelectRunsControlsModule } from './select-runs-controls/select-runs-controls.module';
 
 const materialModules = [
   MatAutocompleteModule,
@@ -56,6 +57,7 @@ const materialModules = [
   MatNativeDateModule,
   MatProgressBarModule,
   MatRadioModule,
+  MatSlideToggleModule,
   MatSnackBarModule,
   MatTabsModule,
   MatTableModule,
@@ -70,6 +72,7 @@ const materialModules = [
     LibraryModule,
     materialModules,
     SharedModule,
+    SelectRunsControlsModule,
     TeacherRoutingModule,
     TimelineModule,
     ClipboardModule
@@ -88,8 +91,7 @@ const materialModules = [
     TeacherComponent,
     TeacherHomeComponent,
     TeacherRunListComponent,
-    TeacherRunListItemComponent,
-    UseWithClassWarningDialogComponent
+    TeacherRunListItemComponent
   ],
   providers: [AuthGuard],
   exports: [TeacherComponent, materialModules]

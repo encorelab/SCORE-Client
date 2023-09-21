@@ -27,11 +27,15 @@ top-bar {
 }
 
 #content {
-  position: absolute;
+  position: fixed;
   top: $toolbar-height + $secondary-toolbar-height;
   bottom: 0;
   width: 100%;
   overflow: scroll;
+}
+
+.view-content {
+  margin-bottom: 64px;
 }
 
 notebook-report {

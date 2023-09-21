@@ -1,9 +1,9 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ConfigService } from '../../../services/configService';
-import { UtilService } from '../../../services/utilService';
 import { ClassResponse } from './class-response.component';
 import { AnnotationService } from '../../../services/annotationService';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 let fixture: ComponentFixture<ClassResponse>;
 let component: ClassResponse;
@@ -17,11 +17,7 @@ describe('ClassResponseComponent', () => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       declarations: [ClassResponse],
-      providers: [
-        { provide: AnnotationService, useClass: MockAnnotationService },
-        ConfigService,
-        UtilService
-      ]
+      providers: [{ provide: AnnotationService, useClass: MockAnnotationService }, ConfigService]
     });
     fixture = TestBed.createComponent(ClassResponse);
     component = fixture.componentInstance;

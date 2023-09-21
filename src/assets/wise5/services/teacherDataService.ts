@@ -3,16 +3,16 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { AnnotationService } from './annotationService';
 import { ConfigService } from './configService';
-import { UtilService } from './utilService';
 import { TeacherProjectService } from './teacherProjectService';
 import { TeacherWebSocketService } from './teacherWebSocketService';
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, tap } from 'rxjs';
 import { DataService } from '../../../app/services/data.service';
 import { Node } from '../common/Node';
 import { compressToEncodedURIComponent } from 'lz-string';
 import { isMatchingPeriods } from '../common/period/period';
 import { getIntersectOfArrays } from '../common/array/array';
+import { serverSaveTimeComparator } from '../common/object/object';
 
 @Injectable()
 export class TeacherDataService extends DataService {
@@ -36,8 +36,7 @@ export class TeacherDataService extends DataService {
     private AnnotationService: AnnotationService,
     private ConfigService: ConfigService,
     protected ProjectService: TeacherProjectService,
-    private TeacherWebSocketService: TeacherWebSocketService,
-    private UtilService: UtilService
+    private TeacherWebSocketService: TeacherWebSocketService
   ) {
     super(ProjectService);
     this.studentData = {
@@ -170,7 +169,7 @@ export class TeacherDataService extends DataService {
     return newEvent;
   }
 
-  retrieveStudentDataForNode(node: Node): Promise<any> {
+  retrieveStudentDataForNode(node: Node): Observable<any> {
     let params = new HttpParams()
       .set('runId', this.ConfigService.getRunId())
       .set('getStudentWork', 'true')
@@ -244,22 +243,21 @@ export class TeacherDataService extends DataService {
     if (periodId != null) {
       params = params.set('periodId', periodId);
     }
-    return this.retrieveStudentData(params).then((result) => {
+    return this.retrieveStudentData(params).subscribe((result) => {
       return result.studentWorkList;
     });
   }
 
-  retrieveStudentData(params): Promise<any> {
+  retrieveStudentData(params): Observable<any> {
     const url = this.ConfigService.getConfigParam('teacherDataURL');
     const options = {
       params: params
     };
-    return this.http
-      .get(url, options)
-      .toPromise()
-      .then((data: any) => {
-        return this.handleStudentDataResponse(data);
-      });
+    return this.http.get(url, options).pipe(
+      tap((data: any) => {
+        this.handleStudentDataResponse(data);
+      })
+    );
   }
 
   handleStudentDataResponse(resultData) {
@@ -290,7 +288,7 @@ export class TeacherDataService extends DataService {
   }
 
   processEvents(events) {
-    events.sort(this.UtilService.sortByServerSaveTime);
+    events.sort(serverSaveTimeComparator);
     this.studentData.allEvents = events;
     this.initializeEventsDataStructures();
     for (const event of events) {

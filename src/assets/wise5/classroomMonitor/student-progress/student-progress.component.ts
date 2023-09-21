@@ -3,7 +3,9 @@ import { Subscription } from 'rxjs';
 import { ConfigService } from '../../services/configService';
 import { ClassroomStatusService } from '../../services/classroomStatusService';
 import { TeacherDataService } from '../../services/teacherDataService';
-import { UpgradeModule } from '@angular/upgrade/static';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { GoToNodeSelectComponent } from '../classroomMonitorComponents/go-to-node-select/go-to-node-select.component';
 
 @Component({
   selector: 'student-progress',
@@ -23,13 +25,15 @@ export class StudentProgressComponent implements OnInit {
   constructor(
     private classroomStatusService: ClassroomStatusService,
     private configService: ConfigService,
-    private teacherDataService: TeacherDataService,
-    private upgrade: UpgradeModule
+    private dataService: TeacherDataService,
+    private dialog: MatDialog,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
     this.teacherWorkgroupId = this.configService.getWorkgroupId();
-    this.sort = this.teacherDataService.studentProgressSort;
+    this.sort = this.dataService.studentProgressSort;
     this.permissions = this.configService.getPermissions();
     this.initializeStudents();
     this.subscriptions.add(
@@ -40,25 +44,9 @@ export class StudentProgressComponent implements OnInit {
       })
     );
     this.subscriptions.add(
-      this.teacherDataService.currentWorkgroupChanged$.subscribe(({ currentWorkgroup }) => {
+      this.dataService.currentWorkgroupChanged$.subscribe(({ currentWorkgroup }) => {
         this.currentWorkgroup = currentWorkgroup;
       })
-    );
-    const context = 'ClassroomMonitor',
-      nodeId = null,
-      componentId = null,
-      componentType = null,
-      category = 'Navigation',
-      event = 'studentProgressViewDisplayed',
-      data = {};
-    this.teacherDataService.saveEvent(
-      context,
-      nodeId,
-      componentId,
-      componentType,
-      category,
-      event,
-      data
     );
   }
 
@@ -118,7 +106,7 @@ export class StudentProgressComponent implements OnInit {
   }
 
   private getStudentTotalScore(workgroupId: number): number {
-    return this.teacherDataService.getTotalScoreByWorkgroupId(workgroupId);
+    return this.dataService.getTotalScoreByWorkgroupId(workgroupId);
   }
 
   private sortWorkgroups(): void {
@@ -210,14 +198,12 @@ export class StudentProgressComponent implements OnInit {
   }
 
   isWorkgroupShown(workgroup: number): boolean {
-    return this.teacherDataService.isWorkgroupShown(workgroup);
+    return this.dataService.isWorkgroupShown(workgroup);
   }
 
   showStudentGradingView(workgroup: any): void {
     if (this.classroomStatusService.hasStudentStatus(workgroup.workgroupId)) {
-      this.upgrade.$injector
-        .get('$state')
-        .go('root.cm.team', { workgroupId: workgroup.workgroupId });
+      this.router.navigate([workgroup.workgroupId], { relativeTo: this.route });
     }
   }
 
@@ -227,55 +213,24 @@ export class StudentProgressComponent implements OnInit {
     } else {
       this.sort = value;
     }
-    this.teacherDataService.studentProgressSort = this.sort;
+    this.dataService.studentProgressSort = this.sort;
     this.sortWorkgroups();
   }
 
   isShowingAllPeriods() {
-    return this.teacherDataService.getCurrentPeriod().periodId === -1;
+    return this.dataService.getCurrentPeriod().periodId === -1;
   }
 
-  chooseNodeToSend($event: any, workgroup: any) {
+  chooseNodeToSend($event: any) {
     $event.stopPropagation();
-    this.upgrade.$injector.get('$mdDialog').show({
-      templateUrl: 'wise5/classroomMonitor/studentProgress/goToNodeSelect.html',
-      controller: [
-        '$scope',
-        '$mdDialog',
-        'ProjectService',
-        'TeacherDataService',
-        'TeacherWebSocketService',
-        function GoToNodeSelectController(
-          $scope,
-          $mdDialog,
-          ProjectService,
-          TeacherDataService,
-          TeacherWebSocketService
-        ) {
-          $scope.idToOrder = ProjectService.idToOrder;
-          $scope.workgroup = workgroup;
-          $scope.period = TeacherDataService.getCurrentPeriod();
-          $scope.isApplicationNode = (id) => {
-            return ProjectService.isApplicationNode(id);
-          };
-          $scope.getNodePositionAndTitleByNodeId = (id) => {
-            return ProjectService.getNodePositionAndTitleByNodeId(id);
-          };
-          $scope.sendToNode = (nodeId) => {
-            if ($scope.workgroup != null) {
-              TeacherWebSocketService.sendWorkgroupToNode($scope.workgroup.workgroupId, nodeId);
-            } else {
-              TeacherWebSocketService.sendPeriodToNode($scope.period.periodId, nodeId);
-            }
-          };
-          $scope.close = () => {
-            $mdDialog.hide();
-          };
-        }
-      ],
-      targetEvent: $event,
-      clickOutsideToClose: true,
-      escapeToClose: true
+    this.dialog.open(GoToNodeSelectComponent, {
+      minWidth: '600px',
+      maxHeight: '800px',
+      data: {
+        period: this.dataService.getCurrentPeriod(),
+        runId: this.configService.getRunId()
+      },
+      panelClass: 'mat-dialog--md'
     });
   }
 }
