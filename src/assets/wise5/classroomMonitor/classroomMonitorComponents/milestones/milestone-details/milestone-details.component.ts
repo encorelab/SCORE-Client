@@ -7,6 +7,7 @@ import { ConfigService } from '../../../../services/configService';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { ShowNodeInfoDialogComponent } from '../../../../../../app/classroom-monitor/show-node-info-dialog/show-node-info-dialog.component';
+import { getAvatarColorForWorkgroupId } from '../../../../common/workgroup/workgroup';
 
 @Component({
   selector: 'milestone-details',
@@ -14,6 +15,7 @@ import { ShowNodeInfoDialogComponent } from '../../../../../../app/classroom-mon
   templateUrl: './milestone-details.component.html'
 })
 export class MilestoneDetailsComponent implements OnInit {
+  currentPeriod: any;
   description: SafeHtml;
   @Input() milestone;
   @Output() onVisitNodeGrading = new EventEmitter<string>();
@@ -31,9 +33,11 @@ export class MilestoneDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.currentPeriod = this.dataService.getCurrentPeriod();
     this.processMilestone();
     this.subscriptions.add(
       this.dataService.currentPeriodChanged$.subscribe(({ currentPeriod }) => {
+        this.currentPeriod = currentPeriod;
         this.processMilestone();
         this.saveMilestoneCurrentPeriodSelectedEvent(currentPeriod);
       })
@@ -60,7 +64,7 @@ export class MilestoneDetailsComponent implements OnInit {
   }
 
   getAvatarColorForWorkgroupId(workgroupId: number): string {
-    return this.configService.getAvatarColorForWorkgroupId(workgroupId);
+    return getAvatarColorForWorkgroupId(workgroupId);
   }
 
   getDisplayNamesByWorkgroupId(workgroupId: number): string {

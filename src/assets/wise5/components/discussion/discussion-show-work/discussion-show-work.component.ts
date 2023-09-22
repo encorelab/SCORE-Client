@@ -85,7 +85,7 @@ export class DiscussionShowWorkComponent extends ComponentShowWorkDirective {
     this.classResponses = this.TeacherDiscussionService.getClassResponses(
       componentStates,
       annotations,
-      isStudentMode
+      false
     );
     this.responsesMap = this.TeacherDiscussionService.getResponsesMap(this.classResponses);
     const isGradingMode = true;
@@ -93,7 +93,10 @@ export class DiscussionShowWorkComponent extends ComponentShowWorkDirective {
       this.classResponses,
       this.componentId,
       this.workgroupId,
-      isGradingMode
+      () => {
+        return 0;
+      },
+      true
     );
     this.retrievedClassmateResponses = true;
   }

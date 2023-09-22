@@ -10,6 +10,8 @@ import { TeacherDataService } from '../../services/teacherDataService';
 import { ClassroomMonitorTestingModule } from '../classroom-monitor-testing.module';
 import { ClassroomMonitorTestHelper } from '../classroomMonitorComponents/shared/testing/ClassroomMonitorTestHelper';
 import { StudentProgressComponent } from './student-progress.component';
+import { RouterTestingModule } from '@angular/router/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 class Team {
   public completion: any;
@@ -52,8 +54,10 @@ describe('StudentProgressComponent', () => {
         MatFormFieldModule,
         MatInputModule,
         MatListModule,
-        ReactiveFormsModule
-      ]
+        ReactiveFormsModule,
+        RouterTestingModule
+      ],
+      schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
   });
 

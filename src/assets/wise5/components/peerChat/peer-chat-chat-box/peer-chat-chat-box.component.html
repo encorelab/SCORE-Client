@@ -1,4 +1,4 @@
-<mat-card class="chat-box mat-elevation-z2">
+<mat-card appearance="outlined" class="chat-box mat-elevation-z2">
   <peer-chat-members [peerChatWorkgroupInfos]="workgroupInfosWithoutTeachers"></peer-chat-members>
   <peer-chat-messages
     *ngIf="messages.length > 0"
@@ -11,6 +11,8 @@
   ></peer-chat-messages>
   <peer-chat-message-input
     *ngIf="isEnabled"
-    (onSubmit)="submit.emit($event)"
+    [messageText]="response"
+    (onSubmit)="submitResponse($event)"
+    (responseChangedEvent)="responseChanged($event)"
   ></peer-chat-message-input>
 </mat-card>

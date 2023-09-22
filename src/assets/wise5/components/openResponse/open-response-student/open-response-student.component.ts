@@ -11,7 +11,6 @@ import { NotificationService } from '../../../services/notificationService';
 import { ProjectService } from '../../../services/projectService';
 import { StudentAssetService } from '../../../services/studentAssetService';
 import { StudentDataService } from '../../../services/studentDataService';
-import { UtilService } from '../../../services/utilService';
 import { ComponentStudent } from '../../component-student.component';
 import { ComponentService } from '../../componentService';
 import { CRaterResponse } from '../../common/cRater/CRaterResponse';
@@ -20,6 +19,9 @@ import { FeedbackRule } from '../../common/feedbackRule/FeedbackRule';
 import { FeedbackRuleComponent } from '../../feedbackRule/FeedbackRuleComponent';
 import { OpenResponseService } from '../openResponseService';
 import { copy } from '../../../common/object/object';
+import { RawCRaterResponse } from '../../common/cRater/RawCRaterResponse';
+import { hasConnectedComponent } from '../../../common/ComponentContent';
+import { ConstraintService } from '../../../services/constraintService';
 
 @Component({
   selector: 'open-response-student',
@@ -37,6 +39,7 @@ export class OpenResponseStudent extends ComponentStudent {
     protected AnnotationService: AnnotationService,
     private changeDetector: ChangeDetectorRef,
     protected ComponentService: ComponentService,
+    private constraintService: ConstraintService,
     protected ConfigService: ConfigService,
     private CRaterService: CRaterService,
     protected dialog: MatDialog,
@@ -46,8 +49,7 @@ export class OpenResponseStudent extends ComponentStudent {
     private NotificationService: NotificationService,
     private ProjectService: ProjectService,
     protected StudentAssetService: StudentAssetService,
-    protected StudentDataService: StudentDataService,
-    protected UtilService: UtilService
+    protected StudentDataService: StudentDataService
   ) {
     super(
       AnnotationService,
@@ -63,7 +65,7 @@ export class OpenResponseStudent extends ComponentStudent {
 
   ngOnInit(): void {
     super.ngOnInit();
-    if (this.UtilService.hasShowWorkConnectedComponent(this.componentContent)) {
+    if (hasConnectedComponent(this.componentContent, 'showWork')) {
       this.handleConnectedComponents();
     } else if (
       this.componentState != null &&
@@ -305,7 +307,7 @@ export class OpenResponseStudent extends ComponentStudent {
       .pipe(timeout(this.cRaterTimeout))
       .subscribe(
         (response: any) => {
-          this.cRaterSuccessResponse(response, componentState, deferred, dialogRef);
+          this.cRaterSuccessResponse(response.responses, componentState, deferred, dialogRef);
         },
         () => {
           this.cRaterErrorResponse(componentState, deferred, dialogRef);
@@ -325,12 +327,12 @@ export class OpenResponseStudent extends ComponentStudent {
   }
 
   private cRaterSuccessResponse(
-    response: any,
+    responses: RawCRaterResponse,
     componentState: any,
     deferred: any,
     dialogRef: any
   ): void {
-    const cRaterResponse = this.CRaterService.getCRaterResponse(response, this.submitCounter);
+    const cRaterResponse = this.CRaterService.getCRaterResponse(responses, this.submitCounter);
     let score = cRaterResponse.score;
     if (cRaterResponse.scores != null) {
       const maxSoFarFunc = (accumulator, currentValue) => {
@@ -346,7 +348,7 @@ export class OpenResponseStudent extends ComponentStudent {
   }
 
   private processCRaterSuccessResponse(
-    score: any,
+    score: number,
     response: CRaterResponse,
     componentState: any
   ): void {
@@ -399,11 +401,13 @@ export class OpenResponseStudent extends ComponentStudent {
             this.getFeedbackRules(),
             this.getMaxSubmitCount(),
             this.isMultipleFeedbackTextsForSameRuleAllowed()
-          )
+          ),
+          this.ConfigService,
+          this.constraintService
         );
-        const feedbackRule: FeedbackRule = feedbackRuleEvaluator.getFeedbackRule(response);
-        autoComment = this.getFeedbackText(feedbackRule);
-        feedbackRuleId = feedbackRule.id;
+        const rule: FeedbackRule = feedbackRuleEvaluator.getFeedbackRule([response]);
+        autoComment = this.getFeedbackText(rule);
+        feedbackRuleId = rule.id;
       } else {
         autoComment = this.CRaterService.getCRaterFeedbackTextByScore(this.componentContent, score);
       }

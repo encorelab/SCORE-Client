@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MoveGroupMembersComponent } from './move-group-members.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('MoveGroupMembersComponent', () => {
   let component: MoveGroupMembersComponent;
@@ -7,7 +8,8 @@ describe('MoveGroupMembersComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MoveGroupMembersComponent]
+      declarations: [MoveGroupMembersComponent],
+      schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
   });
 

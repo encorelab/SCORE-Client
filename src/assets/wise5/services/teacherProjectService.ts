@@ -1,5 +1,4 @@
 'use strict';
-import * as angular from 'angular';
 import { ProjectService } from './projectService';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
@@ -10,6 +9,7 @@ import { ConfigService } from './configService';
 import { PathService } from './pathService';
 import { copy } from '../common/object/object';
 import { generateRandomKey } from '../common/string/string';
+import { branchPathBackgroundColors } from '../common/color/color';
 
 @Injectable()
 export class TeacherProjectService extends ProjectService {
@@ -19,8 +19,6 @@ export class TeacherProjectService extends ProjectService {
   public nodeChanged$: Observable<boolean> = this.nodeChangedSource.asObservable();
   private refreshProjectSource: Subject<void> = new Subject<void>();
   public refreshProject$ = this.refreshProjectSource.asObservable();
-  private scrollToBottomOfPageSource: Subject<void> = new Subject<void>();
-  public scrollToBottomOfPage$ = this.scrollToBottomOfPageSource.asObservable();
   private errorSavingProjectSource: Subject<void> = new Subject<void>();
   public errorSavingProject$: Observable<void> = this.errorSavingProjectSource.asObservable();
   private notAllowedToEditThisProjectSource: Subject<void> = new Subject<void>();
@@ -237,22 +235,6 @@ export class TeacherProjectService extends ProjectService {
       .then((newProjectId) => {
         return newProjectId;
       });
-  }
-
-  /**
-   * Replace a component
-   * @param nodeId the node id
-   * @param componentId the component id
-   * @param component the new component
-   */
-  replaceComponent(nodeId, componentId, component) {
-    const components = this.getComponents(nodeId);
-    for (let c = 0; c < components.length; c++) {
-      if (components[c].id === componentId) {
-        components[c] = component;
-        break;
-      }
-    }
   }
 
   /**
@@ -585,22 +567,6 @@ export class TeacherProjectService extends ProjectService {
     return numRubrics;
   }
 
-  /**
-   * Delete a component from a node
-   * @param nodeId the node id containing the node
-   * @param componentId the component id
-   */
-  deleteComponent(nodeId, componentId) {
-    const node = this.getNodeById(nodeId);
-    const components = node.components;
-    for (let c = 0; c < components.length; c++) {
-      if (components[c].id === componentId) {
-        components.splice(c, 1);
-        break;
-      }
-    }
-  }
-
   deleteTransition(node, transition) {
     const nodeTransitions = node.transitionLogic.transitions;
     const index = nodeTransitions.indexOf(transition);
@@ -616,13 +582,14 @@ export class TeacherProjectService extends ProjectService {
     }
   }
 
-  /**
-   * Get the branch path letter
-   * @param nodeId get the branch path letter for this node if it is in a branch
-   * @return the branch path letter for the node if it is in a branch
-   */
-  getBranchPathLetter(nodeId) {
-    return this.nodeIdToBranchPathLetter[nodeId];
+  getBackgroundColor(nodeId: string): string {
+    const branchPathLetter = this.nodeIdToBranchPathLetter[nodeId];
+    if (branchPathLetter != null) {
+      const letterASCIICode = branchPathLetter.charCodeAt(0);
+      const branchPathNumber = letterASCIICode - 65;
+      return branchPathBackgroundColors[branchPathNumber];
+    }
+    return null;
   }
 
   /**
@@ -649,24 +616,6 @@ export class TeacherProjectService extends ProjectService {
 
   getIdToNode() {
     return this.idToNode;
-  }
-
-  turnOnSaveButtonForAllComponents(node) {
-    for (const component of node.components) {
-      const service = this.componentServiceLookupService.getService(component.type);
-      if (service.componentUsesSaveButton()) {
-        component.showSaveButton = true;
-      }
-    }
-  }
-
-  turnOffSaveButtonForAllComponents(node) {
-    for (const component of node.components) {
-      const service = this.componentServiceLookupService.getService(component.type);
-      if (service.componentUsesSaveButton()) {
-        component.showSaveButton = false;
-      }
-    }
   }
 
   checkPotentialStartNodeIdChangeThenSaveProject() {
@@ -947,10 +896,6 @@ export class TeacherProjectService extends ProjectService {
     this.refreshProjectSource.next();
   }
 
-  scrollToBottomOfPage() {
-    this.scrollToBottomOfPageSource.next();
-  }
-
   nodeHasConstraint(nodeId: string): boolean {
     const constraints = this.getConstraintsOnNode(nodeId);
     return constraints.length > 0;
@@ -958,7 +903,7 @@ export class TeacherProjectService extends ProjectService {
 
   getConstraintsOnNode(nodeId: string): any {
     const node = this.getNodeById(nodeId);
-    return node.constraints;
+    return node.constraints ?? [];
   }
 
   /**
@@ -1057,10 +1002,7 @@ export class TeacherProjectService extends ProjectService {
       this.addCurrentUserToAuthors(this.getAuthors())
     );
     return this.http
-      .post(
-        this.configService.getConfigParam('saveProjectURL'),
-        angular.toJson(this.project, false)
-      )
+      .post(this.configService.getConfigParam('saveProjectURL'), JSON.stringify(this.project))
       .toPromise()
       .then((response: any) => {
         this.handleSaveProjectResponse(response);
@@ -1264,8 +1206,8 @@ export class TeacherProjectService extends ProjectService {
   }
 
   copyTransitions(previousNode, node) {
-    const transitionsJSONString = angular.toJson(previousNode.transitionLogic.transitions);
-    const transitionsCopy = angular.fromJson(transitionsJSONString);
+    const transitionsJSONString = JSON.stringify(previousNode.transitionLogic.transitions);
+    const transitionsCopy = JSON.parse(transitionsJSONString);
     node.transitionLogic.transitions = transitionsCopy;
   }
 
@@ -1643,8 +1585,7 @@ export class TeacherProjectService extends ProjectService {
               // we have found the transition to the node we are removing
 
               // copy the transitions from the node we are removing
-              let transitionsCopy = angular.toJson(nodeToRemoveTransitions);
-              transitionsCopy = angular.fromJson(transitionsCopy);
+              let transitionsCopy = copy(nodeToRemoveTransitions);
 
               /*
                * if the parent from group is different than the parent removing group
@@ -3155,5 +3096,15 @@ export class TeacherProjectService extends ProjectService {
       objects.splice(index, 1);
       objects.splice(index + 1, 0, object);
     }
+  }
+
+  getNodesInOrder(): any[] {
+    return Object.entries(this.idToOrder)
+      .map((entry: any) => {
+        return { key: entry[0], id: entry[0], order: entry[1].order };
+      })
+      .sort((a: any, b: any) => {
+        return a.order - b.order;
+      });
   }
 }

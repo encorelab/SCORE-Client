@@ -3,6 +3,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { ConfigService } from '../../../../services/configService';
 
 import { MoveGroupToNodeComponent } from './move-group-to-node.component';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('MoveGroupToNodeComponent', () => {
   let component: MoveGroupToNodeComponent;
@@ -12,7 +13,8 @@ describe('MoveGroupToNodeComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [MoveGroupToNodeComponent],
       imports: [MatDialogModule],
-      providers: [{ provide: ConfigService, useValue: {} }]
+      providers: [{ provide: ConfigService, useValue: {} }],
+      schemas: [NO_ERRORS_SCHEMA]
     }).compileComponents();
   });
 
