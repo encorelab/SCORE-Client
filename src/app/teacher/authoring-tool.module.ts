@@ -50,10 +50,13 @@ import { NodeIconAndTitleComponent } from '../../assets/wise5/authoringTool/choo
 import { NodeWithMoveAfterButtonComponent } from '../../assets/wise5/authoringTool/choose-node-location/node-with-move-after-button/node-with-move-after-button.component';
 import { ProjectAuthoringParentComponent } from '../../assets/wise5/authoringTool/project-authoring-parent/project-authoring-parent.component';
 import { ChooseImportUnitComponent } from '../authoring-tool/import-step/choose-import-unit/choose-import-unit.component';
+import { NodeAuthoringParentComponent } from '../../assets/wise5/authoringTool/node/node-authoring-parent/node-authoring-parent.component';
+import { AddLessonChooseTemplateComponent } from '../../assets/wise5/authoringTool/addLesson/add-lesson-choose-template/add-lesson-choose-template.component';
 
 @NgModule({
   declarations: [
     AddLessonChooseLocationComponent,
+    AddLessonChooseTemplateComponent,
     AddLessonConfigureComponent,
     AddProjectComponent,
     AddYourOwnNode,
@@ -78,6 +81,7 @@ import { ChooseImportUnitComponent } from '../authoring-tool/import-step/choose-
     InsertNodeInsideButtonComponent,
     MilestonesAuthoringComponent,
     NodeAuthoringComponent,
+    NodeAuthoringParentComponent,
     NodeIconChooserDialog,
     NodeIconAndTitleComponent,
     NodeWithMoveAfterButtonComponent,

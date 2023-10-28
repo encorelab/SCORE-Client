@@ -5,25 +5,27 @@ import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   selector: 'choose-new-node-template',
   templateUrl: 'choose-new-node-template.component.html',
-  styleUrls: ['choose-new-node-template.component.scss']
+  styleUrls: ['choose-new-node-template.component.scss', '../../add-content.scss']
 })
 export class ChooseNewNodeTemplate {
   protected templates: NewNodeTemplate[] = [
     {
       label: $localize`Create Your Own`,
-      description: $localize`Create Your Own Description`,
       icon: 'mode_edit',
       route: 'add-your-own'
     },
     {
+      label: $localize`Import From Another Unit`,
+      icon: 'system_update_alt',
+      route: 'import-step/choose-unit'
+    },
+    {
       label: $localize`Automated Assessment`,
-      description: $localize`Automated Assessment Description`,
       icon: 'fact_check',
       route: 'automated-assessment/choose-item'
     },
     {
       label: $localize`Interactive Simulation`,
-      description: $localize`Add an existing interactive simulation`,
       icon: 'video_settings',
       route: 'simulation/choose-item'
     }
