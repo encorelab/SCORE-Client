@@ -99,6 +99,7 @@ export class UserService {
           }
         } catch (e) {}
         this.retrieveUser(credentials.username).subscribe((user) => {
+          this.redirectOnSessionExpire((user as any).expiresIn);
           return callback && callback(response);
         });
       });
@@ -113,6 +114,17 @@ export class UserService {
       return '/teacher';
     } else {
       return '/';
+    }
+  }
+
+  redirectOnSessionExpire(expiresIn: string) {
+    if (expiresIn && expiresIn.length > 1) {
+      const durationMap = { 's': 1000, 'm': 60 * 1000 };
+      const duration = Number(expiresIn.substring(0, expiresIn.length - 1));
+      if (!Number.isNaN(duration)) {
+        const expiresAtMs = duration * durationMap[expiresIn.substring(expiresIn.length - 1)];
+        setTimeout(() => window.location.reload(), expiresAtMs);
+      }
     }
   }
 
